@@ -13,8 +13,7 @@ object BasicSum {
       }
       val sc = new SparkContext(master, "BasicMap", System.getenv("SPARK_HOME"))
       val input = sc.parallelize(List(1,2,3,4))
-      val squared = input.map(x => x*x)
-      val result = squared.fold(0)((x, y) => (x + y))
+      val result = input.fold(0)((x, y) => (x + y))
       println(result)
     }
 }
