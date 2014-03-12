@@ -1,5 +1,5 @@
 /**
- * Illustrates a simple map in Scala
+ * Illustrates remove outliers in Scala using summary Stats
  */
 package com.oreilly.learningsparkexamples.scala
 
