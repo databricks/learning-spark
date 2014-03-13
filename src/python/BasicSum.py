@@ -2,8 +2,8 @@
 >>> from pyspark.context import SparkContext
 >>> sc = SparkContext('local', 'test')
 >>> b = sc.parallelize([1, 2, 3, 4])
->>> sorted(basicSquareNoOnes(b).collect())
-[4, 9, 16]
+>>> basicSum(b)
+10
 """
 
 import sys
