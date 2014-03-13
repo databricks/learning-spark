@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
 
 public class BasicAvg {
   class AvgCount {
@@ -20,6 +20,9 @@ public class BasicAvg {
     }
     public int total_;
     public int num_;
+    public float avg() {
+      return total_ / (float) num_;
+    }
   }
   public static void main(String[] args) throws Exception {
 		String master;
@@ -28,11 +31,31 @@ public class BasicAvg {
 		} else {
 			master = "local";
 		}
+    BasicAvg avg = new BasicAvg();
+    avg.run(master);
+  }
+  public void run(String master) throws Exception {
 		JavaSparkContext sc = new JavaSparkContext(
       master, "basicmap", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4));
-    JavaRDD<Integer> result = rdd.map(
-      new Function<Integer, Integer>() { public Integer call(Integer x) { return x*x;}});
-    System.out.println(StringUtils.join(result.collect(), ","));
+    Function2<AvgCount, Integer, AvgCount> addAndCount = new Function2<AvgCount, Integer, AvgCount>() {
+      @Override
+      public AvgCount call(AvgCount a, Integer x) {
+        a.total_ += x;
+        a.num_ += 1;
+        return a;
+      }
+    };
+    Function2<AvgCount, AvgCount, AvgCount> combine = new Function2<AvgCount, AvgCount, AvgCount>() {
+      @Override
+      public AvgCount call(AvgCount a, AvgCount b) {
+        a.total_ += b.total_;
+        a.num_ += b.num_;
+        return a;
+      }
+    };
+    AvgCount initial = new AvgCount(0,0);
+    AvgCount result = rdd.aggregate(initial, addAndCount, combine);
+    System.out.println(result.avg());
 	}
 }
