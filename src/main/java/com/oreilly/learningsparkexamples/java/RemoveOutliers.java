@@ -24,7 +24,7 @@ public class RemoveOutliers {
 		}
 		JavaSparkContext sc = new JavaSparkContext(
       master, "basicmap", System.getenv("SPARK_HOME"), System.getenv("JARS"));
-    JavaDoubleRDD input = sc.parallelizeDoubles(Arrays.asList(1.0, 2.0, 3.0, 4.0));
+    JavaDoubleRDD input = sc.parallelizeDoubles(Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 1000.0));
     JavaDoubleRDD result = removeOutliers(input);
     System.out.println(StringUtils.join(result.collect(), ","));
   }
@@ -32,7 +32,7 @@ public class RemoveOutliers {
     final StatCounter summaryStats = rdd.stats();
     final Double stddev = Math.sqrt(summaryStats.variance());
     return rdd.filter(new Function<Double, Boolean>() { public Boolean call(Double x) {
-          return (Math.abs(x-summaryStats.mean()) < 3 * stddev);
+          return (Math.abs(x - summaryStats.mean()) < 3 * stddev);
         }});
   }
 }

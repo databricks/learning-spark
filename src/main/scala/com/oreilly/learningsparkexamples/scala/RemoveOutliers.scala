@@ -14,7 +14,7 @@ object RemoveOutliers {
       case _ => "local"
     }
     val sc = new SparkContext(master, "RemoveOutliers", System.getenv("SPARK_HOME"))
-    val input = sc.parallelize(List(1,2,3,4,1000)).map(_.toDouble)
+    val input = sc.parallelize(List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1000)).map(_.toDouble)
     val result = removeOutliers(input)
     println(result.collect().mkString(","))
   }
