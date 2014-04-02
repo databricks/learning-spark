@@ -15,8 +15,6 @@ def removeOutliers(nums):
     """Remove the outliers"""
     stats = nums.stats()
     stddev = math.sqrt(stats.variance())
-    print "stddev is "
-    print stddev
     return nums.filter(lambda x: math.fabs(x - stats.mean()) < 3 * stddev)
 
 if __name__ == "__main__":
