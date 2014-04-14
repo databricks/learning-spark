@@ -19,6 +19,10 @@ import com.esotericsoftware.kryo.Kryo;
 public class BasicAvgWithKryo {
   // This is our custom class we will configure Kyro to serialize
   class AvgCount {
+    public AvgCount() {
+      total_ = 0;
+      num_ = 0;
+    }
     public AvgCount(int total, int num) {
       total_ = total;
       num_ = num;
