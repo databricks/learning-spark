@@ -11,7 +11,8 @@ scalaVersion := "2.10.3"
 // additional libraries
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "0.9.0-incubating",
-  "org.apache.commons" % "commons-lang3" % "3.0"
+  "org.apache.commons" % "commons-lang3" % "3.0",
+  "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031"
 )
 
 resolvers ++= Seq(
