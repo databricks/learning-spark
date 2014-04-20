@@ -23,6 +23,7 @@ object BasicMapPartitions {
         signs.map {sign =>
           val exchange = new ContentExchange(true);
           exchange.setURL(s"http://qrzcq.com/call/${sign}")
+          client.send(exchange)
           exchange
         }.map{ exchange =>
           exchange.waitForDone();
