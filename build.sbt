@@ -10,7 +10,7 @@ scalaVersion := "2.10.3"
 
 // additional libraries
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "0.9.0-incubating",
+  "org.apache.spark" %% "spark-core" % "0.9.1",
   "org.apache.commons" % "commons-lang3" % "3.0",
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031"
 )
@@ -29,6 +29,7 @@ resolvers ++= Seq(
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   {
     case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
+    case m if m.startsWith("META-INF") => MergeStrategy.discard
     case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
     case PathList("org", "apache", xs @ _*) => MergeStrategy.first
     case PathList("org", "jboss", xs @ _*) => MergeStrategy.first
