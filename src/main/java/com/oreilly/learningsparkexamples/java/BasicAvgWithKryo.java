@@ -16,9 +16,10 @@ import org.apache.spark.api.java.function.Function2;
 
 import com.esotericsoftware.kryo.Kryo;
 
-public class BasicAvgWithKryo {
+
+public final class BasicAvgWithKryo {
   // This is our custom class we will configure Kyro to serialize
-  class AvgCount {
+  static class AvgCount implements java.io.Serializable {
     public AvgCount() {
       total_ = 0;
       num_ = 0;
@@ -27,11 +28,11 @@ public class BasicAvgWithKryo {
       total_ = total;
       num_ = num;
     }
-    public int total_;
-    public int num_;
     public float avg() {
       return total_ / (float) num_;
     }
+    public int total_;
+    public int num_;
   }
 
   public class AvgRegistrator implements KryoRegistrator {
@@ -47,11 +48,7 @@ public class BasicAvgWithKryo {
 		} else {
 			master = "local";
 		}
-    BasicAvg avg = new BasicAvg();
-    avg.run(master);
-  }
 
-  public void run(String master) throws Exception {
     SparkConf conf = new SparkConf().setMaster(master).setAppName("basicavgwithkyro");
     conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
     conf.set("spark.kryo.registrator", AvgRegistrator.class.getName());

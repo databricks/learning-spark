@@ -3,6 +3,7 @@
  */
 package com.oreilly.learningsparkexamples.java;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,8 +13,8 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function2;
 
-public class BasicAvg {
-  class AvgCount {
+public final class BasicAvg {
+  public static class AvgCount implements Serializable {
     public AvgCount(int total, int num) {
 	    total_ = total;
 	    num_ = num;
@@ -32,11 +33,7 @@ public class BasicAvg {
     } else {
 	    master = "local";
     }
-    BasicAvg avg = new BasicAvg();
-    avg.run(master);
-  }
 
-  public void run(String master) throws Exception {
     JavaSparkContext sc = new JavaSparkContext(
       master, "basicavg", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4));

@@ -2,7 +2,7 @@ import AssemblyKeys._
 
 assemblySettings
 
-name := "learning spark examples"
+name := "learning-spark-examples"
 
 version := "0.0.1"
 
