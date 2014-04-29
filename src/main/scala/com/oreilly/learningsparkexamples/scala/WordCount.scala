@@ -4,6 +4,7 @@
 package com.oreilly.learningsparkexamples.scala
 
 import org.apache.spark._
+import org.apache.spark.SparkContext._
 
 object WordCount {
     def main(args: Array[String]) {
@@ -11,9 +12,15 @@ object WordCount {
         case x: Int if x > 0 => args(0)
         case _ => "local"
       }
-      val sc = new SparkContext(master, "BasicMap", System.getenv("SPARK_HOME"))
-      val input = sc.parallelize(List("i like coffee", "coffee is delicious"))
-      val result = input.flatMap(x => x.split(" ")).countByValue()
-      println(result)
+      val sc = new SparkContext(master, "WordCount", System.getenv("SPARK_HOME"))
+      val input = args.length match {
+        case x: Int if x > 1 => sc.textFile(args(1))
+        case _ => sc.parallelize(List("pandas", "i like pandas"))
+      }
+      val counts = input.flatMap(_.split(" ")).map((_, 1)).reduceByKey(_ + _)
+      args.length match {
+        case x: Int if x > 2 => counts.saveAsTextFile(args(2))
+        case _ => println(counts.collect().mkString(","))
+      }
     }
 }
