@@ -35,7 +35,7 @@ public final class BasicAvgWithKryo {
     public int num_;
   }
 
-  public class AvgRegistrator implements KryoRegistrator {
+  public static class AvgRegistrator implements KryoRegistrator {
     public void registerClasses(Kryo kryo) {
       kryo.register(AvgCount.class);
     }
