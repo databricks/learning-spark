@@ -15,7 +15,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function2;
 
 import com.esotericsoftware.kryo.Kryo;
-
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 public final class BasicAvgWithKryo {
   // This is our custom class we will configure Kyro to serialize
@@ -37,7 +37,7 @@ public final class BasicAvgWithKryo {
 
   public static class AvgRegistrator implements KryoRegistrator {
     public void registerClasses(Kryo kryo) {
-      kryo.register(AvgCount.class);
+      kryo.register(AvgCount.class, new FieldSerializer(kryo, AvgCount.class));
     }
   }
 

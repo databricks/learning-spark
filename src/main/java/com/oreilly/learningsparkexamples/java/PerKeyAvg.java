@@ -3,18 +3,24 @@
  */
 package com.oreilly.learningsparkexamples.java;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import scala.Tuple2;
 
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 
 public final class PerKeyAvg {
-  static class AvgCount {
+  public static class AvgCount implements java.io.Serializable {
     public AvgCount(int total, int num) {
       total_ = total;
       num_ = num;
@@ -35,7 +41,11 @@ public final class PerKeyAvg {
 
 		JavaSparkContext sc = new JavaSparkContext(
       master, "PerKeyAvg", System.getenv("SPARK_HOME"), System.getenv("JARS"));
-    JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4));
+    List<Tuple2<String, Integer>> input = new ArrayList();
+    input.add(new Tuple2("coffee", 1));
+    input.add(new Tuple2("coffee", 2));
+    input.add(new Tuple2("pandas", 3));
+    JavaPairRDD<String, Integer> rdd = sc.parallelizePairs(input);
     Function<Integer, AvgCount> createAcc = new Function<Integer, AvgCount>() {
       @Override
       public AvgCount call(Integer x) {
@@ -59,7 +69,10 @@ public final class PerKeyAvg {
       }
     };
     AvgCount initial = new AvgCount(0,0);
-    AvgCount result = rdd.aggregate(initial, addAndCount, combine);
-    System.out.println(result.avg());
+    JavaPairRDD<String, AvgCount> avgCounts = rdd.combineByKey(createAcc, addAndCount, combine);
+    Map<String, AvgCount> countMap = avgCounts.collectAsMap();
+    for (Entry<String, AvgCount> entry : countMap.entrySet()) {
+      System.out.println(entry.getKey() + ":" + entry.getValue().avg());
+    }
 	}
 }
