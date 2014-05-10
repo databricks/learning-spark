@@ -1,5 +1,5 @@
 /**
- * Illustrates a simple map in Java
+ * Illustrates a simple map to double in Java
  */
 package com.oreilly.learningsparkexamples.java;
 
@@ -22,10 +22,15 @@ public class BasicMapToDouble {
 			master = "local";
 		}
 		JavaSparkContext sc = new JavaSparkContext(
-      master, "basicmap", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+      master, "basicmaptodouble", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4));
-    JavaDoubleRDD result = rdd.map(
-      new DoubleFunction<Integer>() { public Double call(Integer x) { Double y = (double) x; return y * y;}});
+    JavaDoubleRDD result = rdd.mapToDouble(
+      new DoubleFunction<Integer>() {
+        public double call(Integer x) {
+          double y = (double) x;
+          return y * y;
+        }
+      });
     System.out.println(StringUtils.join(result.collect(), ","));
 	}
 }

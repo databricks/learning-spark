@@ -18,7 +18,7 @@ import org.apache.spark.api.java.function.PairFunction;
 
 public class BasicJoinCsv {
 
-  public static class ParseLine extends PairFunction<String, Integer, String[]> {
+  public static class ParseLine implements PairFunction<String, Integer, String[]> {
     public Tuple2<Integer, String[]> call(String line) throws Exception {
       CSVReader reader = new CSVReader(new StringReader(line));
       String[] elements = reader.readNext();
@@ -43,8 +43,8 @@ public class BasicJoinCsv {
       master, "basicjoincsv", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaRDD<String> csvFile1 = sc.textFile(csv1);
     JavaRDD<String> csvFile2 = sc.textFile(csv2);
-    JavaPairRDD<Integer, String[]> keyedRDD1 = csvFile1.map(new ParseLine());
-    JavaPairRDD<Integer, String[]> keyedRDD2 = csvFile1.map(new ParseLine());
+    JavaPairRDD<Integer, String[]> keyedRDD1 = csvFile1.mapToPair(new ParseLine());
+    JavaPairRDD<Integer, String[]> keyedRDD2 = csvFile1.mapToPair(new ParseLine());
     JavaPairRDD<Integer, Tuple2<String[], String[]>> result = keyedRDD1.join(keyedRDD2);
     List<Tuple2<Integer, Tuple2<String[], String[]>>> resultCollection = result.collect();
 	}

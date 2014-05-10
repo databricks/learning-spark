@@ -29,7 +29,7 @@ public class WordCount {
       new FlatMapFunction<String, String>() {
         public Iterable<String> call(String x) {
           return Arrays.asList(x.split(" "));
-        }}).map(new PairFunction<String, String, Integer>(){
+        }}).mapToPair(new PairFunction<String, String, Integer>(){
             public Tuple2<String, Integer> call(String x){
               return new Tuple2(x, 1);
             }}).reduceByKey(new Function2<Integer, Integer, Integer>(){
