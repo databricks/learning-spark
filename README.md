@@ -1,6 +1,14 @@
 Examples for Learning Spark
 ===============
-Examples for the Learning Spark book. 
+Examples for the Learning Spark book.
+
+Requirements
+==
+* JDK 1.6 or higher
+* Scala 2.10.3
+- scala-lang.org
+* Spark 1.0 sanp shot
+- You can checkout spark from https://github.com/apache/spark and then run "sbt/sbt publish-local"
 
 Scala examples
 ===

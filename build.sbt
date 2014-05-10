@@ -10,7 +10,7 @@ scalaVersion := "2.10.3"
 
 // additional libraries
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "0.9.1",
+  "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT",
   "org.apache.commons" % "commons-lang3" % "3.0",
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031",
   "net.sf.opencsv" % "opencsv" % "2.0"
