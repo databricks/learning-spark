@@ -13,7 +13,8 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT",
   "org.apache.commons" % "commons-lang3" % "3.0",
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031",
-  "org.elasticsearch" % "elasticsearch-hadoop" % "2.0.0.RC1",
+  "com.typesafe.play" % "play-json_2.10" % "2.2.1",
+  //  "org.elasticsearch" % "elasticsearch-hadoop" % "2.0.0.RC1",
   "net.sf.opencsv" % "opencsv" % "2.0"
 )
 
@@ -25,7 +26,8 @@ resolvers ++= Seq(
    "Twitter4J Repository" at "http://twitter4j.org/maven2/",
    "Apache HBase" at "https://repository.apache.org/content/repositories/releases",
    "Twitter Maven Repo" at "http://maven.twttr.com/",
-   "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools"
+   "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools",
+  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
