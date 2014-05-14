@@ -37,7 +37,7 @@ public class BasicLoadWholeCsv {
     final String key = args[3];
 
 		JavaSparkContext sc = new JavaSparkContext(
-      master, "basicjoincsv", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+      master, "loadwholecsv", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaPairRDD<String, String> csvData = sc.wholeTextFiles(csvInput);
     JavaRDD<String[]> keyedRDD = csvData.flatMap(new ParseLine());
     JavaRDD<String[]> result =
