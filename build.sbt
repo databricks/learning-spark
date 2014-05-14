@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.0",
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031",
   "com.typesafe.play" % "play-json_2.10" % "2.2.1",
+  "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.1",
   //  "org.elasticsearch" % "elasticsearch-hadoop" % "2.0.0.RC1",
   "net.sf.opencsv" % "opencsv" % "2.0"
 )
