@@ -19,7 +19,7 @@
     </dependency>
     <dependency> <!-- Elastic search connector -->
       <groupId>org.elasticsearch</groupId>
-      <artifactId>elasticsearch-hadoop</artifactId>
+      <artifactId>elasticsearch-hadoop-mr</artifactId>
       <version>2.0.0.RC1</version>
     </dependency>
     <dependency> <!-- Jetty demmo -->

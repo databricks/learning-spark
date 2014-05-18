@@ -6,7 +6,7 @@ name := "learning-spark-examples"
 
 version := "0.0.1"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
 // additional libraries
 libraryDependencies ++= Seq(
@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031",
   "com.typesafe.play" % "play-json_2.10" % "2.2.1",
   "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.1",
-  //  "org.elasticsearch" % "elasticsearch-hadoop" % "2.0.0.RC1",
+  "org.elasticsearch" % "elasticsearch-hadoop-mr" % "2.0.0.RC1",
   "net.sf.opencsv" % "opencsv" % "2.0"
 )
 
