@@ -4,7 +4,7 @@
 >>> rdd1 = sc.parallelize([("coffee", 1), ("pandas", 2), ("coffee", 3), ("very", 4)])
 >>> rdd2 = sc.parallelize([("pandas", 20)])
 >>> intserectByKey(rdd1, rdd2).collect()
-
+[('pandas', 2), ('pandas', 20)]
 """
 
 import sys
@@ -35,6 +35,6 @@ if __name__ == "__main__":
         master = sys.argv[1]
     sc = SparkContext(master, "IntersectByKey")
     rdd1 = sc.parallelize([("coffee", 1), ("pandas", 2), ("coffee", 3), ("very", 4)])
-    rdd2 = sc.parallelize([("pandas", 20)])
+    rdd2 = sc.parallelize([("pandas", 20), ("pandas", 21)])
     print intersectByKey(rdd1, rdd2).collect()
 
