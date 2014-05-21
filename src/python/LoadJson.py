@@ -3,11 +3,15 @@ import json
 import sys
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print "Error usage: LoadJson [sparkmaster] [file]"
+    if len(sys.argv) != 4:
+        print "Error usage: LoadJson [sparkmaster] [inputfile] [outputfile]"
         sys.exit(-1)
-    sc = SparkContext(sys.argv[1], "LoadJson")
-    input = sc.textFile(sys.argv[2])
+    master = sys.argv[1]
+    inputFile = sys.argv[2]
+    outputFile = sys.argv[3]
+    sc = SparkContext(master, "LoadJson")
+    input = sc.textFile(inputFile)
     data = input.map(lambda x: json.loads(x))
-    print data.collect()
-
+    data.filter(lambda x: x['lovesPandas']).map(lambda x: json.dumps(x)).saveAsTextFile(outputFile)
+    sc.stop()
+    print "Done!"

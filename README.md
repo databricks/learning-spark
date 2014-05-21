@@ -27,3 +27,12 @@ Python examples
 ===
 
 From spark just run ./bin/pyspark ./src/python/[example]
+
+Spark Submit
+===
+
+You can also create an assembly jar with all of the dependcies for running either the java or scala
+versions of the code and run the job with the spark-submit script
+
+./sbt/sbt assembly
+cd $SPARK_HOME; ./bin/spark-submit   --class com.oreilly.learningsparkexamples.[lang].[example] ../learning-spark-examples/target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar

@@ -8,24 +8,23 @@ package com.oreilly.learningsparkexamples.scala
 import org.apache.spark._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import scala.util.parsing.json.JSON
 
 object BasicParseJson {
   case class Person(name: String, lovesPandas: Boolean)
   implicit val personReads = Json.format[Person]
 
   def main(args: Array[String]) {
-      if (args.length < 2) {
-        println("Usage: [sparkmaster] [inputfile]")
-        exit(1)
+    if (args.length < 3) {
+      println("Usage: [sparkmaster] [inputfile] [outputfile]")
+      exit(1)
       }
-      val master = args(0)
-      val inputFile = args(1)
-      val sc = new SparkContext(master, "BasicParseJson", System.getenv("SPARK_HOME"))
-      val input = sc.textFile(inputFile)
-      val parsed = input.map(JSON.parseFull(_))
-      val result = parsed.map(record => personReads.reads(_))
-
-      println(result.collect().mkString(","))
+    val master = args(0)
+    val inputFile = args(1)
+    val outputFile = args(2)
+    val sc = new SparkContext(master, "BasicParseJson", System.getenv("SPARK_HOME"))
+    val input = sc.textFile(inputFile)
+    val parsed = input.map(Json.parse(_))
+    val result = parsed.flatMap(record => personReads.reads(record).asOpt)
+    result.filter(_.lovesPandas).map(Json.toJson(_)).saveAsTextFile(outputFile)
     }
 }
