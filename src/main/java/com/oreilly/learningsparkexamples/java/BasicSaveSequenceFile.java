@@ -38,5 +38,5 @@ public class BasicSaveSequenceFile {
     JavaPairRDD<String, Integer> rdd = sc.parallelizePairs(input);
     JavaPairRDD<Text, IntWritable> result = rdd.mapToPair(new ConvertToWritableTypes());
     result.saveAsHadoopFile(fileName, Text.class, IntWritable.class, SequenceFileOutputFormat.class);
-`	}
+	}
 }
