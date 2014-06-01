@@ -1,3 +1,5 @@
 language: scala
 scala:
    - 2.10.4
+before_script:
+   - sudo apt-get install protobuf-compiler
