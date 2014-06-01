@@ -10,13 +10,16 @@ scalaVersion := "2.10.4"
 
 // additional libraries
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT",
+  "org.apache.spark" %% "spark-core" % "1.0.0",
   "org.apache.commons" % "commons-lang3" % "3.0",
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031",
   "com.typesafe.play" % "play-json_2.10" % "2.2.1",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.3.3",
   "org.elasticsearch" % "elasticsearch-hadoop-mr" % "2.0.0.RC1",
-  "net.sf.opencsv" % "opencsv" % "2.0"
+  "net.sf.opencsv" % "opencsv" % "2.0",
+  "com.twitter.elephantbird" % "elephant-bird" % "4.5",
+  "com.twitter.elephantbird" % "elephant-bird-core" % "4.5",
+  "com.hadoop.gplcompression" % "hadoop-lzo" % "0.4.17"
 )
 
 resolvers ++= Seq(
