@@ -28,7 +28,7 @@ public class BasicLoadSequenceFile {
     String fileName = args[1];
 
 		JavaSparkContext sc = new JavaSparkContext(
-      master, "basicloadjson", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+      master, "basicloadsequencefile", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaPairRDD<Text, IntWritable> input = sc.sequenceFile(fileName, Text.class, IntWritable.class);
     JavaPairRDD<String, Integer> result = input.mapToPair(new ConvertToNativeTypes());
     List<Tuple2<String, Integer>> resultList = result.collect();
