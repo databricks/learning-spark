@@ -17,6 +17,6 @@ object BasicSaveProtoBuf {
       dnaLounge.setId(1);
       dnaLounge.setName("DNA Lounge")
       dnaLounge.setType(Places.Venue.VenueType.CLUB)
-      val data = sc.parallelize(List(dnaLounge))
+      val data = sc.parallelize(List(dnaLounge.build()))
     }
 }
