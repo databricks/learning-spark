@@ -1,5 +1,5 @@
 /**
- * Illustrates loading a sequence file of people and how many pandas they have seen
+ * Illustrates saving a sequence file in Java using the old style hadoop APIs.
  */
 package com.oreilly.learningsparkexamples.java;
 
