@@ -1,0 +1,38 @@
+package com.oreilly.learningsparkexamples.proto;
+
+// The sample protocol buffer file that Google uses in their examples at
+// http://code.google.com/p/protobuf and twitter uses in elephant bird.
+// Used in this project for examples.
+
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phone = 4;
+}
+
+message AddressBook {
+  repeated Person person = 1;
+  optional bytes byteData = 2;
+}
+
+// used testing handling of unknown fields
+message PersonWithoutEmail {
+  required string name = 1;
+  required int32 id = 2;
+  repeated Person.PhoneNumber phone = 4;
+}
