@@ -7,8 +7,8 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         master = sys.argv[1]
     sc = SparkContext(master, "WordCount")
-    nums = sc.parallelize(["pandas", "i like pandas"])
-    result = nums.flatMap(lambda x: x.split(" ")).countByValue()
+    lines = sc.parallelize(["pandas", "i like pandas"])
+    result = lines.flatMap(lambda x: x.split(" ")).countByValue()
     for key, value in result.iteritems():
         print "%s %i" % (key, value)
 
