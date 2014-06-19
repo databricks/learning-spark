@@ -33,7 +33,11 @@ public class BasicLoadJson {
       ObjectMapper mapper = new ObjectMapper();
       while (lines.hasNext()) {
         String line = lines.next();
-        people.add(mapper.readValue(line, Person.class));
+        try {
+          people.add(mapper.readValue(line, Person.class));
+        } catch (Exception e) {
+          // Skip invalid input
+        }
       }
       return people;
     }

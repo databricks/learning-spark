@@ -24,6 +24,8 @@ object BasicParseJson {
     val sc = new SparkContext(master, "BasicParseJson", System.getenv("SPARK_HOME"))
     val input = sc.textFile(inputFile)
     val parsed = input.map(Json.parse(_))
+    // We use asOpt combined with flatMap so that if it fails to parse we
+    // get back a None and the flatMap essentially skips the result.
     val result = parsed.flatMap(record => personReads.reads(record).asOpt)
     result.filter(_.lovesPandas).map(Json.toJson(_)).saveAsTextFile(outputFile)
     }
