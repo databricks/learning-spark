@@ -24,7 +24,8 @@ libraryDependencies ++= Seq(
   "net.sf.opencsv" % "opencsv" % "2.0",
   "com.twitter.elephantbird" % "elephant-bird" % "4.5",
   "com.twitter.elephantbird" % "elephant-bird-core" % "4.5",
-  "com.hadoop.gplcompression" % "hadoop-lzo" % "0.4.17"
+  "com.hadoop.gplcompression" % "hadoop-lzo" % "0.4.17",
+  "mysql" % "mysql-connector-java" % "5.1.31"
 )
 
 resolvers ++= Seq(
