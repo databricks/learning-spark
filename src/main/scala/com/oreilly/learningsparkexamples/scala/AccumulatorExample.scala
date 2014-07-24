@@ -33,7 +33,7 @@ object AccumulatorExample {
           case _ => {invalidSignCount += 1; None}
         }
       }
-      val contactCount = validSigns.map((_, 1)).reduceByKey(_ + _)
+      val contactCount = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
       if (errorLines.value < 0.1 * dataLines.value) {
         contactCount.saveAsTextFile("output.txt")
       } else {
