@@ -37,6 +37,8 @@ object AdvancedSparkProgrammingExample {
         }
       }
       val contactCount = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
+      // Force evaluation so the counters are populated
+      contactCount.count()
       if (errorLines.value < 0.1 * dataLines.value) {
         contactCount.saveAsTextFile("output.txt")
       } else {
@@ -49,8 +51,10 @@ object AdvancedSparkProgrammingExample {
       val countryContactCount = contactCount.map{case (sign, count) =>
         (prefixRanges.rangeImpl(Some(sign), None).head._2,count)
       }.reduceByKey((x, y) => x + y)
+      // Force evaluation so the counters are populated
+      countryContactCount.count()
       if (unknownCountry.value < 0.1 * resolvedCountry.value) {
-        contactCount.saveAsTextFile("countries.txt")
+        countryContactCount.saveAsTextFile("countries.txt")
       } else {
         println(s"Too many unresolved countries ${unknownCountry.value} for ${resolvedCountry.value} resolved countries")
       }
