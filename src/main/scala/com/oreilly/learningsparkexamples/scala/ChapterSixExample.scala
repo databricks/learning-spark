@@ -47,14 +47,14 @@ object AdvancedSparkProgrammingExample {
       }
       // Lookup the countries for each call sign
       val callSignMap = scala.io.Source.fromFile("./files/callsign_tbl_sorted").getLines().filter(_ != "").map(_.split(",")).toList
-      val callSignKeys = callSignMap.map(line => line(0)).toArray
-      val callSignLocations = callSignMap.map(line => line(1)).toArray
+      val callSignKeys = sc.broadcast(callSignMap.map(line => line(0)).toArray)
+      val callSignLocations = sc.broadcast(callSignMap.map(line => line(1)).toArray)
       val countryContactCount = contactCount.map{case (sign, count) =>
-        val pos = java.util.Arrays.binarySearch(callSignKeys.asInstanceOf[Array[AnyRef]], sign) match {
+        val pos = java.util.Arrays.binarySearch(callSignKeys.value.asInstanceOf[Array[AnyRef]], sign) match {
           case x if x < 0 => -x-1
           case x => x
         }
-        (callSignLocations(pos),count)
+        (callSignLocations.value(pos),count)
       }.reduceByKey((x, y) => x + y)
       // Force evaluation so the counters are populated
       countryContactCount.saveAsTextFile("countries.txt")
