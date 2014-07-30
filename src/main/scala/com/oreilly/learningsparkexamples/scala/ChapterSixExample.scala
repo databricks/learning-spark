@@ -39,25 +39,24 @@ object AdvancedSparkProgrammingExample {
       val contactCount = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
       // Force evaluation so the counters are populated
       contactCount.count()
-      if (errorLines.value < 0.1 * dataLines.value) {
+      if (invalidSignCount.value < 0.5 * validSignCount.value) {
         contactCount.saveAsTextFile("output.txt")
       } else {
-        println(s"Too many errors ${errorLines.value} for ${dataLines.value}")
+        println(s"Too many errors ${invalidSignCount.value} for ${validSignCount.value}")
         exit(1)
       }
       // Lookup the countries for each call sign
-      val callSignMap = scala.io.Source.fromFile("./files/callsign_tbl").getLines().map(line => line.span(x => x == ','))
-      val prefixRanges = scala.collection.immutable.TreeMap(callSignMap.toSeq:_*)
+      val callSignMap = scala.io.Source.fromFile("./files/callsign_tbl_sorted").getLines().filter(_ != "").map(_.split(",")).toList
+      val callSignKeys = callSignMap.map(line => line(0)).toArray
+      val callSignLocations = callSignMap.map(line => line(1)).toArray
       val countryContactCount = contactCount.map{case (sign, count) =>
-        (prefixRanges.rangeImpl(Some(sign), None).head._2,count)
+        val pos = java.util.Arrays.binarySearch(callSignKeys.asInstanceOf[Array[AnyRef]], sign) match {
+          case x if x < 0 => -x-1
+          case x => x
+        }
+        (callSignLocations(pos),count)
       }.reduceByKey((x, y) => x + y)
       // Force evaluation so the counters are populated
-      countryContactCount.count()
-      if (unknownCountry.value < 0.1 * resolvedCountry.value) {
-        countryContactCount.saveAsTextFile("countries.txt")
-      } else {
-        println(s"Too many unresolved countries ${unknownCountry.value} for ${resolvedCountry.value} resolved countries")
-      }
-
+      countryContactCount.saveAsTextFile("countries.txt")
     }
 }
