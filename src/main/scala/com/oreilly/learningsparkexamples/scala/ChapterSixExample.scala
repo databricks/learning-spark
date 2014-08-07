@@ -1,5 +1,5 @@
 /**
- * Contains the Chapter 6 Example
+ * Contains the Chapter 6 Example illustrating accumulators, broadcast variables, numeric operations, and pipe.
  */
 package com.oreilly.learningsparkexamples.scala
 
@@ -11,6 +11,7 @@ object AdvancedSparkProgrammingExample {
     def main(args: Array[String]) {
       val master = args(0)
       val inputFile = args(1)
+      val outputDir = args(2)
       val sc = new SparkContext(master, "AdvancedSparkProgramming", System.getenv("SPARK_HOME"))
       val file = sc.textFile(inputFile)
       // Create Accumulator[Int] initialized to 0
@@ -40,7 +41,7 @@ object AdvancedSparkProgrammingExample {
       // Force evaluation so the counters are populated
       contactCount.count()
       if (invalidSignCount.value < 0.5 * validSignCount.value) {
-        contactCount.saveAsTextFile("output.txt")
+        contactCount.saveAsTextFile(outputDir + "/output.txt")
       } else {
         println(s"Too many errors ${invalidSignCount.value} for ${validSignCount.value}")
         exit(1)
@@ -57,6 +58,6 @@ object AdvancedSparkProgrammingExample {
         (callSignLocations.value(pos),count)
       }.reduceByKey((x, y) => x + y)
       // Force evaluation so the counters are populated
-      countryContactCount.saveAsTextFile("countries.txt")
+      countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
     }
 }
