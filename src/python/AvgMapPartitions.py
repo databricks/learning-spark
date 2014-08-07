@@ -27,10 +27,10 @@ def basicAvg(nums):
     return sumCount[0] / float(sumCount[1])
 
 if __name__ == "__main__":
-    master = "local"
+    cluster = "local"
     if len(sys.argv) == 2:
-        master = sys.argv[1]
-    sc = SparkContext(master, "Sum")
+        cluster = sys.argv[1]
+    sc = SparkContext(cluster, "Sum")
     nums = sc.parallelize([1, 2, 3, 4])
     avg = basicAvg(nums)
     print avg
