@@ -30,10 +30,10 @@ object AdvancedSparkProgrammingExample {
       })
       // Validate a call sign
       val callSignRegex = "\\A\\d?[a-zA-Z]{1,2}\\d{1,4}[a-zA-Z]{1,3}\\Z".r
-      val validSigns = callSigns.flatMap{sign =>
+      val validSigns = callSigns.filter{sign =>
         sign match {
-          case callSignRegex() => {validSignCount += 1; Some(sign)}
-          case _ => {invalidSignCount += 1; None}
+          case callSignRegex() => {validSignCount += 1; true}
+          case _ => {invalidSignCount += 1; false}
         }
       }
       val contactCount = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
