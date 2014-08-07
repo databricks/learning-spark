@@ -1,6 +1,7 @@
 """Contains the Chapter 6 Example illustrating accumulators, broadcast variables, numeric operations, and pipe."""
 import sys
 import re
+import bisect
 
 from pyspark import SparkContext
 
@@ -37,11 +38,27 @@ def validateSign(sign):
         invalidSignCount += 1
         return False
 
-
 validSigns = callSigns.filter(validateSign)
+contactCount = validSigns.map(lambda sign: (sign, 1)).reduceByKey((lambda x, y: x + y))
 # Force evaluation so the counters are populated
-validSigns.count()
+contactCount.count()
 if invalidSignCount.value < 0.1 * validSignCount.value:
-    validSigns.saveAsTextFile(outputDir + "/validsigns")
+    contactCount.saveAsTextFile(outputDir + "/contactCount")
 else:
     print "Too many errors %d in %d" % (invalidSignCount.value, validSignCount.value)
+
+# Lookup the locations of the call signs
+f = open("./files/callsign_tbl_sorted", "r")
+callSignMap = map((lambda x: x.split(",")), f.readlines())
+(callSignKeys, callSignLocations) = zip(*callSignMap)
+callSignKeysBroadcast = sc.broadcast(callSignKeys)
+callSignLocationsBroadcast = sc.broadcast(callSignLocations)
+
+def lookupCountry(sign_count):
+    sign = sign_count[0]
+    count = sign_count[1]
+    pos = bisect.bisect_left(callSignKeysBroadcast.value, sign)
+    return (callSignLocationsBroadcast.value[pos], count)
+
+countryContactCount = contactCount.map(lookupCountry).reduceByKey((lambda x, y: x+ y))
+countryContactCount.saveAsTextFile(outputDir + "/countries")
