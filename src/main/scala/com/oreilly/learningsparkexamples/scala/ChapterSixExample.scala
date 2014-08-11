@@ -14,6 +14,15 @@ object AdvancedSparkProgrammingExample {
       val outputDir = args(2)
       val sc = new SparkContext(master, "AdvancedSparkProgramming", System.getenv("SPARK_HOME"))
       val file = sc.textFile(inputFile)
+      val count = sc.accumulator(0)
+
+      file.foreach(line => {             // side-effecting only
+        if (line.contains("KK6JKQ")) {
+          count += 1
+        }
+      })
+
+      println("Lines with 'KK6JKQ': " + count.value)
       // Create Accumulator[Int] initialized to 0
       val errorLines = sc.accumulator(0)
       val dataLines = sc.accumulator(0)

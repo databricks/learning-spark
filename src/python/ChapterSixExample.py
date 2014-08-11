@@ -11,6 +11,17 @@ outputDir = sys.argv[2]
 sc = SparkContext(appName="ChapterSixExample")
 file = sc.textFile(inputFile)
 
+# Count lines with KK6JKQ using accumulators
+count = sc.accumulator(0)
+def incrementCounter(line):
+    global count # Access the counter
+    if "KK6JKQ" in line:
+        count += 1
+
+file.foreach(incrementCounter)
+print "Lines with KK6JKQ %d" % count.value
+
+
 # Create Accumulator[Int] initialized to 0
 blankLines = sc.accumulator(0)
 dataLines = sc.accumulator(0)

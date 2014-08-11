@@ -4,19 +4,27 @@
 package com.oreilly.learningsparkexamples.java;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.*;
+import java.util.Scanner;
+import java.io.File;
+
+import scala.Tuple2;
 
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.spark.Accumulator;
+import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 
 public class ChapterSixExample {
@@ -67,13 +75,39 @@ public class ChapterSixExample {
           return b;
         }
       });
+    JavaPairRDD<String, Integer> contactCount = validCallSigns.mapToPair(
+      new PairFunction<String, String, Integer>() {
+        public Tuple2<String, Integer> call(String callSign) {
+          return new Tuple2(callSign, 1);
+        }}).reduceByKey(new Function2<Integer, Integer, Integer>() {
+            public Integer call(Integer x, Integer y) {
+              return x + y;
+            }});
     // Force evaluation so the counters are populated
-    validCallSigns.count();
+    contactCount.count();
     if (invalidSignCount.value() < 0.1 * validSignCount.value()) {
-      validCallSigns.saveAsTextFile(outputDir + "/validatedSigns");
+      contactCount.saveAsTextFile(outputDir + "/contactCount");
     } else {
       System.out.println("Too many errors " + invalidSignCount.value() + " for " + validSignCount.value());
       System.exit(1);
     }
+    // Read in the call sign table
+    Scanner callSignTbl = new Scanner(new File("./files/callsign_tbl_sorted"));
+    ArrayList<String> callSignList = new ArrayList<String>();
+    while (callSignTbl.hasNextLine()) {
+      callSignList.add(callSignTbl.nextLine());
+    }
+    final Broadcast<String[]> callSignsMap = sc.broadcast(callSignList.toArray(new String[0]));
+    validCallSigns.mapToPair(
+      new PairFunction<Tuple2<String, Integer>, String, Integer> (){
+        public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
+          String[] callSignInfo = callSignsMap.value();
+          String sign = callSignCount._1();
+          Integer pos = java.util.Arrays.binarySearch(callSignInfo, sign);
+          if (pos < 0) {
+            pos = -pos-1;
+          }
+          return new Tuple2(callSignInfo[pos], callSignCount._2());
+        }});
   }
 }
