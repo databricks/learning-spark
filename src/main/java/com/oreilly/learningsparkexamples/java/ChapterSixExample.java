@@ -17,6 +17,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.VoidFunction;
 
 public class ChapterSixExample {
   public static void main(String[] args) throws Exception {
@@ -30,9 +31,17 @@ public class ChapterSixExample {
 
     JavaSparkContext sc = new JavaSparkContext(
       sparkMaster, "ChapterSixExample", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+    JavaRDD<String> rdd = sc.textFile(inputFile);
+    // Count the number of lines with KK6JKQ
+    final Accumulator<Integer> count = sc.accumulator(0);
+    rdd.foreach(new VoidFunction<String>(){ public void call(String line) {
+          if (line.contains("KK6JKQ")) {
+            count.add(1);
+          }
+        }});
+    System.out.println("Lines with 'KK6JKQ': " + count.value());
     // Create Accumulators initialized at 0
     final Accumulator<Integer> blankLines = sc.accumulator(0);
-    JavaRDD<String> rdd = sc.textFile(inputFile);
     JavaRDD<String> callSigns = rdd.flatMap(
       new FlatMapFunction<String, String>() { public Iterable<String> call(String line) {
           if (line.equals("")) {
