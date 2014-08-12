@@ -66,7 +66,6 @@ object AdvancedSparkProgrammingExample {
         }
         (callSignLocations.value(pos),count)
       }.reduceByKey((x, y) => x + y)
-      // Force evaluation so the counters are populated
       countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
     }
 }
