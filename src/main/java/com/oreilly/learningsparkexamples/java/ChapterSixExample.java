@@ -64,7 +64,7 @@ public class ChapterSixExample {
     final Accumulator<Integer> invalidSignCount = sc.accumulator(0);
     JavaRDD<String> validCallSigns = callSigns.filter(
       new Function<String, Boolean>(){ public Boolean call(String callSign) {
-          Pattern p = Pattern.compile("\\A\\d\\p{Alpha}{1,2}\\d{1,4}\\{Alpha}{1,3}\\Z");
+          Pattern p = Pattern.compile("\\A\\d?\\p{Alpha}{1,2}\\d{1,4}\\p{Alpha}{1,3}\\Z");
           Matcher m = p.matcher(callSign);
           boolean b = m.matches();
           if (b) {
@@ -98,7 +98,7 @@ public class ChapterSixExample {
       callSignList.add(callSignTbl.nextLine());
     }
     final Broadcast<String[]> callSignsMap = sc.broadcast(callSignList.toArray(new String[0]));
-    validCallSigns.mapToPair(
+    JavaPairRDD<String, Integer> countryContactCount = contactCount.mapToPair(
       new PairFunction<Tuple2<String, Integer>, String, Integer> (){
         public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
           String[] callSignInfo = callSignsMap.value();
@@ -107,7 +107,11 @@ public class ChapterSixExample {
           if (pos < 0) {
             pos = -pos-1;
           }
-          return new Tuple2(callSignInfo[pos], callSignCount._2());
-        }});
+          return new Tuple2(callSignInfo[pos].split(",")[1], callSignCount._2());
+        }}).reduceByKey(new Function2<Integer, Integer, Integer>() {
+            public Integer call(Integer x, Integer y) {
+              return x + y;
+            }});
+    countryContactCount.saveAsTextFile(outputDir + "/countries");
   }
 }
