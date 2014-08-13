@@ -22,7 +22,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" % "play-json_2.10" % "2.2.1",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.3.3",
   "com.fasterxml.jackson.module" % "jackson-module-scala_2.10" % "2.3.3",
-  "mesosphere" %% "jackson-case-class-module" % "0.1.0",
   "org.elasticsearch" % "elasticsearch-hadoop-mr" % "2.0.0.RC1",
   "net.sf.opencsv" % "opencsv" % "2.0",
   "com.twitter.elephantbird" % "elephant-bird" % "4.5",

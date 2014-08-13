@@ -3,7 +3,10 @@
  */
 package com.oreilly.learningsparkexamples.scala
 
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.DeserializationFeature
 
 import org.apache.spark._
 import org.apache.spark.SparkContext._
@@ -11,11 +14,8 @@ import org.apache.spark.SparkContext._
 import org.eclipse.jetty.client.ContentExchange
 import org.eclipse.jetty.client.HttpClient
 
-import mesosphere.jackson.CaseClassModule
-
-
-case class QSO(callsign: String, contactlat: Option[Double],
-  contactlong: Option[Double], mylat: Option[Double], mylong: Option[Double])
+case class QSO(callsign: String="", contactlat: Option[Double]=None,
+  contactlong: Option[Double]=None, mylat: Option[Double]=None, mylong: Option[Double]=None)
 
 object ChapterSixExample {
     def main(args: Array[String]) {
@@ -90,7 +90,8 @@ object ChapterSixExample {
       // Look up the location info using a connection pool
       val contactsContactList = validSigns.distinct().mapPartitions{
         signs =>
-        val mapper = new ObjectMapper
+        val mapper = new ObjectMapper with ScalaObjectMapper
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         mapper.registerModule(DefaultScalaModule)
         val client = new HttpClient()
         client.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
@@ -101,15 +102,15 @@ object ChapterSixExample {
           val exchange = new ContentExchange(true);
           exchange.setURL(s"http://new73s.herokuapp.com/qsos/${sign}.json")
           client.send(exchange)
-          exchange
-        }.map{ exchange =>
+          (sign, exchange)
+        }.flatMap{ case (sign, exchange) =>
           exchange.waitForDone();
           val responseJson = exchange.getResponseContent()
           try {
             val qsos = mapper.readValue(responseJson, classOf[Array[QSO]])
-            qsos.toString()
+            Some((sign, qsos))
           } catch {
-            case e: Exception => "failed with e" + e  + " on "+ responseJson
+            case e: Exception => None
           }
         }
       }
