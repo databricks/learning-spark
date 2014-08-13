@@ -3,15 +3,26 @@
  */
 package com.oreilly.learningsparkexamples.scala
 
+import com.fasterxml.jackson.databind.ObjectMapper
+
 import org.apache.spark._
 import org.apache.spark.SparkContext._
 
+import org.eclipse.jetty.client.ContentExchange
+import org.eclipse.jetty.client.HttpClient
 
-object AdvancedSparkProgrammingExample {
+import mesosphere.jackson.CaseClassModule
+
+
+case class QSO(callsign: String, contactlat: Option[Double],
+  contactlong: Option[Double], mylat: Option[Double], mylong: Option[Double])
+
+object ChapterSixExample {
     def main(args: Array[String]) {
       val master = args(0)
       val inputFile = args(1)
-      val outputDir = args(2)
+      val inputFile2 = args(2)
+      val outputDir = args(3)
       val sc = new SparkContext(master, "AdvancedSparkProgramming", System.getenv("SPARK_HOME"))
       val file = sc.textFile(inputFile)
       val count = sc.accumulator(0)
@@ -67,5 +78,41 @@ object AdvancedSparkProgrammingExample {
         (callSignLocations.value(pos),count)
       }.reduceByKey((x, y) => x + y)
       countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
+      // Resolve call signs in a second file to location
+      val countryCounts2 = sc.textFile(inputFile2)
+        .flatMap(_.split("\\s+"))      // Split line into words
+        .map{case sign =>
+          val pos = java.util.Arrays.binarySearch(callSignKeys.value.asInstanceOf[Array[AnyRef]], sign) match {
+            case x if x < 0 => -x-1
+            case x => x
+          }
+          (callSignLocations.value(pos), 1)}.reduceByKey((x, y) => x + y).collect()
+      // Look up the location info using a connection pool
+      val contactsContactList = validSigns.distinct().mapPartitions{
+        signs =>
+        val mapper = new ObjectMapper
+        mapper.registerModule(DefaultScalaModule)
+        val client = new HttpClient()
+        client.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+        client.setMaxConnectionsPerAddress(10)
+        client.setTimeout(30000) // 30 seconds timeout; if no server reply, the request expires
+        client.start()
+        signs.map {sign =>
+          val exchange = new ContentExchange(true);
+          exchange.setURL(s"http://new73s.herokuapp.com/qsos/${sign}.json")
+          client.send(exchange)
+          exchange
+        }.map{ exchange =>
+          exchange.waitForDone();
+          val responseJson = exchange.getResponseContent()
+          try {
+            val qsos = mapper.readValue(responseJson, classOf[Array[QSO]])
+            qsos.toString()
+          } catch {
+            case e: Exception => "failed with e" + e  + " on "+ responseJson
+          }
+        }
+      }
+      println(contactsContactList.collect().toList)
     }
 }
