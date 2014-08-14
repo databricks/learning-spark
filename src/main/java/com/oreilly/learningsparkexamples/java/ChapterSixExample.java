@@ -10,9 +10,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.*;
 import java.util.Scanner;
+import java.util.Iterator;
 import java.io.File;
 
 import scala.Tuple2;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -27,7 +31,18 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 
+import org.eclipse.jetty.client.ContentExchange;
+import org.eclipse.jetty.client.HttpClient;
+
 public class ChapterSixExample {
+  public class QSO {
+    public String callsign;
+    public Double contactlat;
+    public Double contactlong;
+    public Double mylat;
+    public Double mylong;
+  }
+
   public static void main(String[] args) throws Exception {
 
 		if (args.length != 3) {
@@ -113,5 +128,38 @@ public class ChapterSixExample {
               return x + y;
             }});
     countryContactCount.saveAsTextFile(outputDir + "/countries");
+    JavaRDD<Tuple2<String, QSO[]>> contactsContactList = validCallSigns.mapPartitions(
+      new FlatMapFunction<Iterator<String>, Tuple2<String, QSO[]>>() {
+        public Iterable<Tuple2<String, QSO[]>> call(Iterator<String> input) {
+          ArrayList<Tuple2<String, QSO[]>> callsignQsos = new ArrayList<Tuple2<String, QSO[]>>();
+          ArrayList<Tuple2<String, ContentExchange>> ccea = new ArrayList<Tuple2<String, ContentExchange>>();
+          ObjectMapper mapper = new ObjectMapper();
+          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+          HttpClient client = new HttpClient();
+          client.setMaxConnectionsPerAddress(10);
+          client.setTimeout(30000); // 30 seconds timeout; if no server reply, the request expires
+          try {
+            client.start();
+            while (input.hasNext()) {
+              ContentExchange exchange = new ContentExchange(true);
+              String sign = input.next();
+              exchange.setURL("http://73s.com/qsos/" + input.next() + ".json");
+              client.send(exchange);
+              ccea.add(new Tuple2(sign, exchange));
+            }
+            for (Tuple2<String, ContentExchange> signExchange : ccea) {
+              String sign = signExchange._1();
+              ContentExchange exchange = signExchange._2();
+              exchange.waitForDone();
+              String responseJson = exchange.getResponseContent();
+              QSO[] qsos = mapper.readValue(responseJson, QSO[].class);
+              callsignQsos.add(new Tuple2(sign, qsos));
+            }
+          } catch (Exception e) {
+          }
+          return callsignQsos;
+        }});
+    System.out.println(StringUtils.join(contactsContactList.collect(), ","));
+
   }
 }
