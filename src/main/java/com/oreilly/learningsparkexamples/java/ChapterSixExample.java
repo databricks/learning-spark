@@ -35,22 +35,16 @@ import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 
 public class ChapterSixExample {
-  public class QSO {
-    public String callsign;
-    public Double contactlat;
-    public Double contactlong;
-    public Double mylat;
-    public Double mylong;
-  }
 
   public static void main(String[] args) throws Exception {
 
-		if (args.length != 3) {
+		if (args.length != 4) {
       throw new Exception("Usage AccumulatorExample sparkMaster inputFile outDirectory");
 		}
     String sparkMaster = args[0];
     String inputFile = args[1];
-    String outputDir = args[2];
+    String inputFile2 = args[2];
+    String outputDir = args[3];
 
     JavaSparkContext sc = new JavaSparkContext(
       sparkMaster, "ChapterSixExample", System.getenv("SPARK_HOME"), System.getenv("JARS"));
@@ -128,6 +122,7 @@ public class ChapterSixExample {
               return x + y;
             }});
     countryContactCount.saveAsTextFile(outputDir + "/countries");
+    // use mapPartitions to re-use setup work
     JavaRDD<Tuple2<String, QSO[]>> contactsContactList = validCallSigns.mapPartitions(
       new FlatMapFunction<Iterator<String>, Tuple2<String, QSO[]>>() {
         public Iterable<Tuple2<String, QSO[]>> call(Iterator<String> input) {
@@ -143,7 +138,7 @@ public class ChapterSixExample {
             while (input.hasNext()) {
               ContentExchange exchange = new ContentExchange(true);
               String sign = input.next();
-              exchange.setURL("http://73s.com/qsos/" + input.next() + ".json");
+              exchange.setURL("http://new73s.herokuapp.com/qsos/" + input.next() + ".json");
               client.send(exchange);
               ccea.add(new Tuple2(sign, exchange));
             }
