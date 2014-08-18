@@ -27,20 +27,19 @@ object BasicParseJsonWithJackson {
     val outputFile = args(2)
     val sc = new SparkContext(master, "BasicParseJsonWithJackson", System.getenv("SPARK_HOME"))
     val input = sc.textFile(inputFile)
-    val parsed = input.map(Json.parse(_))
     // We use asOpt combined with flatMap so that if it fails to parse we
     // get back a None and the flatMap essentially skips the result.
-    val result = parsed.flatMap(record => {
+    val mapper = new ObjectMapper with ScalaObjectMapper
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    mapper.registerModule(DefaultScalaModule)
+    val result = input.flatMap(record => {
       try {
-        val mapper = new ObjectMapper with ScalaObjectMapper
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        mapper.registerModule(DefaultScalaModule)
         val person = mapper.readValue(record, classOf[Person])
-        Some(record)
+        Some(person)
       } catch {
         case e: Exception => None
       }
       })
-    result.filter(_.lovesPandas).map(Json.toJson(_)).saveAsTextFile(outputFile)
+    result.filter(_.lovesPandas).map(mapper.writeValueAsString(_)).saveAsTextFile(outputFile)
     }
 }
