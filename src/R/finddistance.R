@@ -5,7 +5,8 @@ open(f)
 separator <- Sys.getenv(c("SEPARATOR"))
 while(length(line <- readLines(f,n=1)) > 0) {
   # process line
-  contents <- strsplit(line, separator)
-  output = paste(contents, collapse=" ")
-  write(output, stdout())
+  contents <- Map(as.numeric, strsplit(line, separator))
+  mydist <- gdist(contents[[1]][1], contents[[1]][2], contents[[1]][3], contents[[1]][4], units="m", a=6378137.0, b=6356752.3142, verbose = FALSE)
+  output = paste(mydist, collapse=" ")
+  write(mydist, stdout())
 }
