@@ -115,5 +115,14 @@ object ChapterSixExample {
         }
       }
       println(contactsContactList.collect().toList)
+      // Computer the distance of each call using an external R program
+      // adds our script to a list of files for each node to download with this job
+      val distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R"
+      sc.addFile(distScript)
+      val distance = contactsContactList.flatMap(x => x._2.map(y =>
+        s"$y.contactlay,$y.contactlong,$y.mylat,$y.mylong")).pipe(Seq(
+          SparkFiles.get(distScript)),
+          Map("SEPARATOR" -> ","))
+      println(distance.collect().toList)
     }
 }
