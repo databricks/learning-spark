@@ -28,6 +28,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 
@@ -123,8 +124,8 @@ public class ChapterSixExample {
             }});
     countryContactCount.saveAsTextFile(outputDir + "/countries");
     // use mapPartitions to re-use setup work
-    JavaRDD<Tuple2<String, QSO[]>> contactsContactList = validCallSigns.mapPartitions(
-      new FlatMapFunction<Iterator<String>, Tuple2<String, QSO[]>>() {
+    JavaPairRDD<String, QSO[]> contactsContactList = validCallSigns.mapPartitionsToPair(
+      new PairFlatMapFunction<Iterator<String>, String, QSO[]>() {
         public Iterable<Tuple2<String, QSO[]>> call(Iterator<String> input) {
           ArrayList<Tuple2<String, QSO[]>> callsignQsos = new ArrayList<Tuple2<String, QSO[]>>();
           ArrayList<Tuple2<String, ContentExchange>> ccea = new ArrayList<Tuple2<String, ContentExchange>>();
@@ -155,6 +156,18 @@ public class ChapterSixExample {
           return callsignQsos;
         }});
     System.out.println(StringUtils.join(contactsContactList.collect(), ","));
-
+    // Computer the distance of each call using an external R program
+    // adds our script to a list of files for each node to download with this job
+    String distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R";
+    sc.addFile(distScript);
+    JavaRDD<String> distance = contactsContactList.values().flatMap(
+      new FlatMapFunction<QSO[], String>() { public Iterable<String> call(QSO[] calls) {
+          ArrayList<String> latLons = new ArrayList<String>();
+          for (QSO call: calls) {
+            latLons.add(call.mylat+","+call.mylong+","+call.contactlat+","+call.contactlong);
+          }
+          return latLons;
+        }
+      });
   }
 }
