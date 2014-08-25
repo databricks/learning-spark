@@ -12,13 +12,15 @@ object PipeExample {
         case _ => "local"
       }
       val sc = new SparkContext(master, "PipeExample", System.getenv("SPARK_HOME"))
-      val rdd = sc.parallelize(Array("i,like,coffee", "also,pandas"))
+      val rdd = sc.parallelize(Array(
+        "37.75889318222431,-122.42683635321838,37.7614213,-122.4240097",
+        "37.7519528,-122.4208689,37.8709087,-122.2688365"))
 
       // adds our script to a list of files for each node to download with this job
-      val splitWords = "/home/holden/repos/learning-spark-examples/src/perl/splitwords.pl"
-      sc.addFile(splitWords)
+      val distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R"
+      sc.addFile(distScript)
 
-      val piped = rdd.pipe(Seq(SparkFiles.get(splitWords)),
+      val piped = rdd.pipe(Seq(SparkFiles.get(distScript)),
         Map("SEPARATOR" -> ","))
       val result = piped.collect
 
