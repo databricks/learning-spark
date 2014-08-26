@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.*;
 import java.util.Scanner;
@@ -21,7 +22,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.spark.Accumulator;
-import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -31,6 +31,8 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
+import org.apache.spark.broadcast.Broadcast;
+import org.apache.spark.SparkFiles;
 
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
@@ -160,7 +162,7 @@ public class ChapterSixExample {
     // adds our script to a list of files for each node to download with this job
     String distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R";
     sc.addFile(distScript);
-    JavaRDD<String> distance = contactsContactList.values().flatMap(
+    JavaRDD<String> pipeInputs = contactsContactList.values().flatMap(
       new FlatMapFunction<QSO[], String>() { public Iterable<String> call(QSO[] calls) {
           ArrayList<String> latLons = new ArrayList<String>();
           for (QSO call: calls) {
@@ -169,5 +171,13 @@ public class ChapterSixExample {
           return latLons;
         }
       });
+    HashMap<String, String> argMap = new HashMap<String, String>();
+    argMap.put("SEPARATOR", ",");
+    ArrayList<String> command = new ArrayList<String>();
+    command.add(SparkFiles.get(distScript));
+    JavaRDD<String> distance = pipeInputs.pipe(command,
+                                               argMap);
+    System.out.println(StringUtils.join(distance.collect(), ","));
+
   }
 }
