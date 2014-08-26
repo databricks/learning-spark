@@ -165,8 +165,14 @@ public class ChapterSixExample {
     JavaRDD<String> pipeInputs = contactsContactList.values().flatMap(
       new FlatMapFunction<QSO[], String>() { public Iterable<String> call(QSO[] calls) {
           ArrayList<String> latLons = new ArrayList<String>();
+          if (calls == null) {
+            return latLons;
+          }
           for (QSO call: calls) {
-            latLons.add(call.mylat+","+call.mylong+","+call.contactlat+","+call.contactlong);
+            if (call != null && call.mylat != null && call.mylong != null
+                && call.contactlat != null && call.contactlong != null) {
+              latLons.add(call.mylat+","+call.mylong+","+call.contactlat+","+call.contactlong);
+            }
           }
           return latLons;
         }
@@ -174,10 +180,11 @@ public class ChapterSixExample {
     HashMap<String, String> argMap = new HashMap<String, String>();
     argMap.put("SEPARATOR", ",");
     ArrayList<String> command = new ArrayList<String>();
-    command.add(SparkFiles.get(distScript));
+    // in local mode just use the script, in distributed mode get the file
+    command.add(distScript);
+    // command.add(SparkFiles.get(distScript));
     JavaRDD<String> distance = pipeInputs.pipe(command,
                                                argMap);
     System.out.println(StringUtils.join(distance.collect(), ","));
-
   }
 }
