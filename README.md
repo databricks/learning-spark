@@ -11,6 +11,7 @@ Requirements
 - You can checkout spark from https://github.com/apache/spark and then run "sbt/sbt publish-local"
 * Protobuf compiler
 - On debian you can install with sudo apt-get install protobuf-compiler
+* R & the CRAN package Imap are required for the ChapterSixExample
 
 Scala examples
 ===
