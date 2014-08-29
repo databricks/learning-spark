@@ -160,7 +160,8 @@ public class ChapterSixExample {
     System.out.println(StringUtils.join(contactsContactList.collect(), ","));
     // Computer the distance of each call using an external R program
     // adds our script to a list of files for each node to download with this job
-    String distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R";
+    String distScript = "./src/R/finddistance.R";
+    String distScriptName = "finddistance.R";
     sc.addFile(distScript);
     JavaRDD<String> pipeInputs = contactsContactList.values().flatMap(
       new FlatMapFunction<QSO[], String>() { public Iterable<String> call(QSO[] calls) {
@@ -180,9 +181,7 @@ public class ChapterSixExample {
     HashMap<String, String> argMap = new HashMap<String, String>();
     argMap.put("SEPARATOR", ",");
     ArrayList<String> command = new ArrayList<String>();
-    // in local mode just use the script, in distributed mode get the file
-    command.add(distScript);
-    // command.add(SparkFiles.get(distScript));
+    command.add(SparkFiles.get(distScriptName));
     JavaRDD<String> distance = pipeInputs.pipe(command,
                                                argMap);
     System.out.println(StringUtils.join(distance.collect(), ","));
