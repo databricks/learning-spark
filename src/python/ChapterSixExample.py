@@ -2,6 +2,7 @@
 import sys
 import re
 import bisect
+import json
 
 from pyspark import SparkContext
 
@@ -73,3 +74,15 @@ def lookupCountry(sign_count):
 
 countryContactCount = contactCount.map(lookupCountry).reduceByKey((lambda x, y: x+ y))
 countryContactCount.saveAsTextFile(outputDir + "/countries")
+
+def processCallSigns(signs):
+    """Process call signs"""
+    http = urllib3.PoolManager()
+    requests = map(lambda x : http.request('GET', "http://73s.com/qsos/%s.json" % x), signs)
+    return map(lambda x : json.loads(x.data), requests)
+
+def fetchCallSigns(input):
+    """Fetch call signs"""
+    return input.mapPartitions(lambda callSigns : processCallSigns(callSigns))
+
+contactsContactList = fetchCallSigns(validSigns)
