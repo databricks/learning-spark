@@ -1,15 +1,18 @@
 """Contains the Chapter 6 Example illustrating accumulators, broadcast variables, numeric operations, and pipe."""
-import sys
-import re
 import bisect
+import re
+import sys
+import urllib3
 import json
 
 from pyspark import SparkContext
+from pyspark import SparkFiles
 
-inputFile = sys.argv[1]
-outputDir = sys.argv[2]
+sparkMaster = sys.argv[1]
+inputFile = sys.argv[2]
+outputDir = sys.argv[3]
 
-sc = SparkContext(appName="ChapterSixExample")
+sc = SparkContext(sparkMaster, appName="ChapterSixExample")
 file = sc.textFile(inputFile)
 
 # Count lines with KK6JKQ using accumulators
@@ -75,14 +78,36 @@ def lookupCountry(sign_count):
 countryContactCount = contactCount.map(lookupCountry).reduceByKey((lambda x, y: x+ y))
 countryContactCount.saveAsTextFile(outputDir + "/countries")
 
+# Query 73s for the call signs QSOs and parse the personse
+
 def processCallSigns(signs):
-    """Process call signs"""
+    """Process call signs using a connection pool"""
     http = urllib3.PoolManager()
-    requests = map(lambda x : http.request('GET', "http://73s.com/qsos/%s.json" % x), signs)
-    return map(lambda x : json.loads(x.data), requests)
+    requests = map(lambda x : (x, http.request('GET', "http://73s.com/qsos/%s.json" % x)), signs)
+    result = map(lambda x : (x[0], json.loads(x[1].data)), requests)
+    return filter(lambda x: x[1] is not None, result)
 
 def fetchCallSigns(input):
     """Fetch call signs"""
     return input.mapPartitions(lambda callSigns : processCallSigns(callSigns))
 
 contactsContactList = fetchCallSigns(validSigns)
+
+# Compute the distance of each call using an external R program
+distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R"
+distScriptName = "finddistance.R"
+def hasDistInfo(call):
+    """Verify that a call has the fields required to compute the distance"""
+    requiredFields = ["mylat", "mylong", "contactlat", "contactlong"]
+    return all(map(lambda f: call[f], requiredFields))
+def formatCall(call):
+    """Format a call so that it can be parsed by our R program"""
+    return "{0},{1},{2},{3}".format(
+        call["mylat"], call["mylong"], call["contactlat"], call["contactlong"])
+
+pipeInputs = contactsContactList.values().flatMap(
+    lambda calls: map(formatCall, filter(hasDistInfo, calls)))
+distance = pipeInputs.pipe(SparkFiles.get(distScript), env={"SEPARATOR" : ","})
+distances = distance.collect()
+for d in distances:
+    print d
