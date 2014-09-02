@@ -1,3 +1,4 @@
+![buildstatus](https://travis-ci.org/holdenk/learning-spark-examples.svg?branch=master)(https://travis-ci.org/holdenk/learning-spark-examples)
 Examples for Learning Spark
 ===============
 Examples for the Learning Spark book.
