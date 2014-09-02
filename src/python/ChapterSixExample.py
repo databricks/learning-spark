@@ -109,5 +109,4 @@ pipeInputs = contactsContactList.values().flatMap(
     lambda calls: map(formatCall, filter(hasDistInfo, calls)))
 distance = pipeInputs.pipe(SparkFiles.get(distScript), env={"SEPARATOR" : ","})
 distances = distance.collect()
-for d in distances:
-    print d
+print distances
