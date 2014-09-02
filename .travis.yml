@@ -10,5 +10,6 @@ script:
   # Run the tests
   - "export SPARK_HOME=./spark-1.0.0-bin-hadoop2/"
   - "export IAM=`whoami`"
+  - sudo pip install urllib3
   - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
   - "./run-all-examples"

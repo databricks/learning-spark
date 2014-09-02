@@ -12,6 +12,7 @@ Requirements
 * Protobuf compiler
 - On debian you can install with sudo apt-get install protobuf-compiler
 * R & the CRAN package Imap are required for the ChapterSixExample
+* The Python examples require urllib3
 
 Scala examples
 ===
