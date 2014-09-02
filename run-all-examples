@@ -9,7 +9,6 @@ set -e
 SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
 # Mini cleanup
 rm -rf /tmp/py/
-mkdir -p /user/hive
 # Python
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/BasicAvg.py local

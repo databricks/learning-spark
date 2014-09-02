@@ -9,4 +9,6 @@ script:
   - "tar -xvf spark-1.0.0-bin-hadoop2.tgz"
   # Run the tests
   - "export SPARK_HOME=./spark-1.0.0-bin-hadoop2/"
+  - "export IAM=`whoami`"
+  - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
   - "./run-all-examples"
