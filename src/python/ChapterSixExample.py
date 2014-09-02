@@ -94,7 +94,7 @@ def fetchCallSigns(input):
 contactsContactList = fetchCallSigns(validSigns)
 
 # Compute the distance of each call using an external R program
-distScript = "/home/holden/repos/learning-spark-examples/src/R/finddistance.R"
+distScript = "./src/R/finddistance.R"
 distScriptName = "finddistance.R"
 def hasDistInfo(call):
     """Verify that a call has the fields required to compute the distance"""
