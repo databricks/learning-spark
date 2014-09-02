@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# This script is used to run all of the examples. Mostly to be used by travis for testing
+# Output the commands we run
+set -x
+# If any command fails, fail
+set -e
+# Build everything
+./sbt/sbt compile package
+SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
+# Mini cleanup
+rm -rf /tmp/py/
+mkdir -p /user/hive
+# Python
+$SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/BasicAvg.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/BasicFilterMap.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/BasicKeyValueMapFilter.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/BasicMapPartitions.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/BasicMap.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/ChapterSixExample.py local ./files/callsigns /tmp/py/pandaout
+$SPARK_SUBMIT_SCRIPT ./src/python/LoadCsv.py local ./files/favourite_animals.csv /tmp/py/panda_lovers.csv
+$SPARK_SUBMIT_SCRIPT ./src/python/MakeHiveTable.py local ./files/int_string.csv pandaplural
+$SPARK_SUBMIT_SCRIPT ./src/python/LoadHive.py local pandaplural
+$SPARK_SUBMIT_SCRIPT ./src/python/LoadJson.py local ./files/pandainfo.json /tmp/py/loadjsonout
+$SPARK_SUBMIT_SCRIPT ./src/python/PerKeyAvg.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/RemoveOutliers.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
+# Scala
+
+# Java

@@ -3,3 +3,10 @@ scala:
    - 2.10.4
 before_script:
    - sudo apt-get install protobuf-compiler
+script:
+  # Download spark 1.0.0
+  - "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.0.0-bin-hadoop2.tgz"
+  - "tar -xvf spark-1.0.0-bin-hadoop2.tgz"
+  # Run the tests
+  - "export SPARK_HOME=./spark-1.0.0-bin-hadoop2/"
+  - "./run-all-examples"

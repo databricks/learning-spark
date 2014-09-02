@@ -14,7 +14,9 @@ if __name__ == "__main__":
     hiveCtx = HiveContext(sc)
     # Query hive
     input = hiveCtx.hql("FROM " + inputTable + " SELECT key, value")
-    data = input.map(lambda x: x['key'] * x['key'])
+    print "result of query"
+    print input.collect()
+    data = input.map(lambda x: x[0] * x[0])
     result = data.collect()
     for element in result:
         print "Got data " + str(element)
