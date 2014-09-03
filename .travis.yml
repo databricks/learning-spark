@@ -1,6 +1,13 @@
 language: scala
 scala:
    - 2.10.4
+# Install R
+before_install:
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
+install:
+  - ./travis-tool.sh install_deps
 before_script:
    - sudo apt-get install protobuf-compiler
 script:
