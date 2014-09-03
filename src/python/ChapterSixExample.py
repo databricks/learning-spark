@@ -92,7 +92,8 @@ countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
 def processCallSigns(signs):
     """Process call signs using a connection pool"""
     http = urllib3.PoolManager()
-    requests = map(lambda x : (x, http.request('GET', "http://73s.com/qsos/%s.json" % x)), signs)
+    urls = map(lambda x: "http://73s.com/qsos/%s.json" % x, signs)
+    requests = map(lambda x : (x, http.request('GET', x)), urls)
     result = map(lambda x : (x[0], json.loads(x[1].data)), requests)
     return filter(lambda x: x[1] is not None, result)
 
