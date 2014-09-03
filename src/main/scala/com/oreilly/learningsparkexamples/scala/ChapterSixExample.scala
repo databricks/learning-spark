@@ -67,14 +67,11 @@ object ChapterSixExample {
         exit(1)
       }
       // Lookup the countries for each call sign
-      val callSignMap = scala.io.Source.fromFile("./files/callsign_tbl_sorted").getLines().filter(_ != "").map(_.split(",")).toList
+      val callSignMap = loadCallSignTable()
       val callSignKeys = sc.broadcast(callSignMap.map(line => line(0)).toArray)
       val callSignLocations = sc.broadcast(callSignMap.map(line => line(1)).toArray)
       val countryContactCount = contactCount.map{case (sign, count) =>
-        val pos = java.util.Arrays.binarySearch(callSignKeys.value.asInstanceOf[Array[AnyRef]], sign) match {
-          case x if x < 0 => -x-1
-          case x => x
-        }
+        val pos = lookupInArray(sign, callSignKeys.value)
         (callSignLocations.value(pos),count)
       }.reduceByKey((x, y) => x + y)
       countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
@@ -82,10 +79,7 @@ object ChapterSixExample {
       val countryCounts2 = sc.textFile(inputFile2)
         .flatMap(_.split("\\s+"))      // Split line into words
         .map{case sign =>
-          val pos = java.util.Arrays.binarySearch(callSignKeys.value.asInstanceOf[Array[AnyRef]], sign) match {
-            case x if x < 0 => -x-1
-            case x => x
-          }
+          val pos = lookupInArray(sign, callSignKeys.value)
           (callSignLocations.value(pos), 1)}.reduceByKey((x, y) => x + y).collect()
       // Look up the location info using a connection pool
       val contactsContactList = validSigns.distinct().mapPartitions{
@@ -133,4 +127,16 @@ object ChapterSixExample {
       val reasonableDistance = distanceDouble.filter(x => math.abs(x-mean) < 3 * stddev)
       println(reasonableDistance.collect().toList)
     }
+
+  def lookupInArray(sign: String, prefixArray: Array[String]): Integer = {
+    java.util.Arrays.binarySearch(prefixArray.asInstanceOf[Array[AnyRef]], sign) match {
+      case x if x < 0 => -x-1
+      case x => x
+    }
+  }
+
+  def loadCallSignTable() = {
+    scala.io.Source.fromFile("./files/callsign_tbl_sorted").getLines()
+      .filter(_ != "").map(_.split(",")).toList
+  }
 }
