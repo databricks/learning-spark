@@ -1,0 +1,3 @@
+Package: learning-spark-examples
+Version: 0.1
+Depends: Imap
