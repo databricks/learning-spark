@@ -108,6 +108,7 @@ public class ChapterSixExample {
       System.exit(1);
     }
     // Read in the call sign table
+    // Lookup the countries for each call sign
     String[] callSignTbl = loadCallSignTable();
     final Broadcast<String[]> callSignsMap = sc.broadcast(callSignTbl);
     JavaPairRDD<String, Integer> countryContactCount = contactCount.mapToPair(
@@ -121,7 +122,7 @@ public class ChapterSixExample {
             public Integer call(Integer x, Integer y) {
               return x + y;
             }});
-    countryContactCount.saveAsTextFile(outputDir + "/countries");
+    countryContactCount.saveAsTextFile(outputDir + "/countries.txt");
     // use mapPartitions to re-use setup work
     JavaPairRDD<String, QSO[]> contactsContactList = validCallSigns.mapPartitionsToPair(
       new PairFlatMapFunction<Iterator<String>, String, QSO[]>() {
