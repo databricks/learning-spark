@@ -52,9 +52,10 @@ object ChapterSixExample {
       // Validate a call sign
       val callSignRegex = "\\A\\d?[a-zA-Z]{1,2}\\d{1,4}[a-zA-Z]{1,3}\\Z".r
       val validSigns = callSigns.filter{sign =>
-        sign match {
-          case callSignRegex() => {validSignCount += 1; true}
-          case _ => {invalidSignCount += 1; false}
+        if ((callSignRegex findFirstIn sign).nonEmpty) {
+          validSignCount += 1; true
+        } else {
+          invalidSignCount += 1; false
         }
       }
       val contactCount = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
