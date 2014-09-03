@@ -19,7 +19,8 @@ $SPARK_SUBMIT_SCRIPT ./src/python/BasicMap.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/ChapterSixExample.py local ./files/callsigns /tmp/py/pandaout
 $SPARK_SUBMIT_SCRIPT ./src/python/LoadCsv.py local ./files/favourite_animals.csv /tmp/py/panda_lovers.csv
 $SPARK_SUBMIT_SCRIPT ./src/python/MakeHiveTable.py local ./files/int_string.csv pandaplural
-$SPARK_SUBMIT_SCRIPT ./src/python/LoadHive.py local pandaplural
+# Temporarily disabled due to API changes
+#$SPARK_SUBMIT_SCRIPT ./src/python/LoadHive.py local pandaplural
 $SPARK_SUBMIT_SCRIPT ./src/python/LoadJson.py local ./files/pandainfo.json /tmp/py/loadjsonout
 $SPARK_SUBMIT_SCRIPT ./src/python/PerKeyAvg.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/RemoveOutliers.py local
