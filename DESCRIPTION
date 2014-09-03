@@ -1,3 +1,7 @@
 Package: learning-spark-examples
 Version: 0.1
 Depends: Imap
+License: MIT License
+Description: Examples for the learning spark book.
+Title: Examples for the learning spark book.
+Author@R: c(person("Holden Karau", role = c("aut", "cre"), email="holden@pigscanfly.ca"))
