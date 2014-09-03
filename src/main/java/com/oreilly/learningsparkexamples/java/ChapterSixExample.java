@@ -127,13 +127,13 @@ public class ChapterSixExample {
     JavaPairRDD<String, QSO[]> contactsContactList = validCallSigns.mapPartitionsToPair(
       new PairFlatMapFunction<Iterator<String>, String, QSO[]>() {
         public Iterable<Tuple2<String, QSO[]>> call(Iterator<String> input) {
-          ArrayList<Tuple2<String, QSO[]>> callsignQsos = new ArrayList<Tuple2<String, QSO[]>>();
-          ArrayList<Tuple2<String, ContentExchange>> ccea = new ArrayList<Tuple2<String, ContentExchange>>();
+          ArrayList<Tuple2<String, QSO[]>> callsignQsos =
+            new ArrayList<Tuple2<String, QSO[]>>();
+          ArrayList<Tuple2<String, ContentExchange>> ccea =
+            new ArrayList<Tuple2<String, ContentExchange>>();
           ObjectMapper mapper = new ObjectMapper();
           mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
           HttpClient client = new HttpClient();
-          client.setMaxConnectionsPerAddress(10);
-          client.setTimeout(30000); // 30 seconds timeout; if no server reply, the request expires
           try {
             client.start();
             while (input.hasNext()) {

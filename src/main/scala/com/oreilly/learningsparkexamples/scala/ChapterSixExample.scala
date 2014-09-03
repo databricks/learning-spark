@@ -88,9 +88,6 @@ object ChapterSixExample {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         mapper.registerModule(DefaultScalaModule)
         val client = new HttpClient()
-        client.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-        client.setMaxConnectionsPerAddress(10)
-        client.setTimeout(30000) // 30 seconds timeout; if no server reply, the request expires
         client.start()
         signs.map {sign =>
           val exchange = new ContentExchange(true);
