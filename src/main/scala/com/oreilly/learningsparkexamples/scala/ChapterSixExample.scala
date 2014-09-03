@@ -124,6 +124,13 @@ object ChapterSixExample {
         s"$y.contactlay,$y.contactlong,$y.mylat,$y.mylong")).pipe(Seq(
           SparkFiles.get(distScriptName)),
           Map("SEPARATOR" -> ","))
-      println(distance.collect().toList)
+      // Now we can go ahead and remove outliers since those may have misreported locations
+      // first we need to take our RDD of strings and turn it into doubles.
+      val distanceDouble = distance.map(string => string.toDouble)
+      val stats = distanceDouble.stats()
+      val stddev = math.sqrt(stats.variance)
+      val mean = stats.mean
+      val reasonableDistance = distanceDouble.filter(x => math.abs(x-mean) < 3 * stddev)
+      println(reasonableDistance.collect().toList)
     }
 }

@@ -4,6 +4,7 @@ import re
 import sys
 import urllib3
 import json
+import math
 
 from pyspark import SparkContext
 from pyspark import SparkFiles
@@ -96,6 +97,7 @@ contactsContactList = fetchCallSigns(validSigns)
 # Compute the distance of each call using an external R program
 distScript = "./src/R/finddistance.R"
 distScriptName = "finddistance.R"
+sc.addFile(distScript)
 def hasDistInfo(call):
     """Verify that a call has the fields required to compute the distance"""
     requiredFields = ["mylat", "mylong", "contactlat", "contactlong"]
@@ -107,6 +109,14 @@ def formatCall(call):
 
 pipeInputs = contactsContactList.values().flatMap(
     lambda calls: map(formatCall, filter(hasDistInfo, calls)))
-distance = pipeInputs.pipe(SparkFiles.get(distScript), env={"SEPARATOR" : ","})
+distance = pipeInputs.pipe(SparkFiles.get(distScriptName), env={"SEPARATOR" : ","})
 distances = distance.collect()
 print distances
+# Convert our RDD of strings to numeric data so we can compute stats and
+# remove the outliers.
+distanceNumeric = distance.map(lambda string: float(string))
+stats = distanceNumeric.stats()
+stddev = math.sqrt(stats.variance())
+mean = distanceNumeric.mean()
+reasonableDistnace = distanceNumeric.filter(lambda x: math.fabs(x - mean) < 3 * stddev)
+print reasonableDistnace.collect()

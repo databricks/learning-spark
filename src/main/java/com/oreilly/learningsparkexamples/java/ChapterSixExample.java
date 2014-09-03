@@ -23,8 +23,10 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.DoubleFunction;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
@@ -33,6 +35,7 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.SparkFiles;
+import org.apache.spark.util.StatCounter;
 
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
@@ -184,6 +187,17 @@ public class ChapterSixExample {
     command.add(SparkFiles.get(distScriptName));
     JavaRDD<String> distance = pipeInputs.pipe(command,
                                                argMap);
-    System.out.println(StringUtils.join(distance.collect(), ","));
+    // First we need to convert our RDD of String to a DoubleRDD so we can
+    // access the stats function
+    JavaDoubleRDD distanceDouble = distance.mapToDouble(new DoubleFunction<String>() {
+        public double call(String value) {
+          return Double.parseDouble(value);
+        }});
+    final StatCounter stats = distanceDouble.stats();
+    final Double stddev = Math.sqrt(stats.variance());
+    final Double mean = stats.mean();
+    JavaDoubleRDD reasonableDistance = distanceDouble.filter(new Function<Double, Boolean>() { public Boolean call(Double x) {
+          return (Math.abs(x-mean) < 3 * stddev);}});
+    System.out.println(StringUtils.join(reasonableDistance.collect(), ","));
   }
 }
