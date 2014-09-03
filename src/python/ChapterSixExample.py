@@ -85,7 +85,7 @@ countryContactCount = (contactCount
                        .map(processSignCount)
                        .reduceByKey((lambda x, y: x+ y)))
 
-countryContactCount.saveAsTextFile(outputDir + "/countries")
+countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
 
 # Query 73s for the call signs QSOs and parse the personse
 
