@@ -5,10 +5,11 @@ set -x
 # If any command fails, fail
 set -e
 # Build everything
-./sbt/sbt compile package
+./sbt/sbt compile package assembly
 SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
 # Mini cleanup
 rm -rf /tmp/py/
+rm -rf /tmp/java/
 # Python
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/BasicAvg.py local
@@ -28,3 +29,4 @@ $SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
 # Scala
 
 # Java
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample  ./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar local ./files/callsigns ./files/callsigns /tmp/java/ch6out

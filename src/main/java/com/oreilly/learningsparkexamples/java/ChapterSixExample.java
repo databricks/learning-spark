@@ -13,6 +13,7 @@ import java.util.regex.*;
 import java.util.Scanner;
 import java.util.Iterator;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import scala.Tuple2;
 
@@ -107,22 +108,15 @@ public class ChapterSixExample {
       System.exit(1);
     }
     // Read in the call sign table
-    Scanner callSignTbl = new Scanner(new File("./files/callsign_tbl_sorted"));
-    ArrayList<String> callSignList = new ArrayList<String>();
-    while (callSignTbl.hasNextLine()) {
-      callSignList.add(callSignTbl.nextLine());
-    }
-    final Broadcast<String[]> callSignsMap = sc.broadcast(callSignList.toArray(new String[0]));
+    String[] callSignTbl = loadCallSignTable();
+    final Broadcast<String[]> callSignsMap = sc.broadcast(callSignTbl);
     JavaPairRDD<String, Integer> countryContactCount = contactCount.mapToPair(
       new PairFunction<Tuple2<String, Integer>, String, Integer> (){
         public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
-          String[] callSignInfo = callSignsMap.value();
           String sign = callSignCount._1();
-          Integer pos = java.util.Arrays.binarySearch(callSignInfo, sign);
-          if (pos < 0) {
-            pos = -pos-1;
-          }
-          return new Tuple2(callSignInfo[pos].split(",")[1], callSignCount._2());
+          String[] callSignInfo = callSignsMap.value();
+          String country = lookupCountry(sign, callSignInfo);
+          return new Tuple2(country, callSignCount._2());
         }}).reduceByKey(new Function2<Integer, Integer, Integer>() {
             public Integer call(Integer x, Integer y) {
               return x + y;
@@ -200,5 +194,22 @@ public class ChapterSixExample {
         public Boolean call(Double x) {
           return (Math.abs(x-mean) < 3 * stddev);}});
     System.out.println(StringUtils.join(reasonableDistance.collect(), ","));
+  }
+
+  static String[] loadCallSignTable() throws FileNotFoundException {
+    Scanner callSignTbl = new Scanner(new File("./files/callsign_tbl_sorted"));
+    ArrayList<String> callSignList = new ArrayList<String>();
+    while (callSignTbl.hasNextLine()) {
+      callSignList.add(callSignTbl.nextLine());
+    }
+    return callSignList.toArray(new String[0]);
+  }
+
+  static String lookupCountry(String callSign, String[] table) {
+      Integer pos = java.util.Arrays.binarySearch(table, callSign);
+      if (pos < 0) {
+        pos = -pos-1;
+      }
+      return table[pos].split(",")[1];
   }
 }
