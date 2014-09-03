@@ -196,7 +196,8 @@ public class ChapterSixExample {
     final StatCounter stats = distanceDouble.stats();
     final Double stddev = Math.sqrt(stats.variance());
     final Double mean = stats.mean();
-    JavaDoubleRDD reasonableDistance = distanceDouble.filter(new Function<Double, Boolean>() { public Boolean call(Double x) {
+    JavaDoubleRDD reasonableDistance = distanceDouble.filter(new Function<Double, Boolean>() {
+        public Boolean call(Double x) {
           return (Math.abs(x-mean) < 3 * stddev);}});
     System.out.println(StringUtils.join(reasonableDistance.collect(), ","));
   }
