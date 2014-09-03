@@ -63,20 +63,28 @@ if invalidSignCount.value < 0.1 * validSignCount.value:
 else:
     print "Too many errors %d in %d" % (invalidSignCount.value, validSignCount.value)
 
+# Helper functions for looking up the call signs
+def lookupCountry(sign, keys, values):
+    pos = bisect.bisect_left(keys, sign)
+    return values[pos]
+def loadCallSignTable():
+    f = open("./files/callsign_tbl_sorted", "r")
+    callSignMap = map((lambda x: x.split(",")), f.readlines())
+    return zip(*callSignMap)
 # Lookup the locations of the call signs
-f = open("./files/callsign_tbl_sorted", "r")
-callSignMap = map((lambda x: x.split(",")), f.readlines())
-(callSignKeys, callSignLocations) = zip(*callSignMap)
-callSignKeysBroadcast = sc.broadcast(callSignKeys)
-callSignLocationsBroadcast = sc.broadcast(callSignLocations)
+(callSignKeys, callSignLocations) = loadCallSignTable()
+keys = sc.broadcast(callSignKeys)
+values = sc.broadcast(callSignLocations)
 
-def lookupCountry(sign_count):
-    sign = sign_count[0]
+def processSignCount(sign_count):
+    country = lookupCountry(sign_count[0], keys.value, values.value)
     count = sign_count[1]
-    pos = bisect.bisect_left(callSignKeysBroadcast.value, sign)
-    return (callSignLocationsBroadcast.value[pos], count)
+    return (country, count)
 
-countryContactCount = contactCount.map(lookupCountry).reduceByKey((lambda x, y: x+ y))
+countryContactCount = (contactCount
+                       .map(processSignCount)
+                       .reduceByKey((lambda x, y: x+ y)))
+
 countryContactCount.saveAsTextFile(outputDir + "/countries")
 
 # Query 73s for the call signs QSOs and parse the personse
