@@ -184,21 +184,21 @@ public class ChapterSixExample {
           return latLons;
         }
       });
-    JavaRDD<String> distance = pipeInputs.pipe(SparkFiles.get(distScriptName));
+    JavaRDD<String> distances = pipeInputs.pipe(SparkFiles.get(distScriptName));
     // First we need to convert our RDD of String to a DoubleRDD so we can
     // access the stats function
-    JavaDoubleRDD distanceDouble = distance.mapToDouble(new DoubleFunction<String>() {
+    JavaDoubleRDD distanceDoubles = distances.mapToDouble(new DoubleFunction<String>() {
         public double call(String value) {
           return Double.parseDouble(value);
         }});
-    final StatCounter stats = distanceDouble.stats();
+    final StatCounter stats = distanceDoubles.stats();
     final Double stddev = stats.stdev();
     final Double mean = stats.mean();
-    JavaDoubleRDD reasonableDistance =
-      distanceDouble.filter(new Function<Double, Boolean>() {
+    JavaDoubleRDD reasonableDistances =
+      distanceDoubles.filter(new Function<Double, Boolean>() {
         public Boolean call(Double x) {
           return (Math.abs(x-mean) < 3 * stddev);}});
-    System.out.println(StringUtils.join(reasonableDistance.collect(), ","));
+    System.out.println(StringUtils.join(reasonableDistances.collect(), ","));
   }
 
   static QSO[] readExchangeQSO(ObjectMapper mapper, ContentExchange exchange) throws Exception {

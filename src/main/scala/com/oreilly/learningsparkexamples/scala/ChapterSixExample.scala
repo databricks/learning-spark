@@ -82,7 +82,7 @@ object ChapterSixExample {
         val country = lookupInArray(sign, signPrefixes.value)
         (country, 1)}.reduceByKey((x, y) => x + y).collect()
     // Look up the location info using a connection pool
-    val contactsContactList = validSigns.distinct().mapPartitions{
+    val contactsContactLists = validSigns.distinct().mapPartitions{
       signs =>
       val mapper = createMapper()
       val client = new HttpClient()
@@ -95,24 +95,24 @@ object ChapterSixExample {
           (sign, readExchangeQSO(mapper, exchange))
       }.filter(x => x._2 != null) // Remove empty QSOs
     }
-    println(contactsContactList.collect().toList)
+    println(contactsContactLists.collect().toList)
     // Computer the distance of each call using an external R program
     // adds our script to a list of files for each node to download with this job
     val distScript = "./src/R/finddistance.R"
     val distScriptName = "finddistance.R"
     sc.addFile(distScript)
-    val pipeInputs = contactsContactList.values.flatMap(x => x.map(y =>
+    val pipeInputs = contactsContactLists.values.flatMap(x => x.map(y =>
       s"${y.contactlat},${y.contactlong},${y.mylat},${y.mylong}"))
     println(pipeInputs.collect().toList)
-    val distance = pipeInputs.pipe(SparkFiles.get(distScriptName))
+    val distances = pipeInputs.pipe(SparkFiles.get(distScriptName))
     // Now we can go ahead and remove outliers since those may have misreported locations
     // first we need to take our RDD of strings and turn it into doubles.
-    val distanceDouble = distance.map(string => string.toDouble)
-    val stats = distanceDouble.stats()
+    val distanceDoubles = distances.map(string => string.toDouble)
+    val stats = distanceDoubles.stats()
     val stddev = stats.stdev
     val mean = stats.mean
-    val reasonableDistance = distanceDouble.filter(x => math.abs(x-mean) < 3 * stddev)
-    println(reasonableDistance.collect().toList)
+    val reasonableDistances = distanceDoubles.filter(x => math.abs(x-mean) < 3 * stddev)
+    println(reasonableDistances.collect().toList)
   }
 
   def createExchangeForSign(sign: String): ContentExchange = {
