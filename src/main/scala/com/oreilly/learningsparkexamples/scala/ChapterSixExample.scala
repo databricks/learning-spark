@@ -93,7 +93,7 @@ object ChapterSixExample {
         (sign, exchange)
       }.map{ case (sign, exchange) =>
           (sign, readExchangeQSO(mapper, exchange))
-      }.filter(x => x._2 != null)
+      }.filter(x => x._2 != null) // Remove empty QSOs
     }
     println(contactsContactList.collect().toList)
     // Computer the distance of each call using an external R program
