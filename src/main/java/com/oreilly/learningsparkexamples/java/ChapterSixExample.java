@@ -104,7 +104,8 @@ public class ChapterSixExample {
     if (invalidSignCount.value() < 0.1 * validSignCount.value()) {
       contactCount.saveAsTextFile(outputDir + "/contactCount");
     } else {
-      System.out.println("Too many errors " + invalidSignCount.value() + " for " + validSignCount.value());
+      System.out.println("Too many errors " + invalidSignCount.value() +
+                         " for " + validSignCount.value());
       System.exit(1);
     }
     // Read in the call sign table
@@ -170,7 +171,8 @@ public class ChapterSixExample {
           for (QSO call: calls) {
             if (call != null && call.mylat != null && call.mylong != null
                 && call.contactlat != null && call.contactlong != null) {
-              latLons.add(call.mylat+","+call.mylong+","+call.contactlat+","+call.contactlong);
+              latLons.add(call.mylat + "," + call.mylong +
+                          "," + call.contactlat + "," + call.contactlong);
             }
           }
           return latLons;
@@ -191,7 +193,8 @@ public class ChapterSixExample {
     final StatCounter stats = distanceDouble.stats();
     final Double stddev = Math.sqrt(stats.variance());
     final Double mean = stats.mean();
-    JavaDoubleRDD reasonableDistance = distanceDouble.filter(new Function<Double, Boolean>() {
+    JavaDoubleRDD reasonableDistance =
+      distanceDouble.filter(new Function<Double, Boolean>() {
         public Boolean call(Double x) {
           return (Math.abs(x-mean) < 3 * stddev);}});
     System.out.println(StringUtils.join(reasonableDistance.collect(), ","));

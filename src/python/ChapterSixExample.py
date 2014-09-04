@@ -114,11 +114,13 @@ def hasDistInfo(call):
 def formatCall(call):
     """Format a call so that it can be parsed by our R program"""
     return "{0},{1},{2},{3}".format(
-        call["mylat"], call["mylong"], call["contactlat"], call["contactlong"])
+        call["mylat"], call["mylong"],
+        call["contactlat"], call["contactlong"])
 
 pipeInputs = contactsContactList.values().flatMap(
     lambda calls: map(formatCall, filter(hasDistInfo, calls)))
-distance = pipeInputs.pipe(SparkFiles.get(distScriptName), env={"SEPARATOR" : ","})
+distance = pipeInputs.pipe(SparkFiles.get(distScriptName),
+                           env={"SEPARATOR" : ","})
 distances = distance.collect()
 print distances
 # Convert our RDD of strings to numeric data so we can compute stats and

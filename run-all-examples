@@ -10,6 +10,7 @@ SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
 # Mini cleanup
 rm -rf /tmp/py/
 rm -rf /tmp/java/
+rm -rf /tmp/scala
 # Python
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/BasicAvg.py local
@@ -27,6 +28,7 @@ $SPARK_SUBMIT_SCRIPT ./src/python/PerKeyAvg.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/RemoveOutliers.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
 # Scala
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  ./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
 
 # Java
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample  ./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar local ./files/callsigns ./files/callsigns /tmp/java/ch6out
