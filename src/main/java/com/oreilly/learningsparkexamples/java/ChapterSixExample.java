@@ -189,9 +189,7 @@ public class ChapterSixExample {
           return latLons;
         }
       });
-    ArrayList<String> command = new ArrayList<String>();
-    command.add(SparkFiles.get(distScriptName));
-    JavaRDD<String> distance = pipeInputs.pipe(command);
+    JavaRDD<String> distance = pipeInputs.pipe(SparkFiles.get(distScriptName));
     // First we need to convert our RDD of String to a DoubleRDD so we can
     // access the stats function
     JavaDoubleRDD distanceDouble = distance.mapToDouble(new DoubleFunction<String>() {

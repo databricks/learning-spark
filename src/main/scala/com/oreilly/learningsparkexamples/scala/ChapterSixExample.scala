@@ -14,8 +14,8 @@ import org.apache.spark.SparkContext._
 import org.eclipse.jetty.client.ContentExchange
 import org.eclipse.jetty.client.HttpClient
 
-case class QSO(callsign: String="", contactlat: Option[Double]=None,
-  contactlong: Option[Double]=None, mylat: Option[Double]=None, mylong: Option[Double]=None)
+case class QSO(callsign: String="", contactlat: Double,
+  contactlong: Double, mylat: Double, mylong: Double)
 
 object ChapterSixExample {
   def main(args: Array[String]) {
@@ -101,7 +101,7 @@ object ChapterSixExample {
           } catch {
             case e: Exception => null
           }
-      }.filter( x => x != null)
+      }.filter(x => x != null && x._2 != null)
     }
     println(contactsContactList.collect().toList)
     // Computer the distance of each call using an external R program
@@ -109,10 +109,10 @@ object ChapterSixExample {
     val distScript = "./src/R/finddistance.R"
     val distScriptName = "finddistance.R"
     sc.addFile(distScript)
-    val distance = contactsContactList.values.flatMap(x => x.map(y =>
-      s"$y.contactlay,$y.contactlong,$y.mylat,$y.mylong")).pipe(Seq(
-        SparkFiles.get(distScriptName)),
-        Map("SEPARATOR" -> ","))
+    val pipeInputs = contactsContactList.values.flatMap(x => x.map(y =>
+      s"${y.contactlat},${y.contactlong},${y.mylat},${y.mylong}"))
+    println(pipeInputs.collect().toList)
+    val distance = pipeInputs.pipe(SparkFiles.get(distScriptName))
     // Now we can go ahead and remove outliers since those may have misreported locations
     // first we need to take our RDD of strings and turn it into doubles.
     val distanceDouble = distance.map(string => string.toDouble)
