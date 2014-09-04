@@ -55,11 +55,11 @@ def validateSign(sign):
         return False
 
 validSigns = callSigns.filter(validateSign)
-contactCount = validSigns.map(lambda sign: (sign, 1)).reduceByKey((lambda x, y: x + y))
+contactCounts = validSigns.map(lambda sign: (sign, 1)).reduceByKey((lambda x, y: x + y))
 # Force evaluation so the counters are populated
-contactCount.count()
+contactCounts.count()
 if invalidSignCount.value < 0.1 * validSignCount.value:
-    contactCount.saveAsTextFile(outputDir + "/contactCount")
+    contactCounts.saveAsTextFile(outputDir + "/contactCount")
 else:
     print "Too many errors %d in %d" % (invalidSignCount.value, validSignCount.value)
 
@@ -72,7 +72,8 @@ def loadCallSignTable():
     f = open("./files/callsign_tbl_sorted", "r")
     return f.readlines()
 
-# Lookup the locations of the call signs
+# Lookup the locations of the call signs on the
+# RDD contactCounts
 signPrefixes = sc.broadcast(loadCallSignTable())
 
 def processSignCount(sign_count):
@@ -80,11 +81,11 @@ def processSignCount(sign_count):
     count = sign_count[1]
     return (country, count)
 
-countryContactCount = (contactCount
+countryContactCounts = (contactCounts
                        .map(processSignCount)
                        .reduceByKey((lambda x, y: x+ y)))
 
-countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
+countryContactCounts.saveAsTextFile(outputDir + "/countries.txt")
 
 # Query 73s for the call signs QSOs and parse the personse
 
