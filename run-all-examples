@@ -11,6 +11,9 @@ SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
 rm -rf /tmp/py/
 rm -rf /tmp/java/
 rm -rf /tmp/scala
+# R
+chmod a+x ./src/R/finddistance.R 
+echo "37.384733,-122.032164,37.751952821,-122.4208688735" | ./src/R/finddistance.R
 # Python
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/BasicAvg.py local
