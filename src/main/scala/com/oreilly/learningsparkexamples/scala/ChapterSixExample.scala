@@ -67,21 +67,20 @@ object ChapterSixExample {
         println(s"Too many errors ${invalidSignCount.value} for ${validSignCount.value}")
         exit(1)
       }
-      // Lookup the countries for each call sign
-      val callSignMap = loadCallSignTable()
-      val callSignKeys = sc.broadcast(callSignMap.map(line => line(0)).toArray)
-      val callSignLocations = sc.broadcast(callSignMap.map(line => line(1)).toArray)
+      // Lookup the countries for each call sign for our
+      // contactCount RDD
+      val signPrefixes = sc.broadcast(loadCallSignTable())
       val countryContactCount = contactCount.map{case (sign, count) =>
-        val pos = lookupInArray(sign, callSignKeys.value)
-        (callSignLocations.value(pos),count)
+        val country = lookupInArray(sign, signPrefixes.value)
+        (country, count)
       }.reduceByKey((x, y) => x + y)
       countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
       // Resolve call signs in a second file to location
       val countryCounts2 = sc.textFile(inputFile2)
         .flatMap(_.split("\\s+"))      // Split line into words
         .map{case sign =>
-          val pos = lookupInArray(sign, callSignKeys.value)
-          (callSignLocations.value(pos), 1)}.reduceByKey((x, y) => x + y).collect()
+          val country = lookupInArray(sign, signPrefixes.value)
+          (country, 1)}.reduceByKey((x, y) => x + y).collect()
       // Look up the location info using a connection pool
       val contactsContactList = validSigns.distinct().mapPartitions{
         signs =>
@@ -126,15 +125,17 @@ object ChapterSixExample {
       println(reasonableDistance.collect().toList)
     }
 
-  def lookupInArray(sign: String, prefixArray: Array[String]): Integer = {
-    java.util.Arrays.binarySearch(prefixArray.asInstanceOf[Array[AnyRef]], sign) match {
+  def lookupInArray(sign: String, prefixArray: Array[String]): String = {
+    val pos = java.util.Arrays.binarySearch(prefixArray.asInstanceOf[Array[AnyRef]], sign) match {
       case x if x < 0 => -x-1
       case x => x
     }
+    // The country is the second element separated by comma
+    prefixArray(pos).split(",")(1)
   }
 
   def loadCallSignTable() = {
     scala.io.Source.fromFile("./files/callsign_tbl_sorted").getLines()
-      .filter(_ != "").map(_.split(",")).toList
+      .filter(_ != "").toArray
   }
 }
