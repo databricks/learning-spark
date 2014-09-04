@@ -42,6 +42,11 @@ import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 
 public class ChapterSixExample {
+  public static class SumInts implements Function2<Integer, Integer, Integer> {
+    public Integer call(Integer x, Integer y) {
+      return x + y;
+    }
+  }
 
   public static void main(String[] args) throws Exception {
 
@@ -91,7 +96,7 @@ public class ChapterSixExample {
           return b;
         }
       });
-    JavaPairRDD<String, Integer> contactCount = validCallSigns.mapToPair(
+    JavaPairRDD<String, Integer> contactCounts = validCallSigns.mapToPair(
       new PairFunction<String, String, Integer>() {
         public Tuple2<String, Integer> call(String callSign) {
           return new Tuple2(callSign, 1);
@@ -100,30 +105,27 @@ public class ChapterSixExample {
               return x + y;
             }});
     // Force evaluation so the counters are populated
-    contactCount.count();
+    contactCounts.count();
     if (invalidSignCount.value() < 0.1 * validSignCount.value()) {
-      contactCount.saveAsTextFile(outputDir + "/contactCount");
+      contactCounts.saveAsTextFile(outputDir + "/contactCount");
     } else {
       System.out.println("Too many errors " + invalidSignCount.value() +
                          " for " + validSignCount.value());
       System.exit(1);
     }
     // Read in the call sign table
-    // Lookup the countries for each call sign
-    String[] callSignTbl = loadCallSignTable();
-    final Broadcast<String[]> callSignsMap = sc.broadcast(callSignTbl);
-    JavaPairRDD<String, Integer> countryContactCount = contactCount.mapToPair(
+    // Lookup the countries for each call sign in the
+    // contactCounts RDD
+    final Broadcast<String[]> signPrefixes = sc.broadcast(loadCallSignTable());
+    JavaPairRDD<String, Integer> countryContactCounts = contactCounts.mapToPair(
       new PairFunction<Tuple2<String, Integer>, String, Integer> (){
         public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
           String sign = callSignCount._1();
-          String[] callSignInfo = callSignsMap.value();
+          String[] callSignInfo = signPrefixes.value();
           String country = lookupCountry(sign, callSignInfo);
           return new Tuple2(country, callSignCount._2());
-        }}).reduceByKey(new Function2<Integer, Integer, Integer>() {
-            public Integer call(Integer x, Integer y) {
-              return x + y;
-            }});
-    countryContactCount.saveAsTextFile(outputDir + "/countries.txt");
+        }}).reduceByKey(new SumInts());
+    countryContactCounts.saveAsTextFile(outputDir + "/countries.txt");
     // use mapPartitions to re-use setup work
     JavaPairRDD<String, QSO[]> contactsContactList = validCallSigns.mapPartitionsToPair(
       new PairFlatMapFunction<Iterator<String>, String, QSO[]>() {
