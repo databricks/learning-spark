@@ -64,20 +64,19 @@ else:
     print "Too many errors %d in %d" % (invalidSignCount.value, validSignCount.value)
 
 # Helper functions for looking up the call signs
-def lookupCountry(sign, keys, values):
-    pos = bisect.bisect_left(keys, sign)
-    return values[pos]
+def lookupCountry(sign, prefixes):
+    pos = bisect.bisect_left(prefixes, sign)
+    return prefixes[pos].split(",")[1]
+
 def loadCallSignTable():
     f = open("./files/callsign_tbl_sorted", "r")
-    callSignMap = map((lambda x: x.split(",")), f.readlines())
-    return zip(*callSignMap)
+    return f.readlines()
+
 # Lookup the locations of the call signs
-(callSignKeys, callSignLocations) = loadCallSignTable()
-keys = sc.broadcast(callSignKeys)
-values = sc.broadcast(callSignLocations)
+signPrefixes = sc.broadcast(loadCallSignTable())
 
 def processSignCount(sign_count):
-    country = lookupCountry(sign_count[0], keys.value, values.value)
+    country = lookupCountry(sign_count[0], signPrefixes.value)
     count = sign_count[1]
     return (country, count)
 
