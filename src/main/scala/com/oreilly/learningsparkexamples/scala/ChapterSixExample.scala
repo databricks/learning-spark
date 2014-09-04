@@ -119,7 +119,7 @@ object ChapterSixExample {
       // first we need to take our RDD of strings and turn it into doubles.
       val distanceDouble = distance.map(string => string.toDouble)
       val stats = distanceDouble.stats()
-      val stddev = math.sqrt(stats.variance)
+      val stddev = stats.stdev
       val mean = stats.mean
       val reasonableDistance = distanceDouble.filter(x => math.abs(x-mean) < 3 * stddev)
       println(reasonableDistance.collect().toList)

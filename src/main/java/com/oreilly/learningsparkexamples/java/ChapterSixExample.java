@@ -48,6 +48,21 @@ public class ChapterSixExample {
     }
   }
 
+  public static class VerifyQSOs implements Function<QSO[], QSO[]> {
+    public QSO[] call(QSO[] input) {
+      ArrayList<QSO> res = new ArrayList<QSO>();
+      if (input != null) {
+        for (QSO call: input) {
+          if (call != null && call.mylat != null && call.mylong != null
+              && call.contactlat != null && call.contactlong != null) {
+            res.add(call);
+          }
+        }
+      }
+      return res.toArray(new QSO[0]);
+    }
+  }
+
   public static void main(String[] args) throws Exception {
 
 		if (args.length != 4) {
@@ -127,7 +142,7 @@ public class ChapterSixExample {
         }}).reduceByKey(new SumInts());
     countryContactCounts.saveAsTextFile(outputDir + "/countries.txt");
     // use mapPartitions to re-use setup work
-    JavaPairRDD<String, QSO[]> contactsContactList = validCallSigns.mapPartitionsToPair(
+    JavaPairRDD<String, QSO[]> contactsContactLists = validCallSigns.mapPartitionsToPair(
       new PairFlatMapFunction<Iterator<String>, String, QSO[]>() {
         public Iterable<Tuple2<String, QSO[]>> call(Iterator<String> input) {
           ArrayList<Tuple2<String, QSO[]>> callsignQsos =
@@ -158,34 +173,25 @@ public class ChapterSixExample {
           }
           return callsignQsos;
         }});
-    System.out.println(StringUtils.join(contactsContactList.collect(), ","));
+    System.out.println(StringUtils.join(contactsContactLists.collect(), ","));
     // Computer the distance of each call using an external R program
     // adds our script to a list of files for each node to download with this job
     String distScript = "./src/R/finddistance.R";
     String distScriptName = "finddistance.R";
     sc.addFile(distScript);
-    JavaRDD<String> pipeInputs = contactsContactList.values().flatMap(
+    JavaRDD<String> pipeInputs = contactsContactLists.values().map(new VerifyQSOs()).flatMap(
       new FlatMapFunction<QSO[], String>() { public Iterable<String> call(QSO[] calls) {
           ArrayList<String> latLons = new ArrayList<String>();
-          if (calls == null) {
-            return latLons;
-          }
           for (QSO call: calls) {
-            if (call != null && call.mylat != null && call.mylong != null
-                && call.contactlat != null && call.contactlong != null) {
-              latLons.add(call.mylat + "," + call.mylong +
-                          "," + call.contactlat + "," + call.contactlong);
-            }
+            latLons.add(call.mylat + "," + call.mylong +
+                        "," + call.contactlat + "," + call.contactlong);
           }
           return latLons;
         }
       });
-    HashMap<String, String> argMap = new HashMap<String, String>();
-    argMap.put("SEPARATOR", ",");
     ArrayList<String> command = new ArrayList<String>();
     command.add(SparkFiles.get(distScriptName));
-    JavaRDD<String> distance = pipeInputs.pipe(command,
-                                               argMap);
+    JavaRDD<String> distance = pipeInputs.pipe(command);
     // First we need to convert our RDD of String to a DoubleRDD so we can
     // access the stats function
     JavaDoubleRDD distanceDouble = distance.mapToDouble(new DoubleFunction<String>() {
@@ -193,7 +199,7 @@ public class ChapterSixExample {
           return Double.parseDouble(value);
         }});
     final StatCounter stats = distanceDouble.stats();
-    final Double stddev = Math.sqrt(stats.variance());
+    final Double stddev = stats.stdev();
     final Double mean = stats.mean();
     JavaDoubleRDD reasonableDistance =
       distanceDouble.filter(new Function<Double, Boolean>() {

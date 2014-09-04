@@ -90,7 +90,7 @@ countryContactCounts.saveAsTextFile(outputDir + "/countries.txt")
 # Query 73s for the call signs QSOs and parse the personse
 
 def processCallSigns(signs):
-    """Process call signs using a connection pool"""
+    """Lookup call signs using a connection pool"""
     http = urllib3.PoolManager()
     urls = map(lambda x: "http://73s.com/qsos/%s.json" % x, signs)
     requests = map(lambda x : (x, http.request('GET', x)), urls)
@@ -127,7 +127,7 @@ print distances
 # remove the outliers.
 distanceNumeric = distance.map(lambda string: float(string))
 stats = distanceNumeric.stats()
-stddev = math.sqrt(stats.variance())
+stddev = stats.stdev()
 mean = distanceNumeric.mean()
 reasonableDistnace = distanceNumeric.filter(lambda x: math.fabs(x - mean) < 3 * stddev)
 print reasonableDistnace.collect()
