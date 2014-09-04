@@ -119,15 +119,13 @@ def formatCall(call):
 
 pipeInputs = contactsContactList.values().flatMap(
     lambda calls: map(formatCall, filter(hasDistInfo, calls)))
-distance = pipeInputs.pipe(SparkFiles.get(distScriptName),
-                           env={"SEPARATOR" : ","})
-distances = distance.collect()
-print distances
+distances = pipeInputs.pipe(SparkFiles.get(distScriptName))
+print distances.collect()
 # Convert our RDD of strings to numeric data so we can compute stats and
 # remove the outliers.
-distanceNumeric = distance.map(lambda string: float(string))
-stats = distanceNumeric.stats()
+distanceNumerics = distances.map(lambda string: float(string))
+stats = distanceNumerics.stats()
 stddev = stats.stdev()
-mean = distanceNumeric.mean()
-reasonableDistnace = distanceNumeric.filter(lambda x: math.fabs(x - mean) < 3 * stddev)
+mean = stats.mean()
+reasonableDistances = distanceNumerics.filter(lambda x: math.fabs(x - mean) < 3 * stddev)
 print reasonableDistnace.collect()
