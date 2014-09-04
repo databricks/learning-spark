@@ -149,25 +149,20 @@ public class ChapterSixExample {
             new ArrayList<Tuple2<String, QSO[]>>();
           ArrayList<Tuple2<String, ContentExchange>> ccea =
             new ArrayList<Tuple2<String, ContentExchange>>();
-          ObjectMapper mapper = new ObjectMapper();
-          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+          ObjectMapper mapper = createMapper();
           HttpClient client = new HttpClient();
           try {
             client.start();
             while (input.hasNext()) {
-              ContentExchange exchange = new ContentExchange(true);
               String sign = input.next();
-              exchange.setURL("http://new73s.herokuapp.com/qsos/" + input.next() + ".json");
+              ContentExchange exchange = createExchangeForSign(sign);
               client.send(exchange);
               ccea.add(new Tuple2(sign, exchange));
             }
             for (Tuple2<String, ContentExchange> signExchange : ccea) {
               String sign = signExchange._1();
               ContentExchange exchange = signExchange._2();
-              exchange.waitForDone();
-              String responseJson = exchange.getResponseContent();
-              QSO[] qsos = mapper.readValue(responseJson, QSO[].class);
-              callsignQsos.add(new Tuple2(sign, qsos));
+              callsignQsos.add(new Tuple2(sign, readExchangeQSO(mapper, exchange)));
             }
           } catch (Exception e) {
           }
@@ -204,6 +199,24 @@ public class ChapterSixExample {
         public Boolean call(Double x) {
           return (Math.abs(x-mean) < 3 * stddev);}});
     System.out.println(StringUtils.join(reasonableDistance.collect(), ","));
+  }
+
+  static QSO[] readExchangeQSO(ObjectMapper mapper, ContentExchange exchange) throws Exception {
+    exchange.waitForDone();
+    String responseJson = exchange.getResponseContent();
+    QSO[] qsos = mapper.readValue(responseJson, QSO[].class);
+    return qsos;
+  }
+
+  static ContentExchange createExchangeForSign(String sign) {
+    ContentExchange exchange = new ContentExchange(true);
+    exchange.setURL("http://new73s.herokuapp.com/qsos/" + sign + ".json");
+    return exchange;
+  }
+  static ObjectMapper createMapper() {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    return mapper;
   }
 
   static String[] loadCallSignTable() throws FileNotFoundException {

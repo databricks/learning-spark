@@ -88,20 +88,12 @@ object ChapterSixExample {
       val client = new HttpClient()
       client.start()
       signs.map {sign =>
-        val exchange = new ContentExchange(true);
-        exchange.setURL(s"http://new73s.herokuapp.com/qsos/${sign}.json")
+        val exchange = createExchangeForSign(sign)
         client.send(exchange)
         (sign, exchange)
       }.map{ case (sign, exchange) =>
-          exchange.waitForDone();
-          val responseJson = exchange.getResponseContent()
-          try {
-            val qsos = mapper.readValue(responseJson, classOf[Array[QSO]])
-            (sign, qsos)
-          } catch {
-            case e: Exception => null
-          }
-      }.filter(x => x != null && x._2 != null)
+          (sign, readExchangeQSO(mapper, exchange))
+      }.filter(x => x._2 != null)
     }
     println(contactsContactList.collect().toList)
     // Computer the distance of each call using an external R program
@@ -121,6 +113,19 @@ object ChapterSixExample {
     val mean = stats.mean
     val reasonableDistance = distanceDouble.filter(x => math.abs(x-mean) < 3 * stddev)
     println(reasonableDistance.collect().toList)
+  }
+
+  def createExchangeForSign(sign: String): ContentExchange = {
+    val exchange = new ContentExchange()
+    exchange.setURL(s"http://new73s.herokuapp.com/qsos/${sign}.json")
+    exchange
+  }
+
+  def readExchangeQSO(mapper: ObjectMapper, exchange: ContentExchange): Array[QSO] = {
+    exchange.waitForDone()
+    val responseJson = exchange.getResponseContent()
+    val qsos = mapper.readValue(responseJson, classOf[Array[QSO]])
+    qsos
   }
 
   def lookupInArray(sign: String, prefixArray: Array[String]): String = {
