@@ -58,23 +58,23 @@ object ChapterSixExample {
           invalidSignCount += 1; false
         }
       }
-      val contactCount = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
+      val contactCounts = validSigns.map(callSign => (callSign, 1)).reduceByKey((x, y) => x + y)
       // Force evaluation so the counters are populated
-      contactCount.count()
+      contactCounts.count()
       if (invalidSignCount.value < 0.5 * validSignCount.value) {
-        contactCount.saveAsTextFile(outputDir + "/output.txt")
+        contactCounts.saveAsTextFile(outputDir + "/output.txt")
       } else {
         println(s"Too many errors ${invalidSignCount.value} for ${validSignCount.value}")
         exit(1)
       }
-      // Lookup the countries for each call sign for our
-      // contactCount RDD
+      // Lookup the countries for each call sign for the
+      // contactCounts RDD
       val signPrefixes = sc.broadcast(loadCallSignTable())
-      val countryContactCount = contactCount.map{case (sign, count) =>
+      val countryContactCounts = contactCounts.map{case (sign, count) =>
         val country = lookupInArray(sign, signPrefixes.value)
         (country, count)
       }.reduceByKey((x, y) => x + y)
-      countryContactCount.saveAsTextFile(outputDir + "/countries.txt")
+      countryContactCounts.saveAsTextFile(outputDir + "/countries.txt")
       // Resolve call signs in a second file to location
       val countryCounts2 = sc.textFile(inputFile2)
         .flatMap(_.split("\\s+"))      // Split line into words
