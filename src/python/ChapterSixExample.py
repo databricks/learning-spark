@@ -1,4 +1,5 @@
-"""Contains the Chapter 6 Example illustrating accumulators, broadcast variables, numeric operations, and pipe."""
+"""Contains the Chapter 6 Example illustrating accumulators, broadcast
+variables, numeric operations, and pipe."""
 import bisect
 import re
 import sys
@@ -66,7 +67,8 @@ contactCounts.count()
 if invalidSignCount.value < 0.1 * validSignCount.value:
     contactCounts.saveAsTextFile(outputDir + "/contactCount")
 else:
-    print "Too many errors %d in %d" % (invalidSignCount.value, validSignCount.value)
+    print ("Too many errors %d in %d" %
+           (invalidSignCount.value, validSignCount.value))
 
 # Helper functions for looking up the call signs
 

@@ -1,7 +1,8 @@
 """
 >>> from pyspark.context import SparkContext
 >>> sc = SparkContext('local', 'test')
->>> b = sc.parallelize([("coffee", 1), ("pandas", 2), ("coffee", 3), ("very", 4)])
+>>> input = [("coffee", 1), ("pandas", 2), ("coffee", 3), ("very", 4)]
+>>> b = sc.parallelize(input)
 >>> perKeyAvg(b)
 
 """

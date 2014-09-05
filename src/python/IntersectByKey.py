@@ -1,7 +1,8 @@
 """
 >>> from pyspark.context import SparkContext
 >>> sc = SparkContext('local', 'test')
->>> rdd1 = sc.parallelize([("coffee", 1), ("pandas", 2), ("coffee", 3), ("very", 4)])
+>>> input = [("coffee", 1), ("pandas", 2), ("coffee", 3), ("very", 4)]
+>>> rdd1 = sc.parallelize(input)
 >>> rdd2 = sc.parallelize([("pandas", 20)])
 >>> intserectByKey(rdd1, rdd2).collect()
 [('pandas', 2), ('pandas', 20)]
