@@ -11,4 +11,3 @@ if __name__ == "__main__":
     result = lines.flatMap(lambda x: x.split(" ")).countByValue()
     for key, value in result.iteritems():
         print "%s %i" % (key, value)
-

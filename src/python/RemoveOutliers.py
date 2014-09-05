@@ -11,6 +11,7 @@ import math
 
 from pyspark import SparkContext
 
+
 def removeOutliers(nums):
     """Remove the outliers"""
     stats = nums.stats()

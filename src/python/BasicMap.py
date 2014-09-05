@@ -10,6 +10,7 @@ import sys
 
 from pyspark import SparkContext
 
+
 def basicSquare(nums):
     """Square the numbers"""
     return nums.map(lambda x: x * x)
@@ -23,4 +24,3 @@ if __name__ == "__main__":
     output = sorted(basicSquare(nums).collect())
     for num in output:
         print "%i " % (num)
-

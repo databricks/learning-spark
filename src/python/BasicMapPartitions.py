@@ -11,15 +11,18 @@ import urllib3
 
 from pyspark import SparkContext
 
+
 def processCallSigns(signs):
     """Process call signs"""
     http = urllib3.PoolManager()
-    requests = map(lambda x : http.request('GET', "http://qrzcq.com/call/" + x), signs)
-    return map(lambda x : x.data, requests)
+    requests = map(
+        lambda x: http.request('GET', "http://qrzcq.com/call/" + x), signs)
+    return map(lambda x: x.data, requests)
+
 
 def fetchCallSigns(input):
     """Fetch call signs"""
-    return input.mapPartitions(lambda callSigns : processCallSigns(callSigns))
+    return input.mapPartitions(lambda callSigns: processCallSigns(callSigns))
 
 if __name__ == "__main__":
     master = "local"
@@ -30,4 +33,3 @@ if __name__ == "__main__":
     output = sorted(fetchCallSigns(input).collect())
     for str in output:
         print "%s " % (str)
-

@@ -1,4 +1,5 @@
-# A simple hive demo. If you do not have a table to load from look run MakeHiveTable.py
+# A simple hive demo. If you do not have a table to load from look run
+# MakeHiveTable.py
 from pyspark import SparkContext
 from pyspark.sql import HiveContext
 import json

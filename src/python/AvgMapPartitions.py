@@ -10,6 +10,7 @@ import sys
 
 from pyspark import SparkContext
 
+
 def partitionCtr(nums):
     """Compute sumCounter for partition"""
     sumCount = [0, 0]
@@ -18,8 +19,10 @@ def partitionCtr(nums):
         sumCount[1] += 1
     return [sumCount]
 
+
 def combineCtrs(c1, c2):
     return (c1[0] + c2[0], c1[1] + c2[1])
+
 
 def basicAvg(nums):
     """Compute the avg"""
@@ -34,4 +37,3 @@ if __name__ == "__main__":
     nums = sc.parallelize([1, 2, 3, 4])
     avg = basicAvg(nums)
     print avg
-

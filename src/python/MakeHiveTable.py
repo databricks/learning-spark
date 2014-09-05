@@ -1,5 +1,6 @@
 # Createas a hive table and loads an input file into it
-# For input you can use examples/src/main/resources/kv1.txt from the spark distribution
+# For input you can use examples/src/main/resources/kv1.txt from the spark
+# distribution
 from pyspark import SparkContext
 from pyspark.sql import HiveContext
 import json
@@ -15,5 +16,7 @@ if __name__ == "__main__":
     sc = SparkContext(master, "LoadHive")
     hiveCtx = HiveContext(sc)
     # Load some data into hive
-    hiveCtx.hql("CREATE TABLE IF NOT EXISTS " + inputTable + " (key INT, value STRING)")
-    hiveCtx.hql("LOAD DATA LOCAL INPATH '" + inputFile + "' INTO TABLE " + inputTable)
+    hiveCtx.hql(
+        "CREATE TABLE IF NOT EXISTS " + inputTable + " (key INT, value STRING)")
+    hiveCtx.hql(
+        "LOAD DATA LOCAL INPATH '" + inputFile + "' INTO TABLE " + inputTable)

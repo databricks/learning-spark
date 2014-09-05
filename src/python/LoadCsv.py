@@ -3,17 +3,20 @@ import csv
 import sys
 import StringIO
 
+
 def loadRecord(line):
     """Parse a CSV line"""
     input = StringIO.StringIO(line)
     reader = csv.DictReader(input, fieldnames=["name", "favouriteAnimal"])
     return reader.next()
 
+
 def loadRecords(fileNameContents):
     """Load all the records in a given file"""
     input = StringIO.StringIO(fileNameContents[1])
     reader = csv.DictReader(input, fieldnames=["name", "favouriteAnimal"])
     return reader
+
 
 def writeRecords(records):
     """Write out CSV lines"""
@@ -38,7 +41,9 @@ if __name__ == "__main__":
     pandaLovers.mapPartitions(writeRecords).saveAsTextFile(outputFile)
     # Try the more whole file input
     fullFileData = sc.wholeTextFiles(inputFile).flatMap(loadRecords)
-    fullFilePandaLovers = fullFileData.filter(lambda x: x['favouriteAnimal'] == "panda")
-    fullFilePandaLovers.mapPartitions(writeRecords).saveAsTextFile(outputFile+"fullfile")
+    fullFilePandaLovers = fullFileData.filter(
+        lambda x: x['favouriteAnimal'] == "panda")
+    fullFilePandaLovers.mapPartitions(
+        writeRecords).saveAsTextFile(outputFile + "fullfile")
     sc.stop()
     print "Done!"

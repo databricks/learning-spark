@@ -10,6 +10,7 @@ import sys
 
 from pyspark import SparkContext
 
+
 def basicSum(nums):
     """Sum the numbers"""
     return nums.fold(0, (lambda x, y: x + y))
@@ -22,4 +23,3 @@ if __name__ == "__main__":
     nums = sc.parallelize([1, 2, 3, 4])
     output = basicSum(nums)
     print output
-
