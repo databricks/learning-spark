@@ -17,6 +17,8 @@ if __name__ == "__main__":
     hiveCtx = HiveContext(sc)
     # Load some data into hive
     hiveCtx.hql(
-        "CREATE TABLE IF NOT EXISTS " + inputTable + " (key INT, value STRING)")
+        "CREATE TABLE IF NOT EXISTS " +
+        inputTable +
+        " (key INT, value STRING)")
     hiveCtx.hql(
         "LOAD DATA LOCAL INPATH '" + inputFile + "' INTO TABLE " + inputTable)

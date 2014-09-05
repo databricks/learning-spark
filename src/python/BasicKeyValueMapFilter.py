@@ -13,7 +13,12 @@ from pyspark import SparkContext
 
 def basicKeyValueMapFilter(input):
     """Construct a key/value RDD and then filter on the value"""
-    return input.map(lambda x: (x.split(" ")[0], x)).filter(lambda x: len(x[1]) < 20)
+    return input.map(
+        lambda x: (
+            x.split(" ")[0],
+            x)).filter(
+        lambda x: len(
+            x[1]) < 20)
 
 if __name__ == "__main__":
     master = "local"
