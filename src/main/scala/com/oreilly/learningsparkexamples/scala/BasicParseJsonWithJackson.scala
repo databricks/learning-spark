@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 
 
 
-case class Person(name: String, lovesPandas: Boolean)
+case class Person(name: String, lovesPandas: Boolean) // Note: must be a top level class
 
 object BasicParseJsonWithJackson {
 
@@ -27,19 +27,19 @@ object BasicParseJsonWithJackson {
     val outputFile = args(2)
     val sc = new SparkContext(master, "BasicParseJsonWithJackson", System.getenv("SPARK_HOME"))
     val input = sc.textFile(inputFile)
-    // We use asOpt combined with flatMap so that if it fails to parse we
-    // get back a None and the flatMap essentially skips the result.
     val mapper = new ObjectMapper with ScalaObjectMapper
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.registerModule(DefaultScalaModule)
+    // Parse it into a specific case class. We use flatMap to handle errors
+    // by returning an empty list (None) if we encounter an issue and a
+    // list with one element if everything is ok (Some(_)).
     val result = input.flatMap(record => {
       try {
-        val person = mapper.readValue(record, classOf[Person])
-        Some(person)
+        Some(mapper.readValue(record, classOf[Person]))
       } catch {
         case e: Exception => None
-      }
-      })
-    result.filter(_.lovesPandas).map(mapper.writeValueAsString(_)).saveAsTextFile(outputFile)
+      }})
+    result.filter(_.lovesPandas).map(mapper.writeValueAsString(_))
+      .saveAsTextFile(outputFile)
     }
 }
