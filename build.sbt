@@ -27,7 +27,9 @@ libraryDependencies ++= Seq(
   "com.twitter.elephantbird" % "elephant-bird" % "4.5",
   "com.twitter.elephantbird" % "elephant-bird-core" % "4.5",
   "com.hadoop.gplcompression" % "hadoop-lzo" % "0.4.17",
-  "mysql" % "mysql-connector-java" % "5.1.31"
+  "mysql" % "mysql-connector-java" % "5.1.31",
+  "com.datastax.spark" %% "spark-cassandra-connector" % "1.0.0-rc5",
+  "com.datastax.spark" %% "spark-cassandra-connector-java" % "1.0.0-rc5"
 )
 
 resolvers ++= Seq(
