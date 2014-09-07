@@ -10,6 +10,11 @@ install:
   - ./travis-tool.sh install_deps
 before_script:
    - sudo apt-get install protobuf-compiler
+   # Set up cassandra
+   -  echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+   - curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+   - sudo apt-get update && sudo apt-get install 
+   - sudo apt-get install dsc20
 script:
   # Download spark 1.0.2
   - "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.0.2-bin-hadoop2.tgz"

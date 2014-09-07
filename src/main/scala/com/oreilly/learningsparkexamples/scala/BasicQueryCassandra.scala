@@ -1,0 +1,26 @@
+/**
+ * A simple illustration of querying Cassandra
+ */
+package com.oreilly.learningsparkexamples.scala
+
+import org.apache.spark._
+import org.apache.spark.SparkContext._
+// Implicits that add functions to the SparkContext & RDDs.
+import com.datastax.spark.connector._
+
+
+object BasicQueryCassandra {
+    def main(args: Array[String]) {
+      val sparkMaster = args(0)
+      val cassandraHost = args(1)
+      val conf = new SparkConf(true)
+        .set("spark.cassandra.connection.host", cassandraHost)
+      val sc = new SparkContext(sparkMaster, "BasicQueryCassandra", conf)
+      // entire table as an RDD
+      // assumes your table test was created as CREATE TABLE test.kv(key text PRIMARY KEY, value int);
+      val data = sc.cassandraTable("test" , "kv")
+      // print some basic stats
+      data.map(row => row.getInt("value")).stats()
+
+    }
+}
