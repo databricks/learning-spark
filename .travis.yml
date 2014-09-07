@@ -14,7 +14,7 @@ before_script:
    -  echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
    - curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
    - sudo apt-get update
-   - sudo apt-get install -y dsc20
+   - sudo apt-get install -y --force-yes dsc20
 script:
   # Download spark 1.0.2
   - "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.0.2-bin-hadoop2.tgz"
