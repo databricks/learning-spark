@@ -12,6 +12,8 @@ ASSEMBLY_JAR=./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar
 rm -rf /tmp/py/
 rm -rf /tmp/java/
 rm -rf /tmp/scala
+# setup cassandra
+cqlsh --file ./files/cqlsh_setup
 # R
 echo "Running R programs"
 chmod a+x ./src/R/finddistance.R 
