@@ -35,6 +35,8 @@ $SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
 # Scala
 echo "Running Scala programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  ./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra local localhost
+
 
 # Java
 echo "Running Java programs"
