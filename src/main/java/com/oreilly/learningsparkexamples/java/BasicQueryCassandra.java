@@ -2,6 +2,7 @@
  * Illustrates loading a json file and finding out if people like pandas
  */
 package com.oreilly.learningsparkexamples.java;
+import java.io.Serializable;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -42,7 +43,35 @@ public class BasicQueryCassandra {
         public double call(CassandraRow row) {
           return row.getInt("value");
         }}).stats());
-
+    // write some basic data to Cassandra
+    ArrayList<KeyValue> input = new ArrayList<KeyValue>();
+    input.add(new KeyValue("mostmagic", 3));
+    JavaRDD<KeyValue> kvRDD = sc.parallelize(input);
+    javaFunctions(kvRDD, KeyValue.class).saveToCassandra("kv", "test");
 	}
+}
+
+class KeyValue implements Serializable {
+  public String key;
+  public Integer value;
+  public KeyValue(String key_, Integer value_) {
+    key = key_;
+    value = value_;
+  }
+  
+  public Integer getValue() {
+    return value;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public void setValue(Integer v) {
+    this.value = v;
+  }
+  public void setKey(String k) {
+    this.key = k;
+  }
 }
 
