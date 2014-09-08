@@ -20,8 +20,8 @@ object BasicQueryCassandra {
       // assumes your table test was created as CREATE TABLE test.kv(key text PRIMARY KEY, value int);
       val data = sc.cassandraTable("test" , "kv")
       // print some basic stats
-      data.map(row => row.getInt("value")).stats()
-      val rdd = sc.parallelize(List(List("moremagic", 1)))
+      println("stats "+data.map(row => row.getInt("value")).stats())
+      val rdd = sc.parallelize(List(("moremagic", 1)))
       rdd.saveToCassandra("test" , "kv", SomeColumns("key", "value"))
     }
 }
