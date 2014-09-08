@@ -47,7 +47,7 @@ public class BasicQueryCassandra {
     ArrayList<KeyValue> input = new ArrayList<KeyValue>();
     input.add(new KeyValue("mostmagic", 3));
     JavaRDD<KeyValue> kvRDD = sc.parallelize(input);
-    javaFunctions(kvRDD, KeyValue.class).saveToCassandra("kv", "test");
+    javaFunctions(kvRDD, KeyValue.class).saveToCassandra("test", "kv");
 	}
 }
 
