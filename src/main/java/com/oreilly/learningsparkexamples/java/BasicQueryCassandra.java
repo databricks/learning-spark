@@ -54,6 +54,10 @@ public class BasicQueryCassandra {
 class KeyValue implements Serializable {
   public String key;
   public Integer value;
+
+  public KeyValue() {
+  }
+
   public KeyValue(String key_, Integer value_) {
     key = key_;
     value = value_;
