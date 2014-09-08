@@ -45,7 +45,7 @@ public class BasicQueryCassandra {
         }}).stats());
     // write some basic data to Cassandra
     ArrayList<KeyValue> input = new ArrayList<KeyValue>();
-    input.add(new KeyValue("mostmagic", 3));
+    input.add(KeyValue.newInstance("mostmagic", 3));
     JavaRDD<KeyValue> kvRDD = sc.parallelize(input);
     javaFunctions(kvRDD, KeyValue.class).saveToCassandra("test", "kv");
 	}
@@ -58,9 +58,11 @@ class KeyValue implements Serializable {
   public KeyValue() {
   }
 
-  public KeyValue(String key_, Integer value_) {
-    key = key_;
-    value = value_;
+  public static KeyValue newInstance(String k, Integer v) {
+    KeyValue kv = new KeyValue();
+    kv.setKey(k);
+    kv.setValue(v);
+    return kv;
   }
 
   public Integer getValue() {
