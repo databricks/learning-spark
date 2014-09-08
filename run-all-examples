@@ -7,10 +7,13 @@ set -e
 # Build everything
 ./sbt/sbt compile package assembly
 SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
+ASSEMBLY_JAR=./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar
 # Mini cleanup
 rm -rf /tmp/py/
 rm -rf /tmp/java/
 rm -rf /tmp/scala
+# setup cassandra
+cqlsh --file ./files/cqlsh_setup
 # R
 echo "Running R programs"
 chmod a+x ./src/R/finddistance.R 
@@ -34,8 +37,10 @@ $SPARK_SUBMIT_SCRIPT ./src/python/RemoveOutliers.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
 # Scala
 echo "Running Scala programs"
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  ./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
+
 
 # Java
 echo "Running Java programs"
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample  ./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar local ./files/callsigns ./files/callsigns /tmp/java/ch6out
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/java/ch6out

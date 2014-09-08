@@ -21,6 +21,7 @@ object BasicQueryCassandra {
       val data = sc.cassandraTable("test" , "kv")
       // print some basic stats
       data.map(row => row.getInt("value")).stats()
-
+      val rdd = sc.parallelize(List(Seq("moremagic", 1)))
+      rdd.saveToCassandra("test" , "kv", SomeColumns("key", "value"))
     }
 }
