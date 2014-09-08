@@ -22,6 +22,11 @@ object BasicQueryCassandra {
       // print some basic stats
       println("stats "+data.map(row => row.getInt("value")).stats())
       val rdd = sc.parallelize(List(("moremagic", 1)))
-      rdd.saveToCassandra("test" , "kv")
+      rdd.saveToCassandra("test" , "kv", SomeColumns("key", "value"))
+      // save from a case class
+      val otherRdd = sc.parallelize(List(KeyValue("magic", 0)))
+      otherRdd.saveToCassandra("test", "kv")
     }
 }
+
+case class KeyValue(key: String, value: Integer)
