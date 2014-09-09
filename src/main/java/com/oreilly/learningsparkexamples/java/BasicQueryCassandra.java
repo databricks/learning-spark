@@ -49,32 +49,31 @@ public class BasicQueryCassandra {
     JavaRDD<KeyValue> kvRDD = sc.parallelize(input);
     javaFunctions(kvRDD, KeyValue.class).saveToCassandra("test", "kv");
 	}
+  public static class KeyValue implements Serializable {
+    private String key;
+    private Integer value;
+
+    public static KeyValue newInstance(String k, Integer v) {
+      KeyValue kv = new KeyValue();
+      kv.setKey(k);
+      kv.setValue(v);
+      return kv;
+    }
+
+    public Integer getValue() {
+      return value;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public void setValue(Integer v) {
+      this.value = v;
+    }
+    public void setKey(String k) {
+      this.key = k;
+    }
+  }
+
 }
-
-class KeyValue implements Serializable {
-  private String key;
-  private Integer value;
-
-  public static KeyValue newInstance(String k, Integer v) {
-    KeyValue kv = new KeyValue();
-    kv.setKey(k);
-    kv.setValue(v);
-    return kv;
-  }
-
-  public Integer getValue() {
-    return value;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setValue(Integer v) {
-    this.value = v;
-  }
-  public void setKey(String k) {
-    this.key = k;
-  }
-}
-
