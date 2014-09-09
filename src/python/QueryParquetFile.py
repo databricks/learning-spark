@@ -21,6 +21,6 @@ if __name__ == "__main__":
     print names.collect()
     # Find the panda lovers
     tbl = rows.registerAsTable("people")
-    pandaLovers = sqlCtx.sql("SELECT name FROM people WHERE favouriteAnimal = \"panda\"")
-    print "Panda lovers"
-    print pandaLovers.map(lambda row: row.name).collect()
+    pandaFriends = sqlCtx.sql("SELECT name FROM people WHERE favouriteAnimal = \"panda\"")
+    print "Panda Friends"
+    print pandaFriends.map(lambda row: row.name).collect()
