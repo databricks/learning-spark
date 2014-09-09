@@ -35,6 +35,8 @@ $SPARK_SUBMIT_SCRIPT ./src/python/LoadJson.py local ./files/pandainfo.json /tmp/
 $SPARK_SUBMIT_SCRIPT ./src/python/PerKeyAvg.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/RemoveOutliers.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
+$SPARK_SUBMIT_SCRIPT ./src/python/MakeParquetFile.py local ./files/favourite_animals.csv /tmp/py/favouriteanimal_parquet
+$SPARK_SUBMIT_SCRIPT ./src/python/QueryParquetFile.py local /tmp/py/favouriteanimal_parquet
 # Scala
 echo "Running Scala programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
