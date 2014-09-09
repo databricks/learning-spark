@@ -52,32 +52,18 @@ public class BasicQueryCassandra {
 }
 
 class KeyValue implements Serializable {
-  private String key;
-  private Integer value;
+  public String key;
+  public Integer value;
 
   public KeyValue() {
   }
 
   public static KeyValue newInstance(String k, Integer v) {
     KeyValue kv = new KeyValue();
-    kv.setKey(k);
-    kv.setValue(v);
+    kv.key = k;
+    kv.value = v;
     return kv;
   }
 
-  public Integer getValue() {
-    return value;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setValue(Integer v) {
-    this.value = v;
-  }
-  public void setKey(String k) {
-    this.key = k;
-  }
 }
 
