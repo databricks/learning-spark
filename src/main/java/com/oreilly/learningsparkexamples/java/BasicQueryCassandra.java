@@ -60,10 +60,10 @@ public class BasicQueryCassandra {
       kv.value = v;
       return kv;
     }
-    public getKey() {
+    public String getKey() {
       return key;
     }
-    public getValue() {
+    public Integer getValue() {
       return value;
     }
   }
