@@ -48,18 +48,18 @@ public class ChapterSixExample {
     }
   }
 
-  public static class VerifyQSOs implements Function<QSO[], QSO[]> {
-    public QSO[] call(QSO[] input) {
-      ArrayList<QSO> res = new ArrayList<QSO>();
+  public static class VerifyCallLogs implements Function<CallLog[], CallLog[]> {
+    public CallLog[] call(CallLog[] input) {
+      ArrayList<CallLog> res = new ArrayList<CallLog>();
       if (input != null) {
-        for (QSO call: input) {
+        for (CallLog call: input) {
           if (call != null && call.mylat != null && call.mylong != null
               && call.contactlat != null && call.contactlong != null) {
             res.add(call);
           }
         }
       }
-      return res.toArray(new QSO[0]);
+      return res.toArray(new CallLog[0]);
     }
   }
 
@@ -142,11 +142,11 @@ public class ChapterSixExample {
         }}).reduceByKey(new SumInts());
     countryContactCounts.saveAsTextFile(outputDir + "/countries.txt");
     // use mapPartitions to re-use setup work
-    JavaPairRDD<String, QSO[]> contactsContactLists = validCallSigns.mapPartitionsToPair(
-      new PairFlatMapFunction<Iterator<String>, String, QSO[]>() {
-        public Iterable<Tuple2<String, QSO[]>> call(Iterator<String> input) {
-          ArrayList<Tuple2<String, QSO[]>> callsignQsos =
-            new ArrayList<Tuple2<String, QSO[]>>();
+    JavaPairRDD<String, CallLog[]> contactsContactLists = validCallSigns.mapPartitionsToPair(
+      new PairFlatMapFunction<Iterator<String>, String, CallLog[]>() {
+        public Iterable<Tuple2<String, CallLog[]>> call(Iterator<String> input) {
+          ArrayList<Tuple2<String, CallLog[]>> callsignQsos =
+            new ArrayList<Tuple2<String, CallLog[]>>();
           ArrayList<Tuple2<String, ContentExchange>> ccea =
             new ArrayList<Tuple2<String, ContentExchange>>();
           ObjectMapper mapper = createMapper();
@@ -162,7 +162,7 @@ public class ChapterSixExample {
             for (Tuple2<String, ContentExchange> signExchange : ccea) {
               String sign = signExchange._1();
               ContentExchange exchange = signExchange._2();
-              callsignQsos.add(new Tuple2(sign, readExchangeQSO(mapper, exchange)));
+              callsignQsos.add(new Tuple2(sign, readExchangeCallLog(mapper, exchange)));
             }
           } catch (Exception e) {
           }
@@ -174,10 +174,10 @@ public class ChapterSixExample {
     String distScript = "./src/R/finddistance.R";
     String distScriptName = "finddistance.R";
     sc.addFile(distScript);
-    JavaRDD<String> pipeInputs = contactsContactLists.values().map(new VerifyQSOs()).flatMap(
-      new FlatMapFunction<QSO[], String>() { public Iterable<String> call(QSO[] calls) {
+    JavaRDD<String> pipeInputs = contactsContactLists.values().map(new VerifyCallLogs()).flatMap(
+      new FlatMapFunction<CallLog[], String>() { public Iterable<String> call(CallLog[] calls) {
           ArrayList<String> latLons = new ArrayList<String>();
-          for (QSO call: calls) {
+          for (CallLog call: calls) {
             latLons.add(call.mylat + "," + call.mylong +
                         "," + call.contactlat + "," + call.contactlong);
           }
@@ -201,10 +201,10 @@ public class ChapterSixExample {
     System.out.println(StringUtils.join(reasonableDistances.collect(), ","));
   }
 
-  static QSO[] readExchangeQSO(ObjectMapper mapper, ContentExchange exchange) throws Exception {
+  static CallLog[] readExchangeCallLog(ObjectMapper mapper, ContentExchange exchange) throws Exception {
     exchange.waitForDone();
     String responseJson = exchange.getResponseContent();
-    QSO[] qsos = mapper.readValue(responseJson, QSO[].class);
+    CallLog[] qsos = mapper.readValue(responseJson, CallLog[].class);
     return qsos;
   }
 
