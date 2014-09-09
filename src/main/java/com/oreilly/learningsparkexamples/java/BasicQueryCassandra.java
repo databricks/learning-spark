@@ -55,9 +55,6 @@ class KeyValue implements Serializable {
   private String key;
   private Integer value;
 
-  public KeyValue() {
-  }
-
   public static KeyValue newInstance(String k, Integer v) {
     KeyValue kv = new KeyValue();
     kv.setKey(k);
