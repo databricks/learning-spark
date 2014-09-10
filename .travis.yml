@@ -25,3 +25,8 @@ script:
   - sudo pip install urllib3
   - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
   - "./run-all-examples"
+  # Now do our mini example
+  - cd mini-complete-example
+  - ./sbt/sbt clean compile package assembly
+  - ./sbt/sbt clean
+  - mvn clean && mvn package

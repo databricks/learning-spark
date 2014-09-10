@@ -10,11 +10,7 @@ scalaVersion := "2.10.4"
 
 // additional libraries
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "1.0.2",
-)
-
-resolvers ++= Seq(
-
+  "org.apache.spark" %% "spark-core" % "1.0.2"
 )
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
