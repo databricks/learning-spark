@@ -47,3 +47,6 @@ $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixE
 echo "Running Java programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/java/ch6out
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.BasicQueryCassandra $ASSEMBLY_JAR local localhost
+
+echo "Done running all programs :)"
+exit 0
