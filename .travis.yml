@@ -19,14 +19,17 @@ script:
   # Download spark 1.0.2
   - "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.0.2-bin-hadoop2.tgz"
   - "tar -xvf spark-1.0.2-bin-hadoop2.tgz"
+  # Do our mini example first
+  - cd mini-complete-example
+  - ./sbt/sbt clean compile package assembly
+  - ./sbt/sbt clean
+  - echo $PWD && mvn clean && mvn compile && mvn package
+  - cd ..
   # Run the tests
   - "export SPARK_HOME=./spark-1.0.2-bin-hadoop2/"
   - "export IAM=`whoami`"
   - sudo pip install urllib3
   - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
   - "./run-all-examples"
-  # Now do our mini example
-  - cd mini-complete-example
-  - ./sbt/sbt clean compile package assembly
-  - ./sbt/sbt clean
+  # Try and build with maven
   - mvn clean && mvn compile && mvn package
