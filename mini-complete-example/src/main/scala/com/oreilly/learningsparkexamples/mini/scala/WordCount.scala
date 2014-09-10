@@ -1,32 +1,20 @@
 /**
  * Illustrates flatMap + countByValue for wordcount.
  */
-package com.oreilly.learningsparkexamples.scala
+package com.oreilly.learningsparkexamples.mini.scala
 
 import org.apache.spark._
 import org.apache.spark.SparkContext._
 
 object WordCount {
     def main(args: Array[String]) {
-      val master = args.length match {
-        case x: Int if x > 0 => args(0)
-        case _ => "local"
-      }
+      val master = args(0)
+      val inputFile = args(1)
+      val outputFile = args(2)
       val sc = new SparkContext(master, "WordCount", System.getenv("SPARK_HOME"))
-      val input = args.length match {
-        case x: Int if x > 1 => sc.textFile(args(1))
-        case _ => sc.parallelize(List("pandas", "i like pandas"))
-      }
-      val words = input.flatMap(_.split(" "))
-      args.length match {
-        case x: Int if x > 2 => {
-          val counts = words.map((_, 1)).reduceByKey(_ + _)
-          counts.saveAsTextFile(args(2))
-        }
-        case _ => {
-          val wc = words.countByValue()
-          println(wc.mkString(","))
-        }
-      }
+      val input =  sc.textFile(inputFile)
+      val words = input.flatMap(line => line.split(" "))
+      val counts = words.map(word => (word, 1)).reduceByKey{case (x, y) => x + y}
+      counts.saveAsTextFile(outputFile)
     }
 }

@@ -17,10 +17,10 @@ object WordCount {
         case x: Int if x > 1 => sc.textFile(args(1))
         case _ => sc.parallelize(List("pandas", "i like pandas"))
       }
-      val words = input.flatMap(_.split(" "))
+      val words = input.flatMap(line => line.split(" "))
       args.length match {
         case x: Int if x > 2 => {
-          val counts = words.map((_, 1)).reduceByKey(_ + _)
+          val counts = words.map(word => (word, 1)).reduceByKey{case (x,y) => x + y}
           counts.saveAsTextFile(args(2))
         }
         case _ => {

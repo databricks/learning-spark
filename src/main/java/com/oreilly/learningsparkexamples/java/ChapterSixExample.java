@@ -199,6 +199,8 @@ public class ChapterSixExample {
         public Boolean call(Double x) {
           return (Math.abs(x-mean) < 3 * stddev);}});
     System.out.println(StringUtils.join(reasonableDistances.collect(), ","));
+    sc.stop();
+    System.exit(0);
   }
 
   static CallLog[] readExchangeCallLog(ObjectMapper mapper, ContentExchange exchange) throws Exception {

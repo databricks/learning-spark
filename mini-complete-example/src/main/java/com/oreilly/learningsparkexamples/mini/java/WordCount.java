@@ -1,7 +1,7 @@
 /**
  * Illustrates a wordcount in Java
  */
-package com.oreilly.learningsparkexamples.java;
+package com.oreilly.learningsparkexamples.mini.java;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,18 +22,22 @@ import org.apache.spark.api.java.function.PairFunction;
 public class WordCount {
   public static void main(String[] args) throws Exception {
 		String master = args[0];
+    String inputFile = args[1];
+    String outputFile = args[2];
 		JavaSparkContext sc = new JavaSparkContext(
       master, "wordcount", System.getenv("SPARK_HOME"), System.getenv("JARS"));
-    JavaRDD<String> rdd = sc.textFile(args[1]);
-    JavaPairRDD<String, Integer> counts = rdd.flatMap(
+    JavaRDD<String> input = sc.textFile(inputFile);
+    JavaRDD<String> words = input.flatMap(
       new FlatMapFunction<String, String>() {
         public Iterable<String> call(String x) {
           return Arrays.asList(x.split(" "));
-        }}).mapToPair(new PairFunction<String, String, Integer>(){
-            public Tuple2<String, Integer> call(String x){
-              return new Tuple2(x, 1);
-            }}).reduceByKey(new Function2<Integer, Integer, Integer>(){
-                public Integer call(Integer x, Integer y){ return x+y;}});
-    counts.saveAsTextFile(args[2]);
+        }});
+    JavaPairRDD<String, Integer> counts = words.mapToPair(
+      new PairFunction<String, String, Integer>(){
+        public Tuple2<String, Integer> call(String x){
+          return new Tuple2(x, 1);
+        }}).reduceByKey(new Function2<Integer, Integer, Integer>(){
+            public Integer call(Integer x, Integer y){ return x + y;}});
+    counts.saveAsTextFile(outputFile);
 	}
 }
