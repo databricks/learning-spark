@@ -10,6 +10,22 @@
       <id>Akka repository</id>
       <url>http://repo.akka.io/releases</url>
     </repository>
+    <repository>
+      <id>scala-tools</id>
+      <url>https://oss.sonatype.org/content/groups/scala-tools</url>
+    </repository>
+    <repository>
+      <id>apache</id>
+      <url>https://repository.apache.org/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>twitter</id>
+      <url>http://maven.twttr.com/</url>
+    </repository>
+    <repository>
+      <id>central2</id>
+      <url>http://central.maven.org/maven2/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency> <!-- Spark dependency -->
