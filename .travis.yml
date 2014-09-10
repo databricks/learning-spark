@@ -29,4 +29,4 @@ script:
   - cd mini-complete-example
   - ./sbt/sbt clean compile package assembly
   - ./sbt/sbt clean
-  - mvn clean && mvn package
+  - mvn clean && mvn compile && mvn package
