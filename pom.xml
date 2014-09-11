@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <name>examples</name>
   <packaging>jar</packaging>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <repositories>
     <repository>
       <id>Akka repository</id>

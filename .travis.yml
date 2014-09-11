@@ -31,7 +31,8 @@ script:
   - sudo pip install urllib3
   - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
   - ./sbt/sbt compile package assembly
-  - ./run-all-examples
+  - echo $?
+  - time ./run-all-examples
   - echo $?
   - echo "done"
   # Try and build with maven, skip for now

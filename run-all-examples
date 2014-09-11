@@ -49,4 +49,3 @@ $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixEx
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.BasicQueryCassandra $ASSEMBLY_JAR local localhost
 
 echo "Done running all programs :)"
-exit 0
