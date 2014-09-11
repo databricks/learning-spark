@@ -24,20 +24,25 @@ public class WordCount {
 		String master = args[0];
     String inputFile = args[1];
     String outputFile = args[2];
+    // Create a Java version of the Spark Context
 		JavaSparkContext sc = new JavaSparkContext(
       master, "wordcount", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+    // load our input data
     JavaRDD<String> input = sc.textFile(inputFile);
+    // split up into words
     JavaRDD<String> words = input.flatMap(
       new FlatMapFunction<String, String>() {
         public Iterable<String> call(String x) {
           return Arrays.asList(x.split(" "));
         }});
+    // word and count
     JavaPairRDD<String, Integer> counts = words.mapToPair(
       new PairFunction<String, String, Integer>(){
         public Tuple2<String, Integer> call(String x){
           return new Tuple2(x, 1);
         }}).reduceByKey(new Function2<Integer, Integer, Integer>(){
             public Integer call(Integer x, Integer y){ return x + y;}});
+    // save the word count back out to a text file, causing evaluation
     counts.saveAsTextFile(outputFile);
 	}
 }
