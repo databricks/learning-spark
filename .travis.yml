@@ -31,5 +31,7 @@ script:
   - sudo pip install urllib3
   - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
   - ./run-all-examples
+  - echo $?
+  - echo "done"
   # Try and build with maven, skip for now
   #- mvn clean && mvn compile && mvn package
