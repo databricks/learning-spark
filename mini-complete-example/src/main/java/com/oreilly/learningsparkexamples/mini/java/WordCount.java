@@ -11,6 +11,7 @@ import scala.Tuple2;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -21,12 +22,11 @@ import org.apache.spark.api.java.function.PairFunction;
 
 public class WordCount {
   public static void main(String[] args) throws Exception {
-		String master = args[0];
-    String inputFile = args[1];
-    String outputFile = args[2];
+    String inputFile = args[0];
+    String outputFile = args[1];
     // Create a Java version of the Spark Context
-		JavaSparkContext sc = new JavaSparkContext(
-      master, "wordcount", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+    SparkConf conf = new SparkConf().setAppName("wordCount");
+		JavaSparkContext sc = new JavaSparkContext(conf);
     // load our input data
     JavaRDD<String> input = sc.textFile(inputFile);
     // split up into words

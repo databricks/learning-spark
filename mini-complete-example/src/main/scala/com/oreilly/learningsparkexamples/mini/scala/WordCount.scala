@@ -8,10 +8,10 @@ import org.apache.spark.SparkContext._
 
 object WordCount {
     def main(args: Array[String]) {
-      val master = args(0)
-      val inputFile = args(1)
-      val outputFile = args(2)
-      val sc = new SparkContext(master, "WordCount", System.getenv("SPARK_HOME"))
+      val inputFile = args(0)
+      val outputFile = args(1)
+      val conf = new SparkConf().setAppName("wordCount")
+      val sc = new SparkContext(conf)
       // load our input data
       val input =  sc.textFile(inputFile)
       // split it up into words
