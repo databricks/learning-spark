@@ -1,3 +1,4 @@
+set -e
 # Do our mini example first
 cd mini-complete-example
 ./sbt/sbt clean compile package assembly
