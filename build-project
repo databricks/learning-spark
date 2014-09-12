@@ -7,7 +7,7 @@ echo $PWD && mvn clean && mvn compile && mvn package
 cd ..
 # Run the tests
 export SPARK_HOME=./spark-1.0.2-bin-hadoop2/
-./sbt/sbt compile package assembly
+./sbt/sbt compile package package
 echo $?
 time ./run-all-examples
 echo $?
