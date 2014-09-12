@@ -1,6 +1,6 @@
 <project>
   <groupId>com.oreilly.learningsparkexamples.mini</groupId>
-  <artifactId>java</artifactId>
+  <artifactId>learning-spark-mini-example</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>example</name>
   <packaging>jar</packaging>
@@ -34,16 +34,6 @@
             <target>${java.version}</target>
           </configuration>
 	</plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <version>2.4.1</version>
-	      <configuration>
-		<descriptorRefs>
-		  <descriptorRef>jar-with-dependencies</descriptorRef>
-		</descriptorRefs>
-              </configuration> 
-            </plugin>
       </plugins>
     </pluginManagement>
   </build>
