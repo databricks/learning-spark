@@ -9,31 +9,6 @@ before_install:
 install:
   - ./travis-tool.sh install_deps
 before_script:
-   - sudo apt-get install protobuf-compiler
-   # Set up cassandra
-   -  echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-   - curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
-   - sudo apt-get update
-   - yes | sudo apt-get install -y --force-yes dsc20
+   - ./setup-project
 script:
-  # Download spark 1.0.2
-  - "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.0.2-bin-hadoop2.tgz"
-  - "tar -xvf spark-1.0.2-bin-hadoop2.tgz"
-  # Do our mini example first
-  - cd mini-complete-example
-  - ./sbt/sbt clean compile package assembly
-  - ./sbt/sbt clean
-  - echo $PWD && mvn clean && mvn compile && mvn package
-  - cd ..
-  # Run the tests
-  - "export SPARK_HOME=./spark-1.0.2-bin-hadoop2/"
-  - "export IAM=`whoami`"
-  - sudo pip install urllib3
-  - sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
-  - ./sbt/sbt compile package assembly
-  - echo $?
-  - time ./run-all-examples
-  - echo $?
-  - echo "done"
-  # Try and build with maven, skip for now
-  #- mvn clean && mvn compile && mvn package
+   - ./build-project
