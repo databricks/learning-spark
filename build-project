@@ -1,13 +1,14 @@
 set -e
+set -x
 # Do our mini example first
 cd mini-complete-example
-./sbt/sbt clean compile package assembly
+./sbt/sbt clean compile package
 ./sbt/sbt clean
-echo $PWD && mvn clean && mvn compile && mvn package
+echo $PWD && mvn clean && mvn compile
 cd ..
 # Run the tests
 export SPARK_HOME=./spark-1.0.2-bin-hadoop2/
-./sbt/sbt compile package package
+./sbt/sbt compile package assembly
 echo $?
 time ./run-all-examples
 echo $?
