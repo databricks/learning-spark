@@ -83,17 +83,18 @@ def loadCallSignTable():
     return f.readlines()
 
 # Lookup the locations of the call signs on the
-# RDD contactCounts
+# RDD contactCounts. We load a list of call sign
+# prefixes to country code to support this lookup.
 signPrefixes = sc.broadcast(loadCallSignTable())
 
 
-def processSignCount(sign_count):
+def processSignCount(sign_count, signPrefixes):
     country = lookupCountry(sign_count[0], signPrefixes.value)
     count = sign_count[1]
     return (country, count)
 
 countryContactCounts = (contactCounts
-                        .map(processSignCount)
+                        .map(lambda signCount: processSignCount(signCount, signPrefixes))
                         .reduceByKey((lambda x, y: x + y)))
 
 countryContactCounts.saveAsTextFile(outputDir + "/countries.txt")

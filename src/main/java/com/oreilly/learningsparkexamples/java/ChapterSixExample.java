@@ -130,14 +130,13 @@ public class ChapterSixExample {
     }
     // Read in the call sign table
     // Lookup the countries for each call sign in the
-    // contactCounts RDD
+    // contactCounts RDD.
     final Broadcast<String[]> signPrefixes = sc.broadcast(loadCallSignTable());
     JavaPairRDD<String, Integer> countryContactCounts = contactCounts.mapToPair(
       new PairFunction<Tuple2<String, Integer>, String, Integer> (){
         public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
           String sign = callSignCount._1();
-          String[] callSignInfo = signPrefixes.value();
-          String country = lookupCountry(sign, callSignInfo);
+          String country = lookupCountry(sign, callSignInfo.value());
           return new Tuple2(country, callSignCount._2());
         }}).reduceByKey(new SumInts());
     countryContactCounts.saveAsTextFile(outputDir + "/countries.txt");

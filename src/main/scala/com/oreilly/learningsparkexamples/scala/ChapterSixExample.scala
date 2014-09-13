@@ -68,7 +68,8 @@ object ChapterSixExample {
       exit(1)
     }
     // Lookup the countries for each call sign for the
-    // contactCounts RDD
+    // contactCounts RDD.  We load an array of call sign
+    // prefixes to country code to support this lookup.
     val signPrefixes = sc.broadcast(loadCallSignTable())
     val countryContactCounts = contactCounts.map{case (sign, count) =>
       val country = lookupInArray(sign, signPrefixes.value)
