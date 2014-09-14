@@ -99,7 +99,7 @@ countryContactCounts = (contactCounts
 
 countryContactCounts.saveAsTextFile(outputDir + "/countries.txt")
 
-# Query 73s for the call signs QSOs and parse the personse
+# Query 73s for the call signs CallLogs and parse the personse
 
 
 def processCallSigns(signs):

@@ -1,0 +1,40 @@
+<project>
+  <groupId>com.oreilly.learningsparkexamples.mini</groupId>
+  <artifactId>learning-spark-mini-example</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <name>example</name>
+  <packaging>jar</packaging>
+  <version>0.0.1</version>
+  <repositories>
+    <repository>
+      <id>Akka repository</id>
+      <url>http://repo.akka.io/releases</url>
+    </repository>
+  </repositories>
+  <dependencies>
+    <dependency> <!-- Spark dependency -->
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_2.10</artifactId>
+      <version>1.0.2</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <properties>
+    <java.version>1.6</java.version>
+  </properties>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+          </configuration>
+	</plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

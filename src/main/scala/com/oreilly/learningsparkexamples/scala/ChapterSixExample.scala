@@ -14,7 +14,7 @@ import org.apache.spark.SparkContext._
 import org.eclipse.jetty.client.ContentExchange
 import org.eclipse.jetty.client.HttpClient
 
-case class QSO(callsign: String="", contactlat: Double,
+case class CallLog(callsign: String="", contactlat: Double,
   contactlong: Double, mylat: Double, mylong: Double)
 
 object ChapterSixExample {
@@ -93,8 +93,8 @@ object ChapterSixExample {
         client.send(exchange)
         (sign, exchange)
       }.map{ case (sign, exchange) =>
-          (sign, readExchangeQSO(mapper, exchange))
-      }.filter(x => x._2 != null) // Remove empty QSOs
+          (sign, readExchangeCallLog(mapper, exchange))
+      }.filter(x => x._2 != null) // Remove empty CallLogs
     }
     println(contactsContactLists.collect().toList)
     // Computer the distance of each call using an external R program
@@ -122,10 +122,10 @@ object ChapterSixExample {
     exchange
   }
 
-  def readExchangeQSO(mapper: ObjectMapper, exchange: ContentExchange): Array[QSO] = {
+  def readExchangeCallLog(mapper: ObjectMapper, exchange: ContentExchange): Array[CallLog] = {
     exchange.waitForDone()
     val responseJson = exchange.getResponseContent()
-    val qsos = mapper.readValue(responseJson, classOf[Array[QSO]])
+    val qsos = mapper.readValue(responseJson, classOf[Array[CallLog]])
     qsos
   }
 

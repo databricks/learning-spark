@@ -1,7 +1,8 @@
 ![buildstatus](https://travis-ci.org/holdenk/learning-spark-examples.svg?branch=master)(https://travis-ci.org/holdenk/learning-spark-examples)
 Examples for Learning Spark
 ===============
-Examples for the Learning Spark book.
+Examples for the Learning Spark book. These examples require a number of libraries and as such have long build files. We have also added a stand alone example with minimal dependcies and a small build file
+in the mini-complete-example directory.
 
 Requirements
 ==
@@ -15,19 +16,6 @@ Requirements
 * R & the CRAN package Imap are required for the ChapterSixExample
 * The Python examples require urllib3
 
-Scala examples
-===
-
-You can build and run the Scala examples with sbt, just run
-sbt/sbt compile package run
-
-Java examples
-===
-
-You can build and run the Java examples wih maven, just run
-mvn package
-mvn exec:java -Dexec.mainClass="com.oreilly.learningsparkexamples.java.[EXAMPLE]"
-
 Python examples
 ===
 
@@ -39,5 +27,5 @@ Spark Submit
 You can also create an assembly jar with all of the dependcies for running either the java or scala
 versions of the code and run the job with the spark-submit script
 
-./sbt/sbt assembly
+./sbt/sbt assembly OR mvn package
 cd $SPARK_HOME; ./bin/spark-submit   --class com.oreilly.learningsparkexamples.[lang].[example] ../learning-spark-examples/target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar

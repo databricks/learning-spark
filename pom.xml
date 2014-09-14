@@ -4,11 +4,27 @@
   <modelVersion>4.0.0</modelVersion>
   <name>examples</name>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>0.0.2</version>
   <repositories>
     <repository>
       <id>Akka repository</id>
       <url>http://repo.akka.io/releases</url>
+    </repository>
+    <repository>
+      <id>scala-tools</id>
+      <url>https://oss.sonatype.org/content/groups/scala-tools</url>
+    </repository>
+    <repository>
+      <id>apache</id>
+      <url>https://repository.apache.org/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>twitter</id>
+      <url>http://maven.twttr.com/</url>
+    </repository>
+    <repository>
+      <id>central2</id>
+      <url>http://central.maven.org/maven2/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -16,21 +32,25 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.10</artifactId>
       <version>1.0.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency> <!-- Spark dependency -->
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_2.10</artifactId>
       <version>1.0.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency> <!-- Spark dependency -->
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-hive_2.10</artifactId>
       <version>1.0.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency> <!-- Spark dependency -->
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-streaming_2.10</artifactId>
       <version>1.0.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency> <!-- Cassandra -->
       <groupId>com.datastax.spark</groupId>
@@ -83,6 +103,18 @@
             <target>${java.version}</target>
           </configuration>
 	</plugin>
+	<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2.2</version>
+          <!-- The configuration of the plugin -->
+          <configuration>
+            <!-- Specifies the configuration file of the assembly plugin -->
+            <descriptors>
+              <descriptor>src/main/assembly/assembly.xml</descriptor>
+            </descriptors>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
