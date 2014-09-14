@@ -136,7 +136,7 @@ public class ChapterSixExample {
       new PairFunction<Tuple2<String, Integer>, String, Integer> (){
         public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
           String sign = callSignCount._1();
-          String country = lookupCountry(sign, callSignInfo.value());
+          String country = lookupCountry(sign, signPrefixes.value());
           return new Tuple2(country, callSignCount._2());
         }}).reduceByKey(new SumInts());
     countryContactCounts.saveAsTextFile(outputDir + "/countries.txt");
@@ -144,24 +144,20 @@ public class ChapterSixExample {
     JavaPairRDD<String, CallLog[]> contactsContactLists = validCallSigns.mapPartitionsToPair(
       new PairFlatMapFunction<Iterator<String>, String, CallLog[]>() {
         public Iterable<Tuple2<String, CallLog[]>> call(Iterator<String> input) {
+          // List for our results.
           ArrayList<Tuple2<String, CallLog[]>> callsignQsos =
             new ArrayList<Tuple2<String, CallLog[]>>();
-          ArrayList<Tuple2<String, ContentExchange>> ccea =
+          ArrayList<Tuple2<String, ContentExchange>> requests =
             new ArrayList<Tuple2<String, ContentExchange>>();
           ObjectMapper mapper = createMapper();
           HttpClient client = new HttpClient();
           try {
             client.start();
             while (input.hasNext()) {
-              String sign = input.next();
-              ContentExchange exchange = createExchangeForSign(sign);
-              client.send(exchange);
-              ccea.add(new Tuple2(sign, exchange));
+              requests.add(createRequestForSign(input.next()));
             }
-            for (Tuple2<String, ContentExchange> signExchange : ccea) {
-              String sign = signExchange._1();
-              ContentExchange exchange = signExchange._2();
-              callsignQsos.add(new Tuple2(sign, readExchangeCallLog(mapper, exchange)));
+            for (Tuple2<String, ContentExchange> signExchange : requests) {
+              callsignQsos.add(fetchResultFromRequest(mapper, signExchange));
             }
           } catch (Exception e) {
           }
@@ -202,17 +198,26 @@ public class ChapterSixExample {
     System.exit(0);
   }
 
-  static CallLog[] readExchangeCallLog(ObjectMapper mapper, ContentExchange exchange) throws Exception {
-    exchange.waitForDone();
-    String responseJson = exchange.getResponseContent();
-    CallLog[] qsos = mapper.readValue(responseJson, CallLog[].class);
-    return qsos;
+  static CallLog[] readExchangeCallLog(ObjectMapper mapper, ContentExchange exchange) {
+    try {
+      exchange.waitForDone();
+      String responseJson = exchange.getResponseContent();
+      return mapper.readValue(responseJson, CallLog[].class);
+    } catch (Exception e) {
+      return new CallLog[0];
+    }
   }
 
-  static ContentExchange createExchangeForSign(String sign) {
+  static Tuple2<String, CallLog[]> fetchResultFromRequest(ObjectMapper mapper,
+                                                                Tuple2<String, ContentExchange> signExchange) {
+    String sign = signExchange._1();
+    ContentExchange exchange = signExchange._2();
+    return new Tuple2(sign, readExchangeCallLog(mapper, exchange));
+  }
+  static Tuple2<String, ContentExchange> createRequestForSign(String sign) {
     ContentExchange exchange = new ContentExchange(true);
     exchange.setURL("http://new73s.herokuapp.com/qsos/" + sign + ".json");
-    return exchange;
+    return new Tuple2(sign, exchange);
   }
   static ObjectMapper createMapper() {
     ObjectMapper mapper = new ObjectMapper();
