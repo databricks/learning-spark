@@ -130,39 +130,35 @@ public class ChapterSixExample {
     }
     // Read in the call sign table
     // Lookup the countries for each call sign in the
-    // contactCounts RDD
+    // contactCounts RDD.
     final Broadcast<String[]> signPrefixes = sc.broadcast(loadCallSignTable());
     JavaPairRDD<String, Integer> countryContactCounts = contactCounts.mapToPair(
       new PairFunction<Tuple2<String, Integer>, String, Integer> (){
         public Tuple2<String, Integer> call(Tuple2<String, Integer> callSignCount) {
           String sign = callSignCount._1();
-          String[] callSignInfo = signPrefixes.value();
-          String country = lookupCountry(sign, callSignInfo);
+          String country = lookupCountry(sign, signPrefixes.value());
           return new Tuple2(country, callSignCount._2());
         }}).reduceByKey(new SumInts());
     countryContactCounts.saveAsTextFile(outputDir + "/countries.txt");
-    // use mapPartitions to re-use setup work
+    System.out.println("Saved country contact counts as a file");
+    // Use mapPartitions to re-use setup work.
     JavaPairRDD<String, CallLog[]> contactsContactLists = validCallSigns.mapPartitionsToPair(
       new PairFlatMapFunction<Iterator<String>, String, CallLog[]>() {
         public Iterable<Tuple2<String, CallLog[]>> call(Iterator<String> input) {
+          // List for our results.
           ArrayList<Tuple2<String, CallLog[]>> callsignQsos =
             new ArrayList<Tuple2<String, CallLog[]>>();
-          ArrayList<Tuple2<String, ContentExchange>> ccea =
+          ArrayList<Tuple2<String, ContentExchange>> requests =
             new ArrayList<Tuple2<String, ContentExchange>>();
           ObjectMapper mapper = createMapper();
           HttpClient client = new HttpClient();
           try {
             client.start();
             while (input.hasNext()) {
-              String sign = input.next();
-              ContentExchange exchange = createExchangeForSign(sign);
-              client.send(exchange);
-              ccea.add(new Tuple2(sign, exchange));
+              requests.add(createRequestForSign(input.next(), client));
             }
-            for (Tuple2<String, ContentExchange> signExchange : ccea) {
-              String sign = signExchange._1();
-              ContentExchange exchange = signExchange._2();
-              callsignQsos.add(new Tuple2(sign, readExchangeCallLog(mapper, exchange)));
+            for (Tuple2<String, ContentExchange> signExchange : requests) {
+              callsignQsos.add(fetchResultFromRequest(mapper, signExchange));
             }
           } catch (Exception e) {
           }
@@ -203,17 +199,27 @@ public class ChapterSixExample {
     System.exit(0);
   }
 
-  static CallLog[] readExchangeCallLog(ObjectMapper mapper, ContentExchange exchange) throws Exception {
-    exchange.waitForDone();
-    String responseJson = exchange.getResponseContent();
-    CallLog[] qsos = mapper.readValue(responseJson, CallLog[].class);
-    return qsos;
+  static CallLog[] readExchangeCallLog(ObjectMapper mapper, ContentExchange exchange) {
+    try {
+      exchange.waitForDone();
+      String responseJson = exchange.getResponseContent();
+      return mapper.readValue(responseJson, CallLog[].class);
+    } catch (Exception e) {
+      return new CallLog[0];
+    }
   }
 
-  static ContentExchange createExchangeForSign(String sign) {
+  static Tuple2<String, CallLog[]> fetchResultFromRequest(ObjectMapper mapper,
+                                                                Tuple2<String, ContentExchange> signExchange) {
+    String sign = signExchange._1();
+    ContentExchange exchange = signExchange._2();
+    return new Tuple2(sign, readExchangeCallLog(mapper, exchange));
+  }
+  static Tuple2<String, ContentExchange> createRequestForSign(String sign, HttpClient client) throws Exception {
     ContentExchange exchange = new ContentExchange(true);
     exchange.setURL("http://new73s.herokuapp.com/qsos/" + sign + ".json");
-    return exchange;
+    client.send(exchange);
+    return new Tuple2(sign, exchange);
   }
   static ObjectMapper createMapper() {
     ObjectMapper mapper = new ObjectMapper();

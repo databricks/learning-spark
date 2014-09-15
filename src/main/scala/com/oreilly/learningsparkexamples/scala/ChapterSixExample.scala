@@ -68,7 +68,8 @@ object ChapterSixExample {
       exit(1)
     }
     // Lookup the countries for each call sign for the
-    // contactCounts RDD
+    // contactCounts RDD.  We load an array of call sign
+    // prefixes to country code to support this lookup.
     val signPrefixes = sc.broadcast(loadCallSignTable())
     val countryContactCounts = contactCounts.map{case (sign, count) =>
       val country = lookupInArray(sign, signPrefixes.value)
@@ -85,12 +86,13 @@ object ChapterSixExample {
     val contactsContactLists = validSigns.distinct().mapPartitions{
       signs =>
       val mapper = createMapper()
+      // create a connection pool
       val client = new HttpClient()
       client.start()
+      // create http request
       signs.map {sign =>
-        val exchange = createExchangeForSign(sign)
-        client.send(exchange)
-        (sign, exchange)
+        createExchangeForSign(client, sign)
+      // fetch responses
       }.map{ case (sign, exchange) =>
           (sign, readExchangeCallLog(mapper, exchange))
       }.filter(x => x._2 != null) // Remove empty CallLogs
@@ -115,10 +117,11 @@ object ChapterSixExample {
     println(reasonableDistances.collect().toList)
   }
 
-  def createExchangeForSign(sign: String): ContentExchange = {
+  def createExchangeForSign(client: HttpClient, sign: String): (String, ContentExchange) = {
     val exchange = new ContentExchange()
     exchange.setURL(s"http://new73s.herokuapp.com/qsos/${sign}.json")
-    exchange
+    client.send(exchange)
+    (sign, exchange)
   }
 
   def readExchangeCallLog(mapper: ObjectMapper, exchange: ContentExchange): Array[CallLog] = {
