@@ -92,6 +92,7 @@ object ChapterSixExample {
       // create http request
       signs.map {sign =>
         createExchangeForSign(client, sign)
+      // fetch responses
       }.map{ case (sign, exchange) =>
           (sign, readExchangeCallLog(mapper, exchange))
       }.filter(x => x._2 != null) // Remove empty CallLogs
