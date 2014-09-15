@@ -104,10 +104,15 @@ countryContactCounts.saveAsTextFile(outputDir + "/countries.txt")
 
 def processCallSigns(signs):
     """Lookup call signs using a connection pool"""
+    # Create a connection pool
     http = urllib3.PoolManager()
+    # the URL associated with each call sign record
     urls = map(lambda x: "http://73s.com/qsos/%s.json" % x, signs)
+    # create the requests (non-blocking)
     requests = map(lambda x: (x, http.request('GET', x)), urls)
+    # fetch the results
     result = map(lambda x: (x[0], json.loads(x[1].data)), requests)
+    # remove any empty results and return
     return filter(lambda x: x[1] is not None, result)
 
 
