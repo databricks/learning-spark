@@ -13,10 +13,10 @@ seq(sbtprotobuf.ProtobufPlugin.protobufSettings: _*)
 
 // additional libraries
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "1.0.2" % "provided",
-  "org.apache.spark" %% "spark-sql" % "1.0.2" % "provided",
-  "org.apache.spark" %% "spark-hive" % "1.0.2" % "provided",
-  "org.apache.spark" %% "spark-streaming" % "1.0.2" % "provided",
+  "org.apache.spark" %% "spark-core" % "1.1.0" % "provided",
+  "org.apache.spark" %% "spark-sql" % "1.1.0" % "provided",
+  "org.apache.spark" %% "spark-hive" % "1.1.0" % "provided",
+  "org.apache.spark" %% "spark-streaming" % "1.1.0" % "provided",
   "org.apache.commons" % "commons-lang3" % "3.0",
   "org.eclipse.jetty"  % "jetty-client" % "8.1.14.v20131031",
   "com.typesafe.play" % "play-json_2.10" % "2.2.1",
