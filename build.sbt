@@ -8,6 +8,8 @@ version := "0.0.1"
 
 scalaVersion := "2.10.4"
 
+javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+
 // protocol buffer support
 seq(sbtprotobuf.ProtobufPlugin.protobufSettings: _*)
 

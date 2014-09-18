@@ -1,4 +1,4 @@
-package com.databricks.apps.logs;
+package com.oreilly.learningsparkexamples.java.logs;
 
 import java.io.Serializable;
 import java.util.logging.Level;

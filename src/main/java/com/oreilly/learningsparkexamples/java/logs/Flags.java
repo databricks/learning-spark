@@ -1,4 +1,4 @@
-package com.databricks.apps.logs;
+package com.oreilly.learningsparkexamples.java.logs;
 
 import org.apache.commons.cli.*;
 import org.apache.spark.streaming.Duration;

@@ -1,11 +1,13 @@
-package com.databricks.apps.logs;
+package com.oreilly.learningsparkexamples.java.logs;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
+import org.apache.spark.api.java.function.Function;
 
 import java.io.IOException;
 
@@ -28,7 +30,7 @@ import java.io.IOException;
  *
  * Example command to run:
  * %  ${YOUR_SPARK_HOME}/bin/spark-submit
- *     --class "com.databricks.apps.logs.LogAnalyzerAppMain"
+ *     --class "com.oreilly.learningsparkexamples.java.logs.LogAnalyzerAppMain"
  *     --master local[4]
  *     target/uber-log-analyzer-1.0.jar
  *     --logs_directory /tmp/logs
@@ -80,10 +82,10 @@ public class LogAnalyzerAppMain {
     JavaDStream<String> logData = jssc.textFileStream(Flags.getInstance().getLogsDirectory());
 
     JavaDStream<ApacheAccessLog> accessLogsDStream
-        = logData.map(ApacheAccessLog::parseFromLogLine).cache();
+      = logData.map(new Functions.ParseFromLogLine()).cache();
 
-    LogAnalyzerTotal logAnalyzerTotal = new LogAnalyzerTotal();
-    LogAnalyzerWindowed logAnalyzerWindowed = new LogAnalyzerWindowed();
+    final LogAnalyzerTotal logAnalyzerTotal = new LogAnalyzerTotal();
+    final LogAnalyzerWindowed logAnalyzerWindowed = new LogAnalyzerWindowed();
 
     // Process the DStream which gathers stats for all of time.
     logAnalyzerTotal.processAccessLogs(accessLogsDStream);
@@ -92,13 +94,18 @@ public class LogAnalyzerAppMain {
     logAnalyzerWindowed.processAccessLogs(accessLogsDStream);
 
     // Render the output each time there is a new RDD in the accessLogsDStream.
-    Renderer renderer = new Renderer();
-    accessLogsDStream.foreachRDD(rdd -> {
-      // Call this to output the stats.
-      renderer.render(logAnalyzerTotal.getLogStatistics(),
-          logAnalyzerWindowed.getLogStatistics());
-      return null;
-    });
+    final Renderer renderer = new Renderer();
+    accessLogsDStream.foreachRDD(new Function<JavaRDD<ApacheAccessLog>, Void>() {
+        public Void call(JavaRDD<ApacheAccessLog> rdd) {
+          // Call this to output the stats.
+          try {
+            renderer.render(logAnalyzerTotal.getLogStatistics(),
+                            logAnalyzerWindowed.getLogStatistics());
+          } catch (Exception e) {
+          }
+          return null;
+        }
+      });
 
     // Start the streaming server.
     jssc.start();              // Start the computation

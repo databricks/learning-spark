@@ -1,4 +1,4 @@
-package com.databricks.apps.logs;
+package com.oreilly.learningsparkexamples.java.logs;
 
 import scala.Tuple2;
 import scala.Tuple4;
@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class LogStatistics implements Serializable {
   public final static LogStatistics EMPTY_LOG_STATISTICS =
-      new LogStatistics(new Tuple4<>(0L, 0L, 0L, 0L), new ArrayList<>(),
-          new ArrayList<>(), new ArrayList<>());
+    new LogStatistics(new Tuple4<>(0L, 0L, 0L, 0L), new ArrayList<Tuple2<Integer, Long>>(),
+                      new ArrayList<String>(), new ArrayList<Tuple2<String, Long>>());
 
   private Tuple4<Long, Long, Long, Long> contentSizeStats;
   private List<Tuple2<Integer, Long>> responseCodeToCount;

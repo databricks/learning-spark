@@ -1,4 +1,4 @@
-package com.databricks.apps.logs;
+package com.oreilly.learningsparkexamples.java.logs;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;

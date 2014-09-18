@@ -1,7 +1,10 @@
-package com.databricks.apps.logs;
+package com.oreilly.learningsparkexamples.java.logs;
 
+import com.google.common.collect.Ordering;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.api.java.function.Function;
 import scala.Tuple2;
 import scala.Tuple4;
 
@@ -16,7 +19,8 @@ public class LogAnalyzerWindowed implements Serializable {
     JavaDStream<ApacheAccessLog> windowDStream = accessLogsDStream.window(
         Flags.getInstance().getWindowLength(),
         Flags.getInstance().getSlideInterval());
-    windowDStream.foreachRDD(accessLogs -> {
+    windowDStream.foreachRDD(new Function<JavaRDD<ApacheAccessLog>, Void>() {
+        public Void call(JavaRDD<ApacheAccessLog> accessLogs) {
       Tuple4<Long, Long, Long, Long> contentSizeStats =
           Functions.contentSizeStats(accessLogs);
 
@@ -29,15 +33,16 @@ public class LogAnalyzerWindowed implements Serializable {
       List<String> ipAddresses = Functions.filterIPAddress(ipAddressCounts)
           .take(100);
 
+      Object ordering = Ordering.natural();
+      Comparator<Long> cmp = (Comparator<Long>)ordering;
       List<Tuple2<String, Long>> topEndpoints =
           Functions.endpointCount(accessLogs)
-          .top(10, new Functions.ValueComparator<>(Comparator.<Long>naturalOrder()));
+        .top(10, new Functions.ValueComparator<String, Long>(cmp));
 
       logStatistics = new LogStatistics(contentSizeStats, responseCodeToCount,
           ipAddresses, topEndpoints);
-
       return null;
-    });
+        }});
   }
 
   public LogStatistics getLogStatistics() {
