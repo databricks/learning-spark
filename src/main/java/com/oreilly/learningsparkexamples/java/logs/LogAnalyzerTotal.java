@@ -43,8 +43,11 @@ public class LogAnalyzerTotal implements Serializable {
       );
 
     // A DStream of Resonse Code Counts;
-    JavaPairDStream<Integer, Long> responseCodeCountDStream =
-      Functions.responseCodeCount(accessLogsDStream)
+    JavaPairDStream<Integer, Long> responseCodeCountDStream = accessLogsDStream.transformToPair(
+      new Function<JavaRDD<ApacheAccessLog>, JavaPairRDD<Integer, Long>>() {
+        public JavaPairRDD<Integer, Long> call(JavaRDD<ApacheAccessLog> rdd) {
+          return Functions.responseCodeCount(rdd);
+        }})
       .updateStateByKey(new Functions.ComputeRunningSum());
     responseCodeCountDStream.foreachRDD(new Function<JavaPairRDD<Integer, Long>, Void>() {
         public Void call(JavaPairRDD<Integer, Long> rdd) {
@@ -53,17 +56,17 @@ public class LogAnalyzerTotal implements Serializable {
         }});
 
     // A DStream of ipAddressCounts.
-    JavaPairDStream<String, Long> ipAddressesRawDStream = accessLogsDStream.transform(
+    JavaPairDStream<String, Long> ipAddressesRawDStream = accessLogsDStream.transformToPair(
       new Function<JavaRDD<ApacheAccessLog>, JavaPairRDD<String, Long>>(){
       public JavaPairRDD<String, Long> call(JavaRDD<ApacheAccessLog> rdd) {
-        return LongFunctions.ipAddressCount(rdd);
+        return Functions.ipAddressCount(rdd);
       }})
       .updateStateByKey(new Functions.ComputeRunningSum());
     // All ips more than 10
     JavaDStream<String> ipAddressDStream = ipAddressesRawDStream.transform(
       new Function<JavaPairRDD<String, Long>, JavaRDD<String>>() {
         public JavaRDD<String> call(JavaPairRDD<String, Long> rdd) {
-          Functions.filterIPAddress(rdd);
+          return Functions.filterIPAddress(rdd);
         }
       });
 
