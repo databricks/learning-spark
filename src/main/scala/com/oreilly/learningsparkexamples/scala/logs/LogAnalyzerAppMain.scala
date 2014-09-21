@@ -1,6 +1,6 @@
 package com.oreilly.learningsparkexamples.scala.logs;
 
-import org.apahce.spark._
+import org.apache.spark._
 import org.apache.spark.streaming._
 
 /**
