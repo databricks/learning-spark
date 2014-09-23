@@ -22,7 +22,7 @@ import org.apache.spark.streaming._
  *
  * Example command to run:
  * %  ${YOUR_SPARK_HOME}/bin/spark-submit
- *     --class "com.oreilly.learningsparkexamples.java.logs.LogAnalyzerAppMain"
+ *     --class "com.oreilly.learningsparkexamples.scala.logs.LogAnalyzerAppMain"
  *     --master local[4]
  *     target/uber-log-analyzer-1.0.jar
  *     --logs_directory /tmp/logs
@@ -30,4 +30,12 @@ import org.apache.spark.streaming._
  *     --index_html_template ./src/main/resources/index.html.template
  */
 object LogAnalyzerAppMain {
+  case class Config(WindowLength: Int = -1, SlideInterval: Int = -1, LogsDirectory: String = "/tmp/logs",
+    OutputHTMLFile: String = "/tmp/log_stats.html",
+    IndexHTMLTemplate :String ="./src/main/resources/index.html.template")
+
+  def main() {
+    val parser = new scopt.OptionParser[Config]("LogAnalyzerAppMain") {}
+
+  }
 }

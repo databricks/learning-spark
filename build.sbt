@@ -31,7 +31,8 @@ libraryDependencies ++= Seq(
   "com.hadoop.gplcompression" % "hadoop-lzo" % "0.4.17",
   "mysql" % "mysql-connector-java" % "5.1.31",
   "com.datastax.spark" %% "spark-cassandra-connector" % "1.0.0-rc5",
-  "com.datastax.spark" %% "spark-cassandra-connector-java" % "1.0.0-rc5"
+  "com.datastax.spark" %% "spark-cassandra-connector-java" % "1.0.0-rc5",
+  "com.github.scopt" %% "scopt" % "3.2.0"
 )
 
 resolvers ++= Seq(
@@ -45,7 +46,8 @@ resolvers ++= Seq(
   "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools",
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
   "Second Typesafe repo" at "http://repo.typesafe.com/typesafe/maven-releases/",
-  "Mesosphere Public Repository" at "http://downloads.mesosphere.io/maven"
+  "Mesosphere Public Repository" at "http://downloads.mesosphere.io/maven",
+  Resolver.sonatypeRepo("public")
 )
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
