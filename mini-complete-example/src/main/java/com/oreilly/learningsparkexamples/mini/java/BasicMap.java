@@ -1,7 +1,7 @@
 /**
  * Illustrates a simple map in Java
  */
-package com.oreilly.learningsparkexamples.java;
+package com.oreilly.learningsparkexamples.mini.java;
 
 import java.util.Arrays;
 import java.util.List;
