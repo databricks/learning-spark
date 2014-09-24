@@ -34,5 +34,7 @@ public class StreamingLogInput {
     jssc.start();
     // Wait for 10 seconds then exit. To run forever call without a timeout
     jssc.awaitTermination(10000);
+    // Stop the streaming context
+    jssc.stop();
 	}
 }
