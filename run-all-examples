@@ -41,7 +41,9 @@ $SPARK_SUBMIT_SCRIPT ./src/python/QueryParquetFile.py local /tmp/py/favouriteani
 echo "Running Scala programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
-
+./bin/fakelogs.sh &
+sleep 1
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.StreamingLogInput $ASSEMBLY_JAR local[4]
 
 # Java
 echo "Running Java programs"

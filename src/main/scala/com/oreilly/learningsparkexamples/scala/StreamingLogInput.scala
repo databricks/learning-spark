@@ -10,7 +10,7 @@ import org.apache.spark.streaming._
 object StreamingLogInput {
   def main(args: Array[String]) {
     val master = args(0)
-    val sc = new SparkContext(master, "StreamingLogInput", System.getenv("SPARK_HOME"))
+    val sc = new SparkContext(master, "StreamingLogInput")
     // Create a StreamingContext with a 1 second batch size
     val ssc = new StreamingContext(sc, Seconds(1))
     // Create a DStream from all the input on port 7777
@@ -19,5 +19,10 @@ object StreamingLogInput {
     val errorLines = lines.filter(_.contains("error"))
     // Print out the lines with errors, which causes this DStream to be evaluated
     errorLines.print()
+    // start our streaming context and wait for it to "finish"
+    ssc.start()
+    // Wait for 10 seconds then exit. To run forever call without a timeout
+    ssc.awaitTermination(10000)
+    ssc.stop()
   }
 }

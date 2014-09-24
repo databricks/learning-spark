@@ -18,8 +18,7 @@ import org.apache.spark.streaming.Duration;
 public class StreamingLogInput {
   public static void main(String[] args) throws Exception {
 		String master = args[0];
-		JavaSparkContext sc = new JavaSparkContext(
-      master, "StreamingLogInput", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+		JavaSparkContext sc = new JavaSparkContext(master, "StreamingLogInput");
     // Create a StreamingContext with a 1 second batch size
     JavaStreamingContext jssc = new JavaStreamingContext(sc, new Duration(1000));
     // Create a DStream from all the input on port 7777
@@ -31,5 +30,9 @@ public class StreamingLogInput {
         }});
     // Print out the lines with errors, which causes this DStream to be evaluated
     errorLines.print();
+    // start our streaming context and wait for it to "finish"
+    jssc.start();
+    // Wait for 10 seconds then exit. To run forever call without a timeout
+    jssc.awaitTermination(10000);
 	}
 }
