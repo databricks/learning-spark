@@ -18,6 +18,15 @@ cqlsh --file ./files/cqlsh_setup
 echo "Running R programs"
 chmod a+x ./src/R/finddistance.R 
 echo "37.384733,-122.032164,37.751952821,-122.4208688735" | ./src/R/finddistance.R
+# Scala
+echo "Running Scala programs"
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
+#$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
+echo "Running Scala streaming program"
+./bin/fakelogs.sh &
+sleep 1
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.StreamingLogInput $ASSEMBLY_JAR local[4]
+
 # Python
 echo "Running Python programs"
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
@@ -37,17 +46,15 @@ $SPARK_SUBMIT_SCRIPT ./src/python/RemoveOutliers.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/WordCount.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/MakeParquetFile.py local ./files/favourite_animals.csv /tmp/py/favouriteanimal_parquet
 $SPARK_SUBMIT_SCRIPT ./src/python/QueryParquetFile.py local /tmp/py/favouriteanimal_parquet
-# Scala
-echo "Running Scala programs"
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
-#$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
-./bin/fakelogs.sh &
-sleep 1
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.StreamingLogInput $ASSEMBLY_JAR local[4]
 
 # Java
 echo "Running Java programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/java/ch6out
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.BasicQueryCassandra $ASSEMBLY_JAR local localhost
+echo "Running Java streaming program"
+./bin/fakelogs.sh &
+sleep 1
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.StreamingLogInput $ASSEMBLY_JAR local[4]
+
 
 echo "Done running all programs :)"
