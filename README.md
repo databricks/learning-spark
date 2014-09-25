@@ -1,3 +1,8 @@
+---
+title: Examples for Learning Spark
+customjs:
+ - http://www.tqlkg.com/widget-54245b33e4b050ed3e73caf4-7645222?target=_top&mouseover=Y
+---
 ![buildstatus](https://travis-ci.org/holdenk/learning-spark-examples.svg?branch=master)(https://travis-ci.org/holdenk/learning-spark-examples)
 Examples for Learning Spark
 ===============
@@ -29,3 +34,8 @@ versions of the code and run the job with the spark-submit script
 
 ./sbt/sbt assembly OR mvn package
 cd $SPARK_HOME; ./bin/spark-submit   --class com.oreilly.learningsparkexamples.[lang].[example] ../learning-spark-examples/target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar
+
+<!-- Custom JavaScript files set in YAML front matter -->
+{% for js in page.customjs %}
+<script async type="text/javascript" src="{{ js }}"></script>
+{% endfor %}
