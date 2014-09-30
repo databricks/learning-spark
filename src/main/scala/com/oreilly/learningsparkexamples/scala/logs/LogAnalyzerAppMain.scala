@@ -30,12 +30,30 @@ import org.apache.spark.streaming._
  *     --index_html_template ./src/main/resources/index.html.template
  */
 object LogAnalyzerAppMain {
-  case class Config(WindowLength: Int = -1, SlideInterval: Int = -1, LogsDirectory: String = "/tmp/logs",
+  case class Config(WindowLength: Int = 1000, SlideInterval: Int = -1, LogsDirectory: String = "/tmp/logs",
+    CheckpointDirectory: String = "/tmp/checkpoint",
     OutputHTMLFile: String = "/tmp/log_stats.html",
     IndexHTMLTemplate :String ="./src/main/resources/index.html.template")
 
-  def main() {
-    val parser = new scopt.OptionParser[Config]("LogAnalyzerAppMain") {}
+  def main(args: Array[String]) {
+    val parser = new scopt.OptionParser[Config]("LogAnalyzerAppMain") {
+      head("LogAnalyzer", "0.1")
+      opt[Int]('w', "window_length") text("size of the window as an integer in miliseconds")
+      opt[Int]('s', "slide_interval") text("size of the slide inteval as an integer in miliseconds")
+      opt[String]('l', "logs_directory") text("location of the logs directory. if you don't have any logs use the fakelogs_dir script.")
+      opt[String]('c', "checkpoint_directory") text("location of the checkpoint directory.")
+    }
+    val opts = parser.parse(args, new Config()).get
+    // Startup the Spark Conf.
+    val conf = new SparkConf()
+      .setAppName("A Databricks Reference Application: Logs Analysis with Spark");
+    val sc = new SparkContext(conf)
+    val ssc = new StreamingContext(sc, new Duration(opts.SlideInterval))
+    // Checkpointing must be enabled to use the updateStateByKey function & windowed operations.
+    ssc.checkpoint(opts.CheckpointDirectory)
+    // This methods monitors a directory for new files to read in for streaming.
+    val logDirectory = opts.LogsDirectory
+    val logData = ssc.textFileStream(logDirectory);
 
   }
 }

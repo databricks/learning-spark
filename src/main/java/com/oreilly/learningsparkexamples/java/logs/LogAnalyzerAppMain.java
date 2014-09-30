@@ -75,7 +75,7 @@ public class LogAnalyzerAppMain {
     JavaStreamingContext jssc = new JavaStreamingContext(sc,
         Flags.getInstance().getSlideInterval());
 
-    // Checkpointing must be enabled to use the updateStateByKey function.
+    // Checkpointing must be enabled to use the updateStateByKey function & windowed operations.
     jssc.checkpoint(Flags.getInstance().getCheckpointDirectory());
 
     // This methods monitors a directory for new files to read in for streaming.
