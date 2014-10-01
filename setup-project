@@ -22,7 +22,10 @@ echo "done with setup"
 # Set up kafka
 echo "Setting up kafka"
 curl http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz > kafka.tgz
-tar -xzf kafka.tgz
+mkdir -p kafka
+
+cd kafka
+tar -xzf ../kafka.tgz
 echo "Starting zookeeper"
 ./bin/zookeeper-server-start.sh config/zookeeper.properties &
 echo "Starting kafka"
@@ -32,4 +35,6 @@ sleep 5
 # publish a pandas topic to kafka
 ./bin/kafka-topics.sh --zookeeper localhost:2181 --topic pandas --partition 1 --replication-factor 1 --create
 ./bin/kafka-topics.sh --zookeeper localhost:2181 --topic logs --partition 1 --replication-factor 1 --create
+cd ..
+
 echo $?

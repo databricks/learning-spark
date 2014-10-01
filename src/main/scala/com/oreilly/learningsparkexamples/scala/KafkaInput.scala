@@ -15,7 +15,7 @@ object KafkaInput {
     val sc = new SparkContext(conf)
     // Create a StreamingContext with a 1 second batch size
     val ssc = new StreamingContext(sc, Seconds(1))
-    // Create a DStream from Kafka the kafka streams pandas
+    // Create a map of topics to number of receiver threads to use
     val topics = List((topic, 1)).toMap
     val topicLines = KafkaUtils.createStream(ssc, zkQuorum, group, topics)
     StreamingLogInput.processLines(topicLines.map(_._2))
