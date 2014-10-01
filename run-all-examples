@@ -58,7 +58,9 @@ echo "Running Java streaming program"
 ./bin/fakelogs.sh &
 sleep 1
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.StreamingLogInput $ASSEMBLY_JAR local[4]
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.KafkaInput $ASSEMBLY_JAR 
+sleep 5
+echo "Running Java Kafka streaming example"
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.KafkaInput $ASSEMBLY_JAR localhost:2181 spark-java-readers
 echo "panda\nerror panda" | $KAFKA_ROOT/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic pandas
 
 echo "Done running all programs :)"
