@@ -29,7 +29,7 @@ sleep 1
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.StreamingLogInput $ASSEMBLY_JAR local[4]
 echo "Running Scala Kafka streaming example"
 $SPARK_SUBMIT_SCRIPT --master local[4] --class com.oreilly.learningsparkexamples.scala.KafkaInput $ASSEMBLY_JAR localhost:2181 spark-readers pandas 1
-echo "panda\nerror panda" | $KAFAK_ROOT/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic pandas
+echo "panda\nerror panda" | $KAFKA_ROOT/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic pandas
 # Python
 echo "Running Python programs"
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
@@ -59,6 +59,6 @@ echo "Running Java streaming program"
 sleep 1
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.StreamingLogInput $ASSEMBLY_JAR local[4]
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.KafkaInput $ASSEMBLY_JAR 
-echo "panda\nerror panda" | $KAFAK_ROOT/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic pandas
+echo "panda\nerror panda" | $KAFKA_ROOT/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic pandas
 
 echo "Done running all programs :)"
