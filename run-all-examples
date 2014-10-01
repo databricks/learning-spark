@@ -27,7 +27,7 @@ echo "Running Scala streaming program"
 sleep 1
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.StreamingLogInput $ASSEMBLY_JAR local[4]
 echo "Running Scala Kafka streaming example"
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.KafkaInput $ASSEMBLY_JAR local[4]
+$SPARK_SUBMIT_SCRIPT --master local[4] --class com.oreilly.learningsparkexamples.scala.KafkaInput $ASSEMBLY_JAR localhost:2181 spark-readers pandas 1
 
 # Python
 echo "Running Python programs"
