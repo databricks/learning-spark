@@ -50,7 +50,11 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-streaming_2.10</artifactId>
       <version>1.1.0</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency> <!-- Spark dependency -->
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-streaming-kafka_2.10</artifactId>
+      <version>1.1.0</version>
     </dependency>
     <dependency> <!-- Cassandra -->
       <groupId>com.datastax.spark</groupId>
