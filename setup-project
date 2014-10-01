@@ -31,4 +31,5 @@ sleep 5
 sleep 5
 # publish a pandas topic to kafka
 ./bin/kafka-topics.sh --zookeeper localhost:2181 --topic pandas --partition 1 --replication-factor 1 --create
+./bin/kafka-topics.sh --zookeeper localhost:2181 --topic logs --partition 1 --replication-factor 1 --create
 echo $?
