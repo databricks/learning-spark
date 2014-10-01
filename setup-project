@@ -22,10 +22,8 @@ echo "done with setup"
 # Set up kafka
 echo "Setting up kafka"
 curl http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz > kafka.tgz
-mkdir -p kafka
-
-cd kafka
-tar -xzf ../kafka.tgz
+tar -xzf kafka.tgz
+cd kafka_2.9.2-0.8.1.1
 echo "Starting zookeeper"
 ./bin/zookeeper-server-start.sh config/zookeeper.properties &
 echo "Starting kafka"
