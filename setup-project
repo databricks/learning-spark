@@ -3,7 +3,7 @@ set -x
 set -e
 sudo apt-get install axel time
 echo "Downloading misc tools"
-axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz &> haddopdl &
+axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz &> sparkdl &
 SPARK_DL_PID=$!
 axel http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz &> kafkadl &
 KAFKA_DL_PID=$!
@@ -16,6 +16,7 @@ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo apt-get update &> aptlog &
 APT_GET_UPDATE_PID=$!
 wait $SPARK_DL_PID || echo "Spark DL finished early"
+cat sparkdl
 tar -xvf spark-1.1.0-bin-hadoop2.4.tgz
 echo "Installing protobuf"
 sudo apt-get install protobuf-compiler
