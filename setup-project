@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -x
 set -e
 sudo apt-get install axel time
 echo "Downloading misc tools"
