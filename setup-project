@@ -1,15 +1,25 @@
-#Download spark 1.0.2
-echo "Setup spark"
-wget http://d3kbcqa49mib13.cloudfront.net/spark-1.0.2-bin-hadoop2.tgz
-tar -xvf spark-1.0.2-bin-hadoop2.tgz
+#!/usr/bin/env sh
+apt-get install axel
+echo "Downloading misc tools"
+axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.tgz &
+SPARK_DL_PID=$!
+axel http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz &
+KAFKA_DL_PID=$!
+axel http://mirror.cogentco.com/pub/apache/flume/1.5.0.1/apache-flume-1.5.0.1-bin.tar.gz &
+FLUME_DL_PID=$!
+waitpid $SPARK_DL_PID
+echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+sudo apt-get update &
+APT_GET_UPDATE_PID=$!
+waitpid $SPARK_DL_PID
+tar -xvf spark-1.1.0-bin-hadoop2.tgz
 echo "Installing protobuf"
 sudo apt-get install protobuf-compiler
 echo $?
 # Set up cassandra
 echo "Setting up dsc (cassandra"
-echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
-sudo apt-get update
+waitpid $APT_GET_UPDATE_PID
 yes | sudo apt-get install -y --force-yes dsc21
 yes | sudo apt-get install -y --force-yes cassandra-tools
 echo $?
@@ -21,8 +31,8 @@ sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
 echo "done with setup"
 # Set up kafka
 echo "Setting up kafka"
-curl http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz > kafka.tgz
-tar -xzf kafka.tgz
+waitpid $KAFKA_DL_PID
+tar -xzf kafka_2.9.2-0.8.1.1.tgz
 cd kafka_2.9.2-0.8.1.1
 echo "Starting zookeeper"
 ./bin/zookeeper-server-start.sh config/zookeeper.properties &
@@ -35,4 +45,12 @@ sleep 5
 ./bin/kafka-topics.sh --zookeeper localhost:2181 --topic logs --partition 1 --replication-factor 1 --create
 cd ..
 
+# set up flume
+waitpid $FLUME_DL_PID
+echo "Setting up flume"
+tar -xvf apache-flume-1.5.0.1-bin.tar.gz
+cd apache-flume-1.5.0.1-bin
+./bin/flume-ng agent -n panda -c ../files/flumeconf.cfg -f ./conf/flume-conf.properties.template -Dflume.root.logger=INFO,console &
+disown $!
+cd ..
 echo $?
