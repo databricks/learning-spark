@@ -29,8 +29,15 @@ echo "Running Scala streaming program"
 sleep 1
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.StreamingLogInput $ASSEMBLY_JAR local[4]
 echo "Running Scala Kafka streaming example"
-$SPARK_SUBMIT_SCRIPT --master local[4] --class com.oreilly.learningsparkexamples.scala.KafkaInput $ASSEMBLY_JAR localhost:2181 spark-readers pandas 1
+$SPARK_SUBMIT_SCRIPT --master local[4] --class com.oreilly.learningsparkexamples.scala.KafkaInput $ASSEMBLY_JAR localhost:2181 spark-readers pandas 1 &
+KAFKA_PID=$!
 echo "panda\nerror panda" | $KAFKA_ROOT/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic pandas
+wait $KAFKA_PID
+echo "Running Scala Flume example"
+$SPARK_SUBMIT_SCRIPT --master local[4] --class com.oreilly.learningsparkexamples.scala.FlumeInput $ASSEMBLY_JAR localhost 7788 &
+FLUME_PID=$!
+echo "panda\nerror panda\n" | nc localhost 44444
+wait $FLUME_PID
 # Python
 echo "Running Python programs"
 $SPARK_SUBMIT_SCRIPT ./src/python/AvgMapPartitions.py local
