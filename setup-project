@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-apt-get install axel
+apt-get install axel time
 echo "Downloading misc tools"
 axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.tgz &
 SPARK_DL_PID=$!
