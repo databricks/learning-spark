@@ -15,14 +15,14 @@ echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/a
 curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo apt-get update &> aptlog &
 APT_GET_UPDATE_PID=$!
-wait $SPARK_DL_PID
+wait $SPARK_DL_PID || echo "Spark DL finished early"
 tar -xvf spark-1.1.0-bin-hadoop2.4.tgz
 echo "Installing protobuf"
 sudo apt-get install protobuf-compiler
 echo $?
 # Set up cassandra
-echo "Setting up dsc (cassandra"
-wait $APT_GET_UPDATE_PID
+echo "Setting up dsc (cassandra)"
+wait $APT_GET_UPDATE_PID || echo "apt-get update finished early"
 yes | sudo apt-get install -y --force-yes dsc21
 yes | sudo apt-get install -y --force-yes cassandra-tools
 echo $?
@@ -34,7 +34,7 @@ sudo mkdir -p /user/hive && sudo chown -R $IAM /user/hive
 echo "done with setup"
 # Set up kafka
 echo "Setting up kafka"
-wait $KAFKA_DL_PID
+wait $KAFKA_DL_PID || echo "Kafka DL finished early"
 tar -xzf kafka_2.9.2-0.8.1.1.tgz
 cd kafka_2.9.2-0.8.1.1
 echo "Starting zookeeper"
@@ -49,7 +49,7 @@ sleep 5
 cd ..
 
 # set up flume
-wait $FLUME_DL_PID
+wait $FLUME_DL_PID || echo "Flume DL finished early"
 echo "Setting up flume"
 tar -xvf apache-flume-1.5.0.1-bin.tar.gz
 cd apache-flume-1.5.0.1-bin
