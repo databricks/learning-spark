@@ -2,16 +2,17 @@
 set -e
 sudo apt-get install axel time
 echo "Downloading misc tools"
-axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz &
+axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz &> haddopdl &
 SPARK_DL_PID=$!
-axel http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz &
+axel http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz &> kafkadl &
 KAFKA_DL_PID=$!
-axel http://mirror.cogentco.com/pub/apache/flume/1.5.0.1/apache-flume-1.5.0.1-bin.tar.gz &
+axel http://mirror.cogentco.com/pub/apache/flume/1.5.0.1/apache-flume-1.5.0.1-bin.tar.gz &> flumedl &
 FLUME_DL_PID=$!
 wait $SPARK_DL_PID
+sudo mkdir -p /etc/apt/sources.list.d/
 echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
 curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
-sudo apt-get update &
+sudo apt-get update &> aptlog &
 APT_GET_UPDATE_PID=$!
 wait $SPARK_DL_PID
 tar -xvf spark-1.1.0-bin-hadoop2.4.tgz
