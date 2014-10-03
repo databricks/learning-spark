@@ -18,7 +18,7 @@ sudo mkdir -p /etc/apt/sources.list.d/
 echo "install urllib3"
 sudo pip install urllib3
 wait $SPARK_DL_PID || echo "Spark DL finished early"
-tar -xvf spark-1.1.0-bin-hadoop2.4.tgz
+tar -xf spark-1.1.0-bin-hadoop2.4.tgz
 wait $APT_GET_UPDATE_PID
 echo "Installing protobuf"
 sudo apt-get install protobuf-compiler
@@ -52,7 +52,7 @@ cd ..
 # set up flume
 wait $FLUME_DL_PID || echo "Flume DL finished early"
 echo "Setting up flume"
-tar -xvf apache-flume-1.5.0.1-bin.tar.gz
+tar -xf apache-flume-1.5.0.1-bin.tar.gz
 cd apache-flume-1.5.0.1-bin
 ./bin/flume-ng agent -n panda -c ../files/flumeconf.cfg -f ./conf/flume-conf.properties.template -Dflume.root.logger=INFO,console &
 disown $!
