@@ -26,8 +26,8 @@ echo $?
 # Set up cassandra
 echo "Setting up dsc (cassandra)"
 wait $APT_GET_UPDATE_PID || echo "apt-get update finished early"
-yes | sudo apt-get install -y --force-yes dsc21
-yes | sudo apt-get install -y --force-yes cassandra-tools
+sudo apt-get install -y --force-yes dsc21
+sudo apt-get install -y --force-yes cassandra-tools
 echo $?
 echo "set up hive directories"
 export IAM=`whoami`
