@@ -18,7 +18,6 @@ sudo mkdir -p /etc/apt/sources.list.d/
 echo "install urllib3"
 sudo pip install urllib3
 wait $SPARK_DL_PID || echo "Spark DL finished early"
-cat sparkdl
 tar -xvf spark-1.1.0-bin-hadoop2.4.tgz
 wait $APT_GET_UPDATE_PID
 echo "Installing protobuf"

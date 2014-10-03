@@ -5,7 +5,7 @@ set -x
 # If any command fails, fail
 set -e
 # Build everything
-./sbt/sbt compile package assembly
+./sbt/sbt compile package assembly > sbtlog || (cat ./sbtlog && exit 1)
 KAFKA_ROOT=./kafka_2.9.2-0.8.1.1
 SPARK_HOME=./spark-1.1.0-bin-hadoop2.4
 SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
