@@ -56,7 +56,7 @@ wait $FLUME_DL_PID || echo "Flume DL finished early"
 echo "Setting up flume"
 tar -xf apache-flume-1.5.0.1-bin.tar.gz
 cd apache-flume-1.5.0.1-bin
-./bin/flume-ng agent -n panda -c ../files/flumeconf.cfg -f ./conf/flume-conf.properties.template -Dflume.root.logger=INFO,console &
+./bin/flume-ng agent -n panda --conf-file ../files/flumeconf.cfg &
 disown $!
 cd ..
 echo $?
