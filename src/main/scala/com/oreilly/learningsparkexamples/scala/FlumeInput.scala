@@ -7,7 +7,6 @@ import org.apache.spark._
 import org.apache.spark.SparkContext._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.flume._
-import org.apache.flume.sink.FlumeFormatter
 
 object FlumeInput {
   def main(args: Array[String]) {
@@ -19,7 +18,7 @@ object FlumeInput {
     val ssc = new StreamingContext(sc, Seconds(1))
     val events = FlumeUtils.createStream(ssc, receiverHostname, receiverPort)
     // Assuming that our flume events are UTF-8 log lines
-    val lines = events.map{e => new String(e.event.getBody(), "UTF-8")}
+    val lines = events.map{e => new String(e.event.getBody().array(), "UTF-8")}
     StreamingLogInput.processLines(lines)
     // start our streaming context and wait for it to "finish"
     ssc.start()
