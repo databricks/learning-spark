@@ -39,6 +39,8 @@ $SPARK_SUBMIT_SCRIPT --master local[4] --class com.oreilly.learningsparkexamples
 FLUME_PID=$!
 sleep 1
 echo "panda\nerror panda\n" | nc localhost 44444
+sleep 3
+echo "panda2\nerror panda2\n" | nc localhost 44444
 wait $FLUME_PID
 # Python
 echo "Running Python programs"
