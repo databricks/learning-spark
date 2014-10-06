@@ -60,10 +60,13 @@ public class LogAnalyzerTotal implements Serializable {
       new Function<JavaRDD<ApacheAccessLog>, JavaPairRDD<String, Long>>(){
       public JavaPairRDD<String, Long> call(JavaRDD<ApacheAccessLog> rdd) {
         return Functions.ipAddressCount(rdd);
-      }})
-      .updateStateByKey(new Functions.ComputeRunningSum());
+      }});
+
+      JavaPairDStream<String, Long> ipAddressesCumDStream = ipAddressesRawDStream.updateStateByKey(
+        new Functions.ComputeRunningSum());
+
     // All ips more than 10
-    JavaDStream<String> ipAddressDStream = ipAddressesRawDStream.transform(
+    JavaDStream<String> ipAddressDStream = ipAddressesCumDStream.transform(
       new Function<JavaPairRDD<String, Long>, JavaRDD<String>>() {
         public JavaRDD<String> call(JavaPairRDD<String, Long> rdd) {
           return Functions.filterIPAddress(rdd);

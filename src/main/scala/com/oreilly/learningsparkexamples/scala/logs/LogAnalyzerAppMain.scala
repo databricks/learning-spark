@@ -2,6 +2,7 @@ package com.oreilly.learningsparkexamples.scala.logs;
 
 import org.apache.spark._
 import org.apache.spark.streaming._
+import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
 
 /**
  * The LogAnalyzerAppMain is an sample logs analysis application.  For now,
@@ -54,6 +55,7 @@ object LogAnalyzerAppMain {
     // This methods monitors a directory for new files to read in for streaming.
     val logDirectory = opts.LogsDirectory
     val logData = ssc.textFileStream(logDirectory);
-
+    val accessLogDStream = logData.map(line => ApacheAccessLog.parseFromLogLine(line)).cache()
+    LogAnalyzerTotal.processAccessLogs(accessLogDStream)
   }
 }
