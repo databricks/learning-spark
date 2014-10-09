@@ -4,7 +4,10 @@ import com.google.common.collect.Ordering;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 import scala.Tuple4;
 
@@ -19,6 +22,31 @@ public class LogAnalyzerWindowed implements Serializable {
     JavaDStream<ApacheAccessLog> windowDStream = accessLogsDStream.window(
         Flags.getInstance().getWindowLength(),
         Flags.getInstance().getSlideInterval());
+    JavaDStream<String> ipAddresses = accessLogsDStream.map(
+      new Function<ApacheAccessLog, String>() {
+        public String call(ApacheAccessLog entry) {
+          return entry.getIpAddress();
+        }});
+    // reduceByWindow
+    JavaDStream<Long> requestCountRBW = accessLogsDStream.map(new Function<ApacheAccessLog, Long>() {
+        public Long call(ApacheAccessLog entry) {
+          return 1L;
+        }}).reduceByWindow(new Function2<Long, Long, Long>() {
+            public Long call(Long v1, Long v2) {
+              return v1+v2;
+            }}, new Function2<Long, Long, Long>() {
+            public Long call(Long v1, Long v2) {
+              return v1-v2;
+            }}, Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
+    requestCountRBW.print();
+    // Use countByWindow
+    JavaDStream<Long> requestCount = accessLogsDStream.countByWindow(
+      Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
+    JavaPairDStream<String, Long> ipAddressRequestCount = ipAddresses.countByValueAndWindow(
+      Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
+    requestCount.print();
+    ipAddressRequestCount.print();
+
     windowDStream.foreachRDD(new Function<JavaRDD<ApacheAccessLog>, Void>() {
         public Void call(JavaRDD<ApacheAccessLog> accessLogs) {
       Tuple4<Long, Long, Long, Long> contentSizeStats =

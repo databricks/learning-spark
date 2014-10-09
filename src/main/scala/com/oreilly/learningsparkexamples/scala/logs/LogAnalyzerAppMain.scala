@@ -30,11 +30,19 @@ import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
  *     --output_html_file /tmp/log_stats.html
  *     --index_html_template ./src/main/resources/index.html.template
  */
+case class Config(WindowLength: Int = 3000, SlideInterval: Int = 1000, LogsDirectory: String = "/tmp/logs",
+  CheckpointDirectory: String = "/tmp/checkpoint",
+  OutputHTMLFile: String = "/tmp/log_stats.html",
+  IndexHTMLTemplate :String ="./src/main/resources/index.html.template") {
+  def getWindowDuration() = {
+    new Duration(WindowLength)
+  }
+  def getSlideDuration() = {
+    new Duration(SlideInterval)
+  }
+}
+
 object LogAnalyzerAppMain {
-  case class Config(WindowLength: Int = 1000, SlideInterval: Int = -1, LogsDirectory: String = "/tmp/logs",
-    CheckpointDirectory: String = "/tmp/checkpoint",
-    OutputHTMLFile: String = "/tmp/log_stats.html",
-    IndexHTMLTemplate :String ="./src/main/resources/index.html.template")
 
   def main(args: Array[String]) {
     val parser = new scopt.OptionParser[Config]("LogAnalyzerAppMain") {
@@ -49,7 +57,7 @@ object LogAnalyzerAppMain {
     val conf = new SparkConf()
       .setAppName("A Databricks Reference Application: Logs Analysis with Spark");
     val sc = new SparkContext(conf)
-    val ssc = new StreamingContext(sc, new Duration(opts.SlideInterval))
+    val ssc = new StreamingContext(sc, opts.getWindowDuration())
     // Checkpointing must be enabled to use the updateStateByKey function & windowed operations.
     ssc.checkpoint(opts.CheckpointDirectory)
     // This methods monitors a directory for new files to read in for streaming.
@@ -57,5 +65,6 @@ object LogAnalyzerAppMain {
     val logData = ssc.textFileStream(logDirectory);
     val accessLogDStream = logData.map(line => ApacheAccessLog.parseFromLogLine(line)).cache()
     LogAnalyzerTotal.processAccessLogs(accessLogDStream)
+    LogAnalyzerWindowed.processAccessLogs(accessLogDStream, opts)
   }
 }
