@@ -1,1 +1,3 @@
 {"name":"Sparky The Bear", "lovesPandas":true}
+{"name": "Holden"}
+{"name":"Sparky The Bear", "lovesPandas":true, "knows":{"friends": ["holden"]}}

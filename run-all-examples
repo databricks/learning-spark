@@ -22,6 +22,7 @@ chmod a+x ./src/R/finddistance.R
 echo "37.384733,-122.032164,37.751952821,-122.4208688735" | ./src/R/finddistance.R
 # Scala
 echo "Running Scala programs"
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.LoadJsonWithSparkSQL local ./files/pandainfo.json 
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
 echo "Running Scala streaming program"
