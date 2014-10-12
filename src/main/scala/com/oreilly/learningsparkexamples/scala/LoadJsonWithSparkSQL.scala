@@ -9,7 +9,7 @@ import org.apache.spark.sql.SQLContext
 
 object LoadJsonWithSparkSQL {
   def main(args: Array[String]) {
-    if (args.length != 2) {
+    if (args.length != 3) {
       println("Usage: [sparkmaster] [inputFile]")
       exit(1)
     }
