@@ -25,7 +25,7 @@ public class LoadJsonWithSparkSQL {
 
 
   public static void main(String[] args) throws Exception {
-		if (args.length != 3) {
+		if (args.length != 2) {
       throw new Exception("Usage LoadJsonWithSparkSQL sparkMaster jsonFile");
 		}
     String master = args[0];
