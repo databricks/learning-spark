@@ -47,6 +47,13 @@ public class LogAnalyzerWindowed implements Serializable {
     requestCount.print();
     ipAddressRequestCount.print();
 
+    // use a transform for the response code count
+    JavaPairDStream<Integer, Long> responseCodeCountTransform = accessLogsDStream.transformToPair(
+      new Function<JavaRDD<ApacheAccessLog>, JavaPairRDD<Integer, Long>>() {
+        public JavaPairRDD<Integer, Long> call(JavaRDD<ApacheAccessLog> logs) {
+          return Functions.responseCodeCount(logs);
+        }
+      });
     windowDStream.foreachRDD(new Function<JavaRDD<ApacheAccessLog>, Void>() {
         public Void call(JavaRDD<ApacheAccessLog> accessLogs) {
       Tuple4<Long, Long, Long, Long> contentSizeStats =
