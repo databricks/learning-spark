@@ -12,7 +12,7 @@ if __name__ == "__main__":
     sc = SparkContext(master, "LoadJson")
     input = sc.textFile(inputFile)
     data = input.map(lambda x: json.loads(x))
-    data.filter(lambda x: x['lovesPandas']).map(
+    data.filter(lambda x: 'lovesPandas' in x and x['lovesPandas']).map(
         lambda x: json.dumps(x)).saveAsTextFile(outputFile)
     sc.stop()
     print "Done!"
