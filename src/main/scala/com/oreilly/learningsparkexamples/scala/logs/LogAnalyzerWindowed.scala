@@ -4,6 +4,7 @@ import org.apache.spark._
 import org.apache.spark.rdd._
 import org.apache.spark.SparkContext._
 import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.streaming.dstream._
 import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
 
@@ -25,5 +26,14 @@ object LogAnalyzerWindowed {
     val accessLogsWindow = accessLogsDStream.window(
       opts.getWindowDuration(), opts.getSlideDuration())
     accessLogsWindow.transform(rdd => responseCodeCount(rdd)).print()
+    // compute the visit counts for IP address in a window
+    val ipAddressesPairDStream = accessLogsDStream.map(logEntry => (logEntry.getIpAddress(), 1))
+    val ipAddressesCountDStream = ipAddressesPairDStream.reduceByKeyAndWindow(
+      {(x, y) => x + y}, // Adding elements in the new slice
+      {(x, y) => x - y}, // Removing elements from the oldest slice
+      opts.getWindowDuration(), // Window duration
+      opts.getSlideDuration() // slide duration
+    )
+    ipAddressesCountDStream.print()
   }
 }
