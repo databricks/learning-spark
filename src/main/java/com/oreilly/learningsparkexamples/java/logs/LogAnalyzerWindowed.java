@@ -39,6 +39,26 @@ public class LogAnalyzerWindowed implements Serializable {
               return v1-v2;
             }}, Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
     requestCountRBW.print();
+    // reducebykeyandwindow
+    JavaPairDStream<String, Long> ipAddressPairDStream = accessLogsDStream.mapToPair(
+      new PairFunction<ApacheAccessLog, String, Long>() {
+        public Tuple2<String, Long> call(ApacheAccessLog entry) {
+          return new Tuple2(entry.getIpAddress(), 1L);
+        }});
+    JavaPairDStream<String, Long> ipAddressesCountDStream = ipAddressPairDStream.reduceByKeyAndWindow(
+      // Adding elements in the new slice
+      new Function2<Long, Long, Long>() {
+        public Long call(Long v1, Long v2) {
+          return v1+v2;
+        }},
+      // Removing elements from the oldest slice
+      new Function2<Long, Long, Long>() {
+        public Long call(Long v1, Long v2) {
+          return v1-v2;
+        }},
+      Flags.getInstance().getWindowLength(),
+      Flags.getInstance().getSlideInterval());
+    ipAddressesCountDStream.print();
     // Use countByWindow
     JavaDStream<Long> requestCount = accessLogsDStream.countByWindow(
       Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
