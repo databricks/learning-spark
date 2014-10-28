@@ -7,6 +7,8 @@ import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.streaming.dstream._
 import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
+import org.apache.hadoop.mapred.SequenceFileOutputFormat;
+import org.apache.hadoop.io.{ArrayWritable, BooleanWritable, BytesWritable, DoubleWritable, FloatWritable, IntWritable, LongWritable, NullWritable, Text, Writable}
 
 /**
  * Computes various pieces of information on a sliding window form the log input
@@ -21,6 +23,10 @@ object LogAnalyzerWindowed {
     val ipAddressRequestCount = ipAddressesDStream.countByValueAndWindow(
       opts.getWindowDuration(), opts.getSlideDuration())
     ipAddressRequestCount.saveAsTextFiles(opts.OutputDirectory + "/ipAddressRequestCountsTXT")
+    val writableIpAddressRequestCount = ipAddressRequestCount.map{case (ip, count) =>
+      (new Text(ip), new LongWritable(count))}
+    writableIpAddressRequestCount.saveAsHadoopFiles[SequenceFileOutputFormat[Text, LongWritable]](
+      opts.OutputDirectory + "/ipAddressRequestCounts", "pandas")
     val requestCount = accessLogsDStream.countByWindow(opts.getWindowDuration(), opts.getSlideDuration())
     requestCount.print()
     ipAddressRequestCount.print()
