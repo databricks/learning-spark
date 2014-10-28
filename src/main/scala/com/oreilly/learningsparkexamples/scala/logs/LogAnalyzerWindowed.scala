@@ -4,6 +4,7 @@ import org.apache.spark._
 import org.apache.spark.rdd._
 import org.apache.spark.SparkContext._
 import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.streaming.dstream._
 import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
 
@@ -19,6 +20,7 @@ object LogAnalyzerWindowed {
     val ipAddressesDStream = accessLogsDStream.map{entry => entry.getIpAddress()}
     val ipAddressRequestCount = ipAddressesDStream.countByValueAndWindow(
       opts.getWindowDuration(), opts.getSlideDuration())
+    ipAddressRequestCount.saveAsTextFiles(opts.OutputDirectory + "/ipAddressRequestCountsTXT")
     val requestCount = accessLogsDStream.countByWindow(opts.getWindowDuration(), opts.getSlideDuration())
     requestCount.print()
     ipAddressRequestCount.print()

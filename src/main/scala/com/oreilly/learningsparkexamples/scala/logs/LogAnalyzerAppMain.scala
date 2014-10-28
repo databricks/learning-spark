@@ -2,6 +2,8 @@ package com.oreilly.learningsparkexamples.scala.logs;
 
 import org.apache.spark._
 import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._
+import org.apache.spark.streaming.dstream._
 import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
 
 /**
@@ -33,6 +35,7 @@ import com.oreilly.learningsparkexamples.java.logs.ApacheAccessLog
 case class Config(WindowLength: Int = 3000, SlideInterval: Int = 1000, LogsDirectory: String = "/tmp/logs",
   CheckpointDirectory: String = "/tmp/checkpoint",
   OutputHTMLFile: String = "/tmp/log_stats.html",
+  OutputDirectory: String = "/tmp/outpandas",
   IndexHTMLTemplate :String ="./src/main/resources/index.html.template") {
   def getWindowDuration() = {
     new Duration(WindowLength)
@@ -51,6 +54,7 @@ object LogAnalyzerAppMain {
       opt[Int]('s', "slide_interval") text("size of the slide inteval as an integer in miliseconds")
       opt[String]('l', "logs_directory") text("location of the logs directory. if you don't have any logs use the fakelogs_dir script.")
       opt[String]('c', "checkpoint_directory") text("location of the checkpoint directory.")
+      opt[String]('o', "output_directory") text("location of the output directory.")
     }
     val opts = parser.parse(args, new Config()).get
     // Startup the Spark Conf.
