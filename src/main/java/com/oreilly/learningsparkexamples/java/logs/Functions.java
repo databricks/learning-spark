@@ -103,6 +103,14 @@ public class Functions {
     }
   }
 
+  public static final class IpContentTuple implements PairFunction<ApacheAccessLog, String, Long> {
+    @Override
+    public Tuple2<String, Long> call(ApacheAccessLog log) {
+      return new Tuple2<>(log.getIpAddress(), log.getContentSize());
+    }
+  }
+
+
   public static final class EndPointTuple implements PairFunction<ApacheAccessLog, String, Long> {
     @Override
     public Tuple2<String, Long> call(ApacheAccessLog log) {
