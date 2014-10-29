@@ -65,6 +65,11 @@ public class LogAnalyzerTotal implements Serializable {
       JavaPairDStream<String, Long> ipAddressesCumDStream = ipAddressesRawDStream.updateStateByKey(
         new Functions.ComputeRunningSum());
 
+    // A DStream of ipAddressCounts without transform
+    JavaPairDStream<String, Long> ipAddressesDStream = accessLogsDStream.mapToPair(new Functions.IpTuple());
+    JavaPairDStream<String, Long> ipAddressesCountsDStream = ipAddressesDStream.reduceByKey(new Functions.LongSumReducer());
+
+
     // All ips more than 10
     JavaDStream<String> ipAddressDStream = ipAddressesCumDStream.transform(
       new Function<JavaPairRDD<String, Long>, JavaRDD<String>>() {
