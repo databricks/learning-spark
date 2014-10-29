@@ -69,9 +69,9 @@ public class LogAnalyzerTotal implements Serializable {
     JavaPairDStream<String, Long> ipAddressesDStream = accessLogsDStream.mapToPair(new Functions.IpTuple());
     JavaPairDStream<String, Long> ipAddressesCountsDStream = ipAddressesDStream.reduceByKey(new Functions.LongSumReducer());
     // and joining it with the transfer amount
-    JavaPairDStream<String, Long> ipAddressesBytesDStream = accessLogsDStream.mapToPair(new Functions.IpContentTuple());
-    JavaPairDStream<String, Long> ipAddressesBytesSumDStream = ipAddressesBytesDStream.reduceByKey(new Functions.LongSumReducer());
-    JavaPairDStream<String, Tuple2<Long, Long>> ipBytesRequestCountDStream = ipAddressesByteSumDStream.join(ipAddressesCountsDStream);
+    JavaPairDStream<String, Long> ipBytesDStream = accessLogsDStream.mapToPair(new Functions.IpContentTuple());
+    JavaPairDStream<String, Long> ipBytesSumDStream = ipBytesDStream.reduceByKey(new Functions.LongSumReducer());
+    JavaPairDStream<String, Tuple2<Long, Long>> ipBytesRequestCountDStream = ipBytesSumDStream.join(ipAddressesCountsDStream);
 
     // All ips more than 10
     JavaDStream<String> ipAddressDStream = ipAddressesCumDStream.transform(
