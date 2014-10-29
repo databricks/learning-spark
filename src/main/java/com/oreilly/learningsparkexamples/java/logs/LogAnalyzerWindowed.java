@@ -18,7 +18,7 @@ import java.util.List;
 public class LogAnalyzerWindowed implements Serializable {
   private LogStatistics logStatistics;
 
-  public void processAccessLogs(JavaDStream<ApacheAccessLog> accessLogsDStream) {
+  public void processAccessLogs(String outDir, JavaDStream<ApacheAccessLog> accessLogsDStream) {
     JavaDStream<ApacheAccessLog> windowDStream = accessLogsDStream.window(
         Flags.getInstance().getWindowLength(),
         Flags.getInstance().getSlideInterval());

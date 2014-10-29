@@ -12,6 +12,7 @@ public class Flags {
   private String outputHtmlFile;
   private String checkpointDirectory;
   private String indexHtmlTemplate;
+  private String outputDirectory;
 
   private boolean initialized = false;
 
@@ -35,6 +36,10 @@ public class Flags {
 
   public String getCheckpointDirectory() {
     return checkpointDirectory;
+  }
+
+  public String getOutputDirectory() {
+    return outputDirectory;
   }
 
   public String getIndexHtmlTemplate() {
@@ -65,6 +70,8 @@ public class Flags {
       THE_INSTANCE.indexHtmlTemplate = cl.getOptionValue(
           LogAnalyzerAppMain.INDEX_HTML_TEMPLATE,
           "./src/main/resources/index.html.template");
+      THE_INSTANCE.outputDirectory = cl.getOptionValue(
+        LogAnalyzerAppMain.OUTPUT_DIRECTORY, "/tmp/pandaout");
       THE_INSTANCE.initialized = true;
     } catch (ParseException e) {
       THE_INSTANCE.initialized = false;

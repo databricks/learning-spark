@@ -36,6 +36,7 @@ import java.io.IOException;
  *     --logs_directory /tmp/logs
  *     --output_html_file /tmp/log_stats.html
  *     --index_html_template ./src/main/resources/index.html.template
+ *     --output_directory /tmp/pandaout
  */
 public class LogAnalyzerAppMain {
   public static final String WINDOW_LENGTH = "window_length";
@@ -44,6 +45,7 @@ public class LogAnalyzerAppMain {
   public static final String OUTPUT_HTML_FILE = "output_html_file";
   public static final String CHECKPOINT_DIRECTORY = "checkpoint_directory";
   public static final String INDEX_HTML_TEMPLATE = "index_html_template";
+  public static final String OUTPUT_DIRECTORY = "output_directory";
 
   private static final Options THE_OPTIONS = createOptions();
   private static Options createOptions() {
@@ -61,6 +63,7 @@ public class LogAnalyzerAppMain {
         new Option(CHECKPOINT_DIRECTORY, false, "The checkpoint directory."));
     options.addOption(new Option(INDEX_HTML_TEMPLATE, true,
             "path to the index.html.template file - accessible from all workers"));
+    options.addOption(new Option(OUTPUT_DIRECTORY, false, "path to output DSTreams too"));
 
     return options;
   }
@@ -88,10 +91,10 @@ public class LogAnalyzerAppMain {
     final LogAnalyzerWindowed logAnalyzerWindowed = new LogAnalyzerWindowed();
 
     // Process the DStream which gathers stats for all of time.
-    logAnalyzerTotal.processAccessLogs(accessLogsDStream);
+    logAnalyzerTotal.processAccessLogs(Flags.getInstance().getOutputDirectory(), accessLogsDStream);
 
     // Calculate statistics for the last time interval.
-    logAnalyzerWindowed.processAccessLogs(accessLogsDStream);
+    logAnalyzerWindowed.processAccessLogs(Flags.getInstance().getOutputDirectory(), accessLogsDStream);
 
     // Render the output each time there is a new RDD in the accessLogsDStream.
     final Renderer renderer = new Renderer();
