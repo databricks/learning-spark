@@ -67,6 +67,7 @@ $SPARK_SUBMIT_SCRIPT ./src/python/QueryParquetFile.py local /tmp/py/favouriteani
 # Java
 echo "Running Java programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/java/ch6out
+./sbt/sbt assembly && $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.SparkSQLTwitter  $ASSEMBLY_JAR  ./files/testweet.json  /tmp/javatweetout
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.BasicQueryCassandra $ASSEMBLY_JAR local localhost
 echo "Running Java streaming program"
 ./bin/fakelogs.sh &

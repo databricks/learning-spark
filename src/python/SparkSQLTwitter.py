@@ -5,6 +5,7 @@ import json
 import sys
 
 if __name__ == "__main__":
-    conf = SparkConf()
+    conf = SparkConf().setAppName("SparkSQLTwitter")
     sc = SparkContext()
     sqlCtx = SQLContext(sc)
+    sc.stop()
