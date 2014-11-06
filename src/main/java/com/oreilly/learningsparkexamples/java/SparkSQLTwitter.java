@@ -9,7 +9,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.api.java.JavaSQLContext;
 import org.apache.spark.sql.api.java.JavaSchemaRDD;
 import org.apache.spark.sql.api.java.Row;
@@ -31,6 +33,11 @@ public class SparkSQLTwitter {
     for (Row row : result) {
       System.out.println(row.get(0));
     }
+    JavaRDD<String> topTweetText = topTweets.map(new Function<Row, String>() {
+        public String call(Row row) {
+          return row.getString(0);
+        }});
+    System.out.println(topTweetText.collect());
     sc.stop();
   }
 }

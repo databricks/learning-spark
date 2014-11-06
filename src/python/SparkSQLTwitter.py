@@ -14,4 +14,6 @@ if __name__ == "__main__":
     input.registerTempTable("tweets")
     topTweets = sqlCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
     print topTweets.collect()
+    topTweetText = topTweets.map(lambda row : row.text)
+    print topTweetText.collect()
     sc.stop()

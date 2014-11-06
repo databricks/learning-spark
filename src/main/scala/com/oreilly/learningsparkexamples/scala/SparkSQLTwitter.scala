@@ -28,6 +28,7 @@ object SparkSQLTwitter {
       // Select tweets based on the retweetCount
       val topTweets = sqlCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
       topTweets.collect().map(println(_))
+      val topTweetText = topTweets.map(row => row.getString(0))
       sc.stop()
     }
 }
