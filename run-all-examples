@@ -11,9 +11,9 @@ SPARK_HOME=./spark-1.1.0-bin-hadoop2.4
 SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
 ASSEMBLY_JAR=./target/scala-2.10/learning-spark-examples-assembly-0.0.1.jar
 # Mini cleanup
-rm -rf /tmp/py/
-rm -rf /tmp/java/
-rm -rf /tmp/scala
+rm -rf /tmp/py; mkdir -p /tmp/py
+rm -rf /tmp/java; mkdir -p /tmp/java
+rm -rf /tmp/scala; mkdir -p /tmp/scala
 # setup cassandra
 cqlsh --file ./files/cqlsh_setup
 # R
@@ -24,7 +24,7 @@ echo "37.384733,-122.032164,37.751952821,-122.4208688735" | ./src/R/finddistance
 echo "Running Scala programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.LoadJsonWithSparkSQL $ASSEMBLY_JAR local ./files/pandainfo.json 
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.SparkSQLTwitter  $ASSEMBLY_JAR  ./files/testweet.json  /tmp/scalatweetout
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.SparkSQLTwitter  $ASSEMBLY_JAR  ./files/testweet.json  /tmp/scala/tweetout
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
 echo "Running Scala streaming program"
 ./bin/fakelogs.sh &
@@ -68,7 +68,7 @@ $SPARK_SUBMIT_SCRIPT ./src/python/QueryParquetFile.py local /tmp/py/favouriteani
 # Java
 echo "Running Java programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.ChapterSixExample $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/java/ch6out
-./sbt/sbt assembly && $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.SparkSQLTwitter  $ASSEMBLY_JAR  ./files/testweet.json  /tmp/javatweetout
+./sbt/sbt assembly && $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.SparkSQLTwitter  $ASSEMBLY_JAR  ./files/testweet.json  /tmp/java/tweetout
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.java.BasicQueryCassandra $ASSEMBLY_JAR local localhost
 echo "Running Java streaming program"
 ./bin/fakelogs.sh &
