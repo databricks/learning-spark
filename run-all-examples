@@ -53,6 +53,7 @@ $SPARK_SUBMIT_SCRIPT ./src/python/BasicKeyValueMapFilter.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/BasicMapPartitions.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/BasicMap.py local
 $SPARK_SUBMIT_SCRIPT ./src/python/ChapterSixExample.py local ./files/callsigns /tmp/py/pandaout
+$SPARK_SUBMIT_SCRIPT ./src/python/SparkSQLTwitter.py ./files/testweet.json /tmp/py/tweetout
 $SPARK_SUBMIT_SCRIPT ./src/python/LoadCsv.py local ./files/favourite_animals.csv /tmp/py/panda_lovers.csv
 $SPARK_SUBMIT_SCRIPT ./src/python/MakeHiveTable.py local ./files/int_string.csv pandaplural
 # Temporarily disabled due to API changes

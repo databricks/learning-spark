@@ -26,7 +26,7 @@ object SparkSQLTwitter {
       // Register the input schema RDD
       input.registerTempTable("tweets")
       // Select tweets based on the retweetCount
-      val topTweets = sqlCtx.sql("SELECT * FROM tweets ORDER BY retweetCount LIMIT 10")
+      val topTweets = sqlCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
       topTweets.collect().map(println(_))
       sc.stop()
     }

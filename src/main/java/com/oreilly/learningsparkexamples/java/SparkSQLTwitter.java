@@ -26,7 +26,7 @@ public class SparkSQLTwitter {
     // Register the input schema RDD
     input.registerTempTable("tweets");
     // Select tweets based on the retweetCount
-    JavaSchemaRDD topTweets = sqlCtx.sql("SELECT * FROM tweets ORDER BY retweetCount LIMIT 10");
+    JavaSchemaRDD topTweets = sqlCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10");
     List<Row> result = topTweets.collect();
     for (Row row : result) {
       System.out.println(row.get(0));
