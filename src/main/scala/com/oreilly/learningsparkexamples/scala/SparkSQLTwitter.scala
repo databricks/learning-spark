@@ -7,6 +7,7 @@ import org.apache.spark._
 import org.apache.spark.SparkContext._
 import org.apache.spark.sql.SQLContext
 
+case class HappyPerson(handle: String, favouriteBeverage: String)
 
 object SparkSQLTwitter {
     def main(args: Array[String]) {
@@ -29,6 +30,9 @@ object SparkSQLTwitter {
       val topTweets = sqlCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
       topTweets.collect().map(println(_))
       val topTweetText = topTweets.map(row => row.getString(0))
+      // Create a person and turn it into a Schema RDD
+      val peopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee")))
+      peopleRDD.registerTempTable("people")
       sc.stop()
     }
 }
