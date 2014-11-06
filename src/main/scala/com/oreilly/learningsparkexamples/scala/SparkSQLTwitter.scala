@@ -31,8 +31,8 @@ object SparkSQLTwitter {
       topTweets.collect().map(println(_))
       val topTweetText = topTweets.map(row => row.getString(0))
       // Create a person and turn it into a Schema RDD
-      val peopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee")))
-      peopleRDD.registerTempTable("people")
+      val happyPeopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee")))
+      happyPeopleRDD.registerTempTable("happy_people")
       sc.stop()
     }
 }
