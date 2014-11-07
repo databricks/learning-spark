@@ -33,6 +33,10 @@ object SparkSQLTwitter {
       // Create a person and turn it into a Schema RDD
       val happyPeopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee")))
       happyPeopleRDD.registerTempTable("happy_people")
+      // UDF
+      registerFunction("strLenScala", (_: String).length)
+      val tweetLength = sqlCtx.sql("SELECT strLenScala('tweet') FROM tweets LIMIT 10")
+      println(tweetLength.collect())
       sc.stop()
     }
 }
