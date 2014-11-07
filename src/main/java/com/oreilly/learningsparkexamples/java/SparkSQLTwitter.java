@@ -16,6 +16,8 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.api.java.JavaSQLContext;
 import org.apache.spark.sql.api.java.JavaSchemaRDD;
 import org.apache.spark.sql.api.java.Row;
+import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.api.java.DataType;
 
 public class SparkSQLTwitter {
   public static void main(String[] args) {
@@ -45,7 +47,17 @@ public class SparkSQLTwitter {
     JavaRDD<HappyPerson> happyPeopleRDD = sc.parallelize(peopleList);
     JavaSchemaRDD happyPeopleSchemaRDD = sqlCtx.applySchema(happyPeopleRDD, HappyPerson.class);
     happyPeopleSchemaRDD.registerTempTable("happy_people");
-
+    sqlCtx.registerFunction("stringLengthJava", new UDF1<String, Integer>() {
+        @Override
+          public Integer call(String str) throws Exception {
+          return str.length();
+        }
+      }, DataType.IntegerType);
+    JavaSchemaRDD tweetLength = sqlCtx.sql("SELECT stringLengthJava('text') FROM tweets LIMIT 10");
+    List<Row> lengths = tweetLength.collect();
+    for (Row row : result) {
+      System.out.println(row.get(0));
+    }
     sc.stop();
   }
 }
