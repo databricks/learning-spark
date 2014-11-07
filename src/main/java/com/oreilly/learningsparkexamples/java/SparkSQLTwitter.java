@@ -4,6 +4,7 @@
 package com.oreilly.learningsparkexamples.java;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,13 @@ public class SparkSQLTwitter {
           return row.getString(0);
         }});
     System.out.println(topTweetText.collect());
+    // Create a person and turn it into a Schema RDD
+    ArrayList<HappyPerson> peopleList = new ArrayList<HappyPerson>();
+    peopleList.add(new HappyPerson("holden", "coffee"));
+    JavaRDD<HappyPerson> happyPeopleRDD = sc.parallelize(peopleList);
+    JavaSchemaRDD happyPeopleSchemaRDD = sqlCtx.applySchema(happyPeopleRDD, HappyPerson.class);
+    happyPeopleSchemaRDD.registerTempTable("happy_people");
+
     sc.stop();
   }
 }
