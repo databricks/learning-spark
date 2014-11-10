@@ -1,6 +1,6 @@
 # A simple demo for working with SparkSQL and Tweets
 from pyspark import SparkContext, SparkConf
-from pyspark.sql import SQLContext, Row
+from pyspark.sql import SQLContext, Row, IntegerType
 import json
 import sys
 
