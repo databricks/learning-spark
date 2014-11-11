@@ -13,7 +13,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.sql.api.java.JavaSQLContext;
+import org.apache.spark.sql.hive.api.java.JavaHiveContext;
 import org.apache.spark.sql.api.java.JavaSchemaRDD;
 import org.apache.spark.sql.api.java.Row;
 import org.apache.spark.sql.api.java.UDF1;
@@ -24,14 +24,14 @@ public class SparkSQLTwitter {
     String inputFile = args[0];
     SparkConf conf = new SparkConf();
     JavaSparkContext sc = new JavaSparkContext(conf);
-    JavaSQLContext sqlCtx = new JavaSQLContext(sc);
-    JavaSchemaRDD input = sqlCtx.jsonFile(inputFile);
+    JavaHiveContext hiveCtx = new JavaHiveContext(sc);
+    JavaSchemaRDD input = hiveCtx.jsonFile(inputFile);
     // Print the schema
     input.printSchema();
     // Register the input schema RDD
     input.registerTempTable("tweets");
     // Select tweets based on the retweetCount
-    JavaSchemaRDD topTweets = sqlCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10");
+    JavaSchemaRDD topTweets = hiveCtx.hql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10");
     List<Row> result = topTweets.collect();
     for (Row row : result) {
       System.out.println(row.get(0));
@@ -45,15 +45,15 @@ public class SparkSQLTwitter {
     ArrayList<HappyPerson> peopleList = new ArrayList<HappyPerson>();
     peopleList.add(new HappyPerson("holden", "coffee"));
     JavaRDD<HappyPerson> happyPeopleRDD = sc.parallelize(peopleList);
-    JavaSchemaRDD happyPeopleSchemaRDD = sqlCtx.applySchema(happyPeopleRDD, HappyPerson.class);
+    JavaSchemaRDD happyPeopleSchemaRDD = hiveCtx.applySchema(happyPeopleRDD, HappyPerson.class);
     happyPeopleSchemaRDD.registerTempTable("happy_people");
-    sqlCtx.registerFunction("stringLengthJava", new UDF1<String, Integer>() {
+    hiveCtx.registerFunction("stringLengthJava", new UDF1<String, Integer>() {
         @Override
           public Integer call(String str) throws Exception {
           return str.length();
         }
       }, DataType.IntegerType);
-    JavaSchemaRDD tweetLength = sqlCtx.sql("SELECT stringLengthJava('text') FROM tweets LIMIT 10");
+    JavaSchemaRDD tweetLength = hiveCtx.hql("SELECT stringLengthJava('text') FROM tweets LIMIT 10");
     List<Row> lengths = tweetLength.collect();
     for (Row row : result) {
       System.out.println(row.get(0));
