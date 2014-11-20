@@ -13,9 +13,8 @@ object FlumeInput {
     val receiverHostname = args(0)
     val receiverPort = args(1).toInt
     val conf = new SparkConf().setAppName("FlumeInput")
-    val sc = new SparkContext(conf)
     // Create a StreamingContext with a 1 second batch size
-    val ssc = new StreamingContext(sc, Seconds(1))
+    val ssc = new StreamingContext(conf, Seconds(1))
     println(s"Creating flume stream on $receiverHostname $receiverPort")
     val events = FlumeUtils.createStream(ssc, receiverHostname, receiverPort)
     // Assuming that our flume events are UTF-8 log lines

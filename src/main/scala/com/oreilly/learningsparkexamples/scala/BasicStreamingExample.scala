@@ -17,8 +17,8 @@ object BasicStreamingExample {
     }
     val Array(master, output) = args.take(2)
 
-    val sc = new SparkContext(master, "BasicStreamingExample")
-    val ssc = new StreamingContext(sc, Seconds(30))
+    val conf = new SparkConf().setMaster(master).setAppName("BasicStreamingExample")
+    val ssc = new StreamingContext(conf, Seconds(30))
 
     val lines = ssc.socketTextStream("localhost" , 7777)
     val words = lines.flatMap(_.split(" "))
