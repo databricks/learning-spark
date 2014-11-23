@@ -17,7 +17,7 @@ object LoadHive {
     val tableName = args(1)
     val sc = new SparkContext(master, "LoadHive", System.getenv("SPARK_HOME"))
     val hiveCtx = new org.apache.spark.sql.hive.HiveContext(sc)
-    val input = hiveCtx.hql("FROM src SELECT key, value")
+    val input = hiveCtx.sql("FROM src SELECT key, value")
     val data = input.map(_.getInt(0))
     println(data.collect().toList)
     }

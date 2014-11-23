@@ -31,7 +31,7 @@ public class SparkSQLTwitter {
     // Register the input schema RDD
     input.registerTempTable("tweets");
     // Select tweets based on the retweetCount
-    JavaSchemaRDD topTweets = hiveCtx.hql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10");
+    JavaSchemaRDD topTweets = hiveCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10");
     List<Row> result = topTweets.collect();
     for (Row row : result) {
       System.out.println(row.get(0));
@@ -53,7 +53,7 @@ public class SparkSQLTwitter {
           return str.length();
         }
       }, DataType.IntegerType);
-    JavaSchemaRDD tweetLength = hiveCtx.hql("SELECT stringLengthJava('text') FROM tweets LIMIT 10");
+    JavaSchemaRDD tweetLength = hiveCtx.sql("SELECT stringLengthJava('text') FROM tweets LIMIT 10");
     List<Row> lengths = tweetLength.collect();
     for (Row row : result) {
       System.out.println(row.get(0));

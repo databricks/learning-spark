@@ -28,7 +28,7 @@ object SparkSQLTwitter {
       // Register the input schema RDD
       input.registerTempTable("tweets")
       // Select tweets based on the retweetCount
-      val topTweets = hiveCtx.hql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
+      val topTweets = hiveCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
       topTweets.collect().map(println(_))
       val topTweetText = topTweets.map(row => row.getString(0))
       // Create a person and turn it into a Schema RDD
@@ -36,7 +36,7 @@ object SparkSQLTwitter {
       happyPeopleRDD.registerTempTable("happy_people")
       // UDF
       registerFunction("strLenScala", (_: String).length)
-      val tweetLength = hiveCtx.hql("SELECT strLenScala('tweet') FROM tweets LIMIT 10")
+      val tweetLength = hiveCtx.sql("SELECT strLenScala('tweet') FROM tweets LIMIT 10")
       println(tweetLength.collect())
       sc.stop()
     }

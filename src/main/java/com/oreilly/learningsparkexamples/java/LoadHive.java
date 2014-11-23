@@ -39,7 +39,7 @@ public class LoadHive {
 		JavaSparkContext sc = new JavaSparkContext(
       master, "loadhive", System.getenv("SPARK_HOME"), System.getenv("JARS"));
     JavaHiveContext hiveCtx = new JavaHiveContext(sc);
-    JavaSchemaRDD rdd = hiveCtx.hql("SELECT key, value FROM src");
+    JavaSchemaRDD rdd = hiveCtx.sql("SELECT key, value FROM src");
     JavaRDD<Integer> squaredKeys = rdd.map(new SquareKey());
     List<Integer> result = squaredKeys.collect();
     for (Integer elem : result) {
