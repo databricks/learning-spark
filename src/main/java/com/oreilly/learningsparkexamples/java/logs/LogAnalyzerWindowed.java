@@ -22,7 +22,7 @@ public class LogAnalyzerWindowed implements Serializable {
     JavaDStream<ApacheAccessLog> windowDStream = accessLogsDStream.window(
         Flags.getInstance().getWindowLength(),
         Flags.getInstance().getSlideInterval());
-    JavaDStream<String> ipAddresses = accessLogsDStream.map(
+    JavaDStream<String> ip = accessLogsDStream.map(
       new Function<ApacheAccessLog, String>() {
         public String call(ApacheAccessLog entry) {
           return entry.getIpAddress();
@@ -45,7 +45,7 @@ public class LogAnalyzerWindowed implements Serializable {
         public Tuple2<String, Long> call(ApacheAccessLog entry) {
           return new Tuple2(entry.getIpAddress(), 1L);
         }});
-    JavaPairDStream<String, Long> ipAddressesCountDStream = ipAddressPairDStream.reduceByKeyAndWindow(
+    JavaPairDStream<String, Long> ipCountDStream = ipAddressPairDStream.reduceByKeyAndWindow(
       // Adding elements in the new slice
       new Function2<Long, Long, Long>() {
         public Long call(Long v1, Long v2) {
@@ -58,11 +58,11 @@ public class LogAnalyzerWindowed implements Serializable {
         }},
       Flags.getInstance().getWindowLength(),
       Flags.getInstance().getSlideInterval());
-    ipAddressesCountDStream.print();
+    ipCountDStream.print();
     // Use countByWindow
     JavaDStream<Long> requestCount = accessLogsDStream.countByWindow(
       Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
-    JavaPairDStream<String, Long> ipAddressRequestCount = ipAddresses.countByValueAndWindow(
+    JavaPairDStream<String, Long> ipAddressRequestCount = ip.countByValueAndWindow(
       Flags.getInstance().getWindowLength(), Flags.getInstance().getSlideInterval());
     requestCount.print();
     ipAddressRequestCount.print();
@@ -85,7 +85,7 @@ public class LogAnalyzerWindowed implements Serializable {
 
       JavaPairRDD<String, Long> ipAddressCounts =
           Functions.ipAddressCount(accessLogs);
-      List<String> ipAddresses = Functions.filterIPAddress(ipAddressCounts)
+      List<String> ip = Functions.filterIPAddress(ipAddressCounts)
           .take(100);
 
       Object ordering = Ordering.natural();
@@ -95,7 +95,7 @@ public class LogAnalyzerWindowed implements Serializable {
         .top(10, new Functions.ValueComparator<String, Long>(cmp));
 
       logStatistics = new LogStatistics(contentSizeStats, responseCodeToCount,
-          ipAddresses, topEndpoints);
+          ip, topEndpoints);
       return null;
         }});
   }

@@ -62,25 +62,25 @@ public class LogAnalyzerTotal implements Serializable {
         }});
 
     // A DStream of ipAddressCounts.
-    JavaPairDStream<String, Long> ipAddressesRawDStream = accessLogsDStream.transformToPair(
+    JavaPairDStream<String, Long> ipRawDStream = accessLogsDStream.transformToPair(
       new Function<JavaRDD<ApacheAccessLog>, JavaPairRDD<String, Long>>(){
       public JavaPairRDD<String, Long> call(JavaRDD<ApacheAccessLog> rdd) {
         return Functions.ipAddressCount(rdd);
       }});
 
-      JavaPairDStream<String, Long> ipAddressesCumDStream = ipAddressesRawDStream.updateStateByKey(
+      JavaPairDStream<String, Long> ipCumDStream = ipRawDStream.updateStateByKey(
         new Functions.ComputeRunningSum());
 
     // A DStream of ipAddressCounts without transform
-    JavaPairDStream<String, Long> ipAddressesDStream = accessLogsDStream.mapToPair(new Functions.IpTuple());
-    JavaPairDStream<String, Long> ipAddressesCountsDStream = ipAddressesDStream.reduceByKey(new Functions.LongSumReducer());
+    JavaPairDStream<String, Long> ipDStream = accessLogsDStream.mapToPair(new Functions.IpTuple());
+    JavaPairDStream<String, Long> ipCountsDStream = ipDStream.reduceByKey(new Functions.LongSumReducer());
     // and joining it with the transfer amount
     JavaPairDStream<String, Long> ipBytesDStream = accessLogsDStream.mapToPair(new Functions.IpContentTuple());
     JavaPairDStream<String, Long> ipBytesSumDStream = ipBytesDStream.reduceByKey(new Functions.LongSumReducer());
-    JavaPairDStream<String, Tuple2<Long, Long>> ipBytesRequestCountDStream = ipBytesSumDStream.join(ipAddressesCountsDStream);
+    JavaPairDStream<String, Tuple2<Long, Long>> ipBytesRequestCountDStream = ipBytesSumDStream.join(ipCountsDStream);
 
     // Save our dstream of ip address request counts
-    JavaPairDStream<Text, LongWritable> writableDStream = ipAddressesDStream.mapToPair(
+    JavaPairDStream<Text, LongWritable> writableDStream = ipDStream.mapToPair(
       new PairFunction<Tuple2<String, Long>, Text, LongWritable>() {
         public Tuple2<Text, LongWritable> call(Tuple2<String, Long> e) {
           return new Tuple2(new Text(e._1()), new LongWritable(e._2()));
@@ -93,7 +93,7 @@ public class LogAnalyzerTotal implements Serializable {
                                       OutFormat.class);
     
     // All ips more than 10
-    JavaDStream<String> ipAddressDStream = ipAddressesCumDStream.transform(
+    JavaDStream<String> ipAddressDStream = ipCumDStream.transform(
       new Function<JavaPairRDD<String, Long>, JavaRDD<String>>() {
         public JavaRDD<String> call(JavaPairRDD<String, Long> rdd) {
           return Functions.filterIPAddress(rdd);

@@ -19,8 +19,8 @@ object LogAnalyzerWindowed {
   }
 
   def processAccessLogs(accessLogsDStream: DStream[ApacheAccessLog], opts: Config) {
-    val ipAddressesDStream = accessLogsDStream.map{entry => entry.getIpAddress()}
-    val ipAddressRequestCount = ipAddressesDStream.countByValueAndWindow(
+    val ipDStream = accessLogsDStream.map{entry => entry.getIpAddress()}
+    val ipAddressRequestCount = ipDStream.countByValueAndWindow(
       opts.getWindowDuration(), opts.getSlideDuration())
     ipAddressRequestCount.saveAsTextFiles(opts.OutputDirectory + "/ipAddressRequestCountsTXT")
     val writableIpAddressRequestCount = ipAddressRequestCount.map{case (ip, count) =>
@@ -34,13 +34,13 @@ object LogAnalyzerWindowed {
       opts.getWindowDuration(), opts.getSlideDuration())
     accessLogsWindow.transform(rdd => responseCodeCount(rdd)).print()
     // compute the visit counts for IP address in a window
-    val ipAddressesPairDStream = accessLogsDStream.map(logEntry => (logEntry.getIpAddress(), 1))
-    val ipAddressesCountDStream = ipAddressesPairDStream.reduceByKeyAndWindow(
+    val ipPairDStream = accessLogsDStream.map(logEntry => (logEntry.getIpAddress(), 1))
+    val ipCountDStream = ipPairDStream.reduceByKeyAndWindow(
       {(x, y) => x + y}, // Adding elements in the new slice
       {(x, y) => x - y}, // Removing elements from the oldest slice
       opts.getWindowDuration(), // Window duration
       opts.getSlideDuration() // slide duration
     )
-    ipAddressesCountDStream.print()
+    ipCountDStream.print()
   }
 }
