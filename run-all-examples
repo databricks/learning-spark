@@ -24,7 +24,8 @@ echo "37.384733,-122.032164,37.751952821,-122.4208688735" | ./src/R/finddistance
 echo "Running Scala programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.LoadJsonWithSparkSQL $ASSEMBLY_JAR local ./files/pandainfo.json 
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.ChapterSixExample  $ASSEMBLY_JAR local ./files/callsigns ./files/callsigns /tmp/scala/ch6out
-$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.SparkSQLTwitter  $ASSEMBLY_JAR  ./files/testweet.json  /tmp/scala/tweetout
+TWITTER_DATA=./files/testweet.json
+$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.SparkSQLTwitter  $ASSEMBLY_JAR  "$TWITTER_DATA"  /tmp/scala/tweetout
 #$SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.BasicQueryCassandra $ASSEMBLY_JAR local localhost
 echo "Running Scala streaming program"
 ./bin/fakelogs.sh &

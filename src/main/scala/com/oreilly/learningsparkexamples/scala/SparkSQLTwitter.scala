@@ -11,13 +11,19 @@ case class HappyPerson(handle: String, favouriteBeverage: String)
 
 object SparkSQLTwitter {
     def main(args: Array[String]) {
-      if (args.length < 1) {
-        println("Usage inputFile outputFile")
+      if (args.length < 2) {
+        println("Usage inputFile outputFile [spark.sql.inMemoryColumnarStorage.batchSize]")
       }
       val inputFile = args(0)
       val outputFile = args(1)
+      val batchSize = if (args.length == 3) {
+        args(2)
+      } else {
+        "200"
+      }
       val conf = new SparkConf()
-      conf.set("spark.sql.codegen", "true")
+      conf.set("spark.sql.codegen", "false")
+      conf.set("spark.sql.inMemoryColumnarStorage.batchSize", batchSize)
       val sc = new SparkContext(conf)
       val hiveCtx = new HiveContext(sc)
       import hiveCtx._
@@ -27,6 +33,7 @@ object SparkSQLTwitter {
       input.printSchema()
       // Register the input schema RDD
       input.registerTempTable("tweets")
+      hiveCtx.cacheTable("tweets")
       // Select tweets based on the retweetCount
       val topTweets = hiveCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
       topTweets.collect().map(println(_))
@@ -37,7 +44,10 @@ object SparkSQLTwitter {
       // UDF
       registerFunction("strLenScala", (_: String).length)
       val tweetLength = hiveCtx.sql("SELECT strLenScala('tweet') FROM tweets LIMIT 10")
-      println(tweetLength.collect())
+      tweetLength.collect().map(println(_))
+      // Two sums at once (crazy town!)
+      val twoSums = hiveCtx.sql("SELECT SUM(user.favouritesCount), SUM(retweetCount), user.id FROM tweets GROUP BY user.id LIMIT 10")
+      twoSums.collect().map(println(_))
       sc.stop()
     }
 }
