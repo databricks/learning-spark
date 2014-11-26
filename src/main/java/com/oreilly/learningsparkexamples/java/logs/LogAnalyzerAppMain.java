@@ -74,8 +74,7 @@ public class LogAnalyzerAppMain {
     // Startup the Spark Conf.
     SparkConf conf = new SparkConf()
         .setAppName("A Databricks Reference Application: Logs Analysis with Spark");
-    JavaSparkContext sc = new JavaSparkContext(conf);
-    JavaStreamingContext jssc = new JavaStreamingContext(sc,
+    JavaStreamingContext jssc = new JavaStreamingContext(conf,
         Flags.getInstance().getSlideInterval());
 
     // Checkpointing must be enabled to use the updateStateByKey function & windowed operations.

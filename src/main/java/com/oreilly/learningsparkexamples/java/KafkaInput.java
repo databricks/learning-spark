@@ -24,9 +24,8 @@ public final class KafkaInput {
     String zkQuorum = args[0];
     String group = args[1];
     SparkConf conf = new SparkConf().setAppName("KafkaInput");
-		JavaSparkContext sc = new JavaSparkContext(conf);
     // Create a StreamingContext with a 1 second batch size
-    JavaStreamingContext jssc = new JavaStreamingContext(sc, new Duration(1000));
+    JavaStreamingContext jssc = new JavaStreamingContext(conf, new Duration(1000));
     Map<String, Integer> topics = new HashMap<String, Integer>();
     topics.put("pandas", 1);
     JavaPairDStream<String, String> input = KafkaUtils.createStream(jssc, zkQuorum, group, topics);

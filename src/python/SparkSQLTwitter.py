@@ -12,7 +12,7 @@ if __name__ == "__main__":
     print "Loading tweets from " + inputFile
     input = hiveCtx.jsonFile(inputFile)
     input.registerTempTable("tweets")
-    topTweets = hiveCtx.hql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
+    topTweets = hiveCtx.sql("SELECT text, retweetCount FROM tweets ORDER BY retweetCount LIMIT 10")
     print topTweets.collect()
     topTweetText = topTweets.map(lambda row : row.text)
     print topTweetText.collect()
@@ -22,6 +22,6 @@ if __name__ == "__main__":
     happyPeopleSchemaRDD.registerTempTable("happy_people")
     # Make a UDF to tell us how long some text is
     hiveCtx.registerFunction("strLenPython", lambda x: len(x), IntegerType())
-    lengthSchemaRDD = hiveCtx.hql("SELECT strLenPython('text') FROM tweets LIMIT 10")
+    lengthSchemaRDD = hiveCtx.sql("SELECT strLenPython('text') FROM tweets LIMIT 10")
     print lengthSchemaRDD.collect()
     sc.stop()

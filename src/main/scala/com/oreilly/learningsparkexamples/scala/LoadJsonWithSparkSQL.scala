@@ -16,7 +16,7 @@ object LoadJsonWithSparkSQL {
     val master = args(0)
     val inputFile = args(1)
     val sc = new SparkContext(master, "LoadJsonWithSparkSQL", System.getenv("SPARK_HOME"))
-    val sqlCtx = new org.apache.spark.sql.SQLContext(sc)
+    val sqlCtx = new SQLContext(sc)
     val input = sqlCtx.jsonFile(inputFile)
     input.printSchema()
   }

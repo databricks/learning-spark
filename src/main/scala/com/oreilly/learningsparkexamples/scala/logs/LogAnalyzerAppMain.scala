@@ -60,8 +60,7 @@ object LogAnalyzerAppMain {
     // Startup the Spark Conf.
     val conf = new SparkConf()
       .setAppName("A Databricks Reference Application: Logs Analysis with Spark");
-    val sc = new SparkContext(conf)
-    val ssc = new StreamingContext(sc, opts.getWindowDuration())
+    val ssc = new StreamingContext(conf, opts.getWindowDuration())
     // Checkpointing must be enabled to use the updateStateByKey function & windowed operations.
     ssc.checkpoint(opts.CheckpointDirectory)
     // This methods monitors a directory for new files to read in for streaming.

@@ -16,9 +16,9 @@ if __name__ == "__main__":
     sc = SparkContext(master, "LoadHive")
     hiveCtx = HiveContext(sc)
     # Load some data into hive
-    hiveCtx.hql(
+    hiveCtx.sql(
         "CREATE TABLE IF NOT EXISTS " +
         inputTable +
         " (key INT, value STRING)")
-    hiveCtx.hql(
+    hiveCtx.sql(
         "LOAD DATA LOCAL INPATH '" + inputFile + "' INTO TABLE " + inputTable)

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     sc = SparkContext(master, "LoadHive")
     hiveCtx = HiveContext(sc)
     # Query hive
-    input = hiveCtx.hql("FROM " + inputTable + " SELECT key, value")
+    input = hiveCtx.sql("FROM " + inputTable + " SELECT key, value")
     print "result of query"
     print input.collect()
     data = input.map(lambda x: x[0] * x[0])

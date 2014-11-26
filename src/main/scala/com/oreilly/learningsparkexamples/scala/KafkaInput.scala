@@ -12,9 +12,8 @@ object KafkaInput {
   def main(args: Array[String]) {
     val Array(zkQuorum, group, topic, numThreads) = args
     val conf = new SparkConf().setAppName("KafkaInput")
-    val sc = new SparkContext(conf)
     // Create a StreamingContext with a 1 second batch size
-    val ssc = new StreamingContext(sc, Seconds(1))
+    val ssc = new StreamingContext(conf, Seconds(1))
     // Create a map of topics to number of receiver threads to use
     val topics = List((topic, 1)).toMap
     val topicLines = KafkaUtils.createStream(ssc, zkQuorum, group, topics)

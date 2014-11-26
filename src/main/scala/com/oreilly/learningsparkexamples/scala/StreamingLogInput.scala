@@ -11,9 +11,9 @@ import org.apache.spark.streaming.dstream._
 object StreamingLogInput {
   def main(args: Array[String]) {
     val master = args(0)
-    val sc = new SparkContext(master, "StreamingLogInput")
+    val conf = new SparkConf().setMaster(master).setAppName("StreamingLogInput")
     // Create a StreamingContext with a 1 second batch size
-    val ssc = new StreamingContext(sc, Seconds(1))
+    val ssc = new StreamingContext(conf, Seconds(1))
     // Create a DStream from all the input on port 7777
     val lines = ssc.socketTextStream("localhost", 7777)
     processLines(lines)
