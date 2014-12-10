@@ -6,7 +6,7 @@ in the mini-complete-example directory.
 
 Requirements
 ==
-* JDK 1.6 or higher
+* JDK 1.7 or higher
 * Scala 2.10.3
 - scala-lang.org
 * Spark 1.0 sanp shot
