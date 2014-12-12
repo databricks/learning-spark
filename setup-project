@@ -26,12 +26,14 @@ echo "Installing protobuf"
 sudo apt-get install protobuf-compiler
 echo $?
 # Set up cassandra
-echo "Setting up dsc (cassandra)"
+echo "Waiting for apt-get update to finish"
 wait $APT_GET_UPDATE_PID || echo "apt-get update finished early"
+echo "Setting up dsc (cassandra)"
+sleep 1;
 #sudo apt-get -y --force-yes remove cassandra cassandra-tools
 #sudo rm -rf /etc/security/limits.d/cassandra.conf || echo "No cassandra security conf"
 #yes | sudo apt-get -y --force-yes install  dsc21 > dscinstall.log
-yes | sudo apt-get -y --force-yes install  cassandra-tools > ctoolsinstall.log
+#yes | sudo apt-get -y --force-yes install  cassandra-tools > ctoolsinstall.log
 echo "Starting cassandra"
 sudo /etc/init.d/cassandra start
 echo $?
