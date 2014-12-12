@@ -29,6 +29,7 @@ echo $?
 echo "Setting up dsc (cassandra)"
 wait $APT_GET_UPDATE_PID || echo "apt-get update finished early"
 sudo apt-get -y --force-yes remove cassandra cassandra-tools
+sudo rm -rf /etc/security/limits.d/cassandra.conf || echo "No cassandra security conf"
 yes | sudo apt-get -y --force-yes install  dsc21 > dscinstall.log
 yes | sudo apt-get -y --force-yes install  cassandra-tools > ctoolsinstall.log
 echo "Starting cassandra"
