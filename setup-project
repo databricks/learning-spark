@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -x
 set -e
+set -o pipefail
 sudo apt-get install -y axel time
 echo "Downloading misc tools"
 sudo rm -f /etc/apt/sources.list.d/cassandra.sources.list
@@ -30,6 +31,8 @@ wait $APT_GET_UPDATE_PID || echo "apt-get update finished early"
 sudo apt-get -y --force-yes remove cassandra cassandra-tools
 yes | sudo apt-get -y --force-yes install  dsc21 > dscinstall.log
 yes | sudo apt-get -y --force-yes install  cassandra-tools > ctoolsinstall.log
+echo "Starting cassandra"
+sudo /etc/init.d/cassandra start
 echo $?
 echo "set up hive directories"
 export IAM=`whoami`
