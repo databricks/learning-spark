@@ -26,8 +26,8 @@ if __name__ == "__main__":
 
     # Load 2 types of emails from text files: spam and ham (non-spam).
     # Each line has text from one email.
-    spam = sc.textFile("data/mllib/spam.txt")
-    ham = sc.textFile("data/mllib/ham.txt")
+    spam = sc.textFile("files/spam.txt")
+    ham = sc.textFile("files/ham.txt")
 
     # Create a HashingTF instance to map email text to vectors of 100 features.
     tf = HashingTF(numFeatures = 100)

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.spark.examples.mllib;
+package com.oreilly.learningsparkexamples.java;
 
 import java.util.Arrays;
 
@@ -30,7 +30,7 @@ import org.apache.spark.mllib.feature.HashingTF;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.regression.LabeledPoint;
 
-public final class JavaBookExample {
+public final class MLlib {
 
   public static void main(String[] args) {
     SparkConf sparkConf = new SparkConf().setAppName("JavaBookExample");
@@ -38,8 +38,8 @@ public final class JavaBookExample {
 
     // Load 2 types of emails from text files: spam and ham (non-spam).
     // Each line has text from one email.
-    JavaRDD<String> spam = sc.textFile("data/mllib/spam.txt");
-    JavaRDD<String> ham = sc.textFile("data/mllib/ham.txt");
+    JavaRDD<String> spam = sc.textFile("files/spam.txt");
+    JavaRDD<String> ham = sc.textFile("files/ham.txt");
 
     // Create a HashingTF instance to map email text to vectors of 100 features.
     final HashingTF tf = new HashingTF(100);

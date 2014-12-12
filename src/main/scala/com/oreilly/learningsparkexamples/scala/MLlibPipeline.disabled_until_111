@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.spark.examples.ml
+package com.oreilly.learningsparkexamples.scala
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{Row, SQLContext}
@@ -23,7 +23,7 @@ import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.ml.feature.{HashingTF, Tokenizer}
 
-object BookExamplePipeline {
+object MLlibPipeline {
 
   case class Document(id: Long, text: String)
 
@@ -37,8 +37,8 @@ object BookExamplePipeline {
 
     // Load 2 types of emails from text files: spam and ham (non-spam).
     // Each line has text from one email.
-    val spam = sc.textFile("data/mllib/spam.txt")
-    val ham = sc.textFile("data/mllib/ham.txt")
+    val spam = sc.textFile("files/spam.txt")
+    val ham = sc.textFile("files/ham.txt")
 
     // Create LabeledPoint datasets for positive (spam) and negative (ham) examples.
     val positiveExamples = spam.zipWithIndex().map { case (email, index) =>
