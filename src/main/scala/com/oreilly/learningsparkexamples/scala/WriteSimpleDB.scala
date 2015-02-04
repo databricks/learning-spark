@@ -42,12 +42,4 @@ object WriteSimpleDB {
     }
   }
 
-  def createConnection() = {
-    Class.forName("com.mysql.jdbc.Driver").newInstance();
-    DriverManager.getConnection("jdbc:mysql://localhost/test?user=holden");
-  }
-
-  def extractValues(r: ResultSet) = {
-    (r.getInt(1), r.getString(2))
-  }
 }
