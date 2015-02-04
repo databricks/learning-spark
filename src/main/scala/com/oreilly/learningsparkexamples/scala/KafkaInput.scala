@@ -17,7 +17,8 @@ object KafkaInput {
     // Create a map of topics to number of receiver threads to use
     val topics = List((topic, 1)).toMap
     val topicLines = KafkaUtils.createStream(ssc, zkQuorum, group, topics)
-    StreamingLogInput.processLines(topicLines.map(_._2))
+    val lines = StreamingLogInput.processLines(topicLines.map(_._2))
+    lines.print()
     // start our streaming context and wait for it to "finish"
     ssc.start()
     // Wait for 10 seconds then exit. To run forever call without a timeout
