@@ -36,7 +36,8 @@ libraryDependencies ++= Seq(
   "com.datastax.spark" %% "spark-cassandra-connector" % "1.0.0-rc5",
   "com.datastax.spark" %% "spark-cassandra-connector-java" % "1.0.0-rc5",
   "com.github.scopt" %% "scopt" % "3.2.0",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "com.holdenkarau" %% "spark-testing-base" % "0.0.1" % "test"
 )
 
 resolvers ++= Seq(
