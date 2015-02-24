@@ -24,7 +24,7 @@ From spark just run ./bin/pyspark ./src/python/[example]
 Spark Submit
 ===
 
-You can also create an assembly jar with all of the dependcies for running either the java or scala
+You can also create an assembly jar with all of the dependencies for running either the java or scala
 versions of the code and run the job with the spark-submit script
 
 ./sbt/sbt assembly OR mvn package
