@@ -21,7 +21,7 @@ if __name__ == "__main__":
     happyPeopleSchemaRDD = hiveCtx.inferSchema(happyPeopleRDD)
     happyPeopleSchemaRDD.registerTempTable("happy_people")
     # Make a UDF to tell us how long some text is
-    hiveCtx.udf().register("strLenPython", lambda x: len(x), IntegerType())
+    hiveCtx.registerFunction("strLenPython", lambda x: len(x), IntegerType())
     lengthSchemaRDD = hiveCtx.sql("SELECT strLenPython('text') FROM tweets LIMIT 10")
     print lengthSchemaRDD.collect()
     sc.stop()
