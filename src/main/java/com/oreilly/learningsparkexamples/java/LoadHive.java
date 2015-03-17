@@ -17,9 +17,9 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.sql.hive.api.java.JavaHiveContext;
-import org.apache.spark.sql.api.java.Row;
-import org.apache.spark.sql.api.java.JavaSchemaRDD;
+import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.DataFrame;
 
 public class LoadHive {
 
@@ -38,9 +38,9 @@ public class LoadHive {
 
 		JavaSparkContext sc = new JavaSparkContext(
       master, "loadhive", System.getenv("SPARK_HOME"), System.getenv("JARS"));
-    JavaHiveContext hiveCtx = new JavaHiveContext(sc);
-    JavaSchemaRDD rdd = hiveCtx.sql("SELECT key, value FROM src");
-    JavaRDD<Integer> squaredKeys = rdd.map(new SquareKey());
+    SQLContext sqlCtx = new SQLContext(sc);
+    DataFrame rdd = sqlCtx.sql("SELECT key, value FROM src");
+    JavaRDD<Integer> squaredKeys = rdd.toJavaRDD().map(new SquareKey());
     List<Integer> result = squaredKeys.collect();
     for (Integer elem : result) {
       System.out.println(elem);
