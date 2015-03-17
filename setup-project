@@ -9,7 +9,7 @@ echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/a
 curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo apt-get update > aptlog &
 APT_GET_UPDATE_PID=$!
-axel http://d3kbcqa49mib13.cloudfront.net/spark-1.3.0-bin-hadoop1.tgz  > sparkdl &
+axel http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz > sparkdl &
 SPARK_DL_PID=$!
 axel http://mirrors.ibiblio.org/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz > kafkadl &
 KAFKA_DL_PID=$!
@@ -20,7 +20,7 @@ sudo mkdir -p /etc/apt/sources.list.d/
 echo "install urllib3"
 sudo pip install urllib3
 wait $SPARK_DL_PID || echo "Spark DL finished early"
-tar -xf spark-1.3.0-bin-hadoop1.tgz
+tar -xf spark-1.1.0-bin-hadoop2.4.tgz
 wait $APT_GET_UPDATE_PID
 echo "Installing protobuf"
 sudo apt-get install protobuf-compiler

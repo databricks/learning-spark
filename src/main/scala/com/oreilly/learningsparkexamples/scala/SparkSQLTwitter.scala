@@ -7,7 +7,6 @@ import org.apache.spark._
 import org.apache.spark.SparkContext._
 import org.apache.spark.sql.hive.HiveContext
 
-
 case class HappyPerson(handle: String, favouriteBeverage: String)
 
 object SparkSQLTwitter {
@@ -27,7 +26,7 @@ object SparkSQLTwitter {
       conf.set("spark.sql.inMemoryColumnarStorage.batchSize", batchSize)
       val sc = new SparkContext(conf)
       val hiveCtx = new HiveContext(sc)
-      import hiveCtx.implicits._
+      import hiveCtx._
       // Load some tweets
       val input = hiveCtx.jsonFile(inputFile)
       // Print the schema
@@ -43,7 +42,7 @@ object SparkSQLTwitter {
       val happyPeopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee")))
       happyPeopleRDD.registerTempTable("happy_people")
       // UDF
-      hiveCtx.udf().register("strLenScala", (_: String).length)
+      registerFunction("strLenScala", (_: String).length)
       val tweetLength = hiveCtx.sql("SELECT strLenScala('tweet') FROM tweets LIMIT 10")
       tweetLength.collect().map(println(_))
       // Two sums at once (crazy town!)
