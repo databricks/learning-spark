@@ -40,10 +40,10 @@ object SparkSQLTwitter {
       topTweets.collect().map(println(_))
       val topTweetText = topTweets.map(row => row.getString(0))
       // Create a person and turn it into a Schema RDD
-      val happyPeopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee"))).toDF()
+      val happyPeopleRDD = sc.parallelize(List(HappyPerson("holden", "coffee")))
       happyPeopleRDD.registerTempTable("happy_people")
       // UDF
-      hiveCtx.udf.register("strLenScala", (_: String).length)
+      hiveCtx.udf().register("strLenScala", (_: String).length)
       val tweetLength = hiveCtx.sql("SELECT strLenScala('tweet') FROM tweets LIMIT 10")
       tweetLength.collect().map(println(_))
       // Two sums at once (crazy town!)

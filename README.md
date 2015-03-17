@@ -4,16 +4,13 @@ Examples for Learning Spark
 Examples for the Learning Spark book. These examples require a number of libraries and as such have long build files. We have also added a stand alone example with minimal dependcies and a small build file
 in the mini-complete-example directory.
 
-
-These examples have been updated to run against Spark 1.3 so they may
-be slightly different than the versions in your copy of "Learning Spark".
-
 Requirements
 ==
 * JDK 1.7 or higher
 * Scala 2.10.3
 - scala-lang.org
-* Spark 1.3
+* Spark 1.0 sanp shot
+- You can checkout spark from https://github.com/apache/spark and then run "sbt/sbt publish-local"
 * Protobuf compiler
 - On debian you can install with sudo apt-get install protobuf-compiler
 * R & the CRAN package Imap are required for the ChapterSixExample

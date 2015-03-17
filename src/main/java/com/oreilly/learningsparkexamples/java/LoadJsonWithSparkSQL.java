@@ -17,9 +17,9 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.sql.SQLContext;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.api.java.JavaSQLContext;
+import org.apache.spark.sql.api.java.Row;
+import org.apache.spark.sql.api.java.JavaSchemaRDD;
 
 public class LoadJsonWithSparkSQL {
 
@@ -33,8 +33,8 @@ public class LoadJsonWithSparkSQL {
 
 		JavaSparkContext sc = new JavaSparkContext(
       master, "loadJsonwithsparksql");
-    SQLContext sqlCtx = new SQLContext(sc);
-    DataFrame input = sqlCtx.jsonFile(jsonFile);
+    JavaSQLContext sqlCtx = new JavaSQLContext(sc);
+    JavaSchemaRDD input = sqlCtx.jsonFile(jsonFile);
     input.printSchema();
   }
 }
