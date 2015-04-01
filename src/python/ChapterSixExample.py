@@ -6,6 +6,7 @@ import sys
 import urllib3
 import json
 import math
+import os
 
 from pyspark import SparkContext
 from pyspark import SparkFiles
