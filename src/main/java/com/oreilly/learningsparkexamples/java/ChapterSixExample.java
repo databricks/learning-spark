@@ -167,7 +167,7 @@ public class ChapterSixExample {
     System.out.println(StringUtils.join(contactsContactLists.collect(), ","));
     // Computer the distance of each call using an external R program
     // adds our script to a list of files for each node to download with this job
-    String distScript = "./src/R/finddistance.R";
+    String distScript = System.getProperty("user.dir") + "/src/R/finddistance.R";
     String distScriptName = "finddistance.R";
     sc.addFile(distScript);
     JavaRDD<String> pipeInputs = contactsContactLists.values().map(new VerifyCallLogs()).flatMap(
