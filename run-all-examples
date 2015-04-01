@@ -5,7 +5,7 @@ set -x
 # If any command fails, fail
 set -e
 # Build everything
-./sbt/sbt compile package assembly > sbtlog || (cat ./sbtlog && exit 1)
+./sbt/sbt compile package assembly > sbtlog || (echo "sbt failed" && cat ./sbtlog && exit 1)
 KAFKA_ROOT=./kafka_2.9.2-0.8.1.1
 SPARK_HOME=./spark-1.3.0-bin-hadoop1
 SPARK_SUBMIT_SCRIPT=$SPARK_HOME/bin/spark-submit
@@ -15,11 +15,7 @@ rm -rf /tmp/py; mkdir -p /tmp/py
 rm -rf /tmp/java; mkdir -p /tmp/java
 rm -rf /tmp/scala; mkdir -p /tmp/scala
 # setup cassandra
-cqlsh --file ./files/cqlsh_setup
-# R
-echo "Running R programs"
-chmod a+x ./src/R/finddistance.R 
-echo "37.384733,-122.032164,37.751952821,-122.4208688735" | ./src/R/finddistance.R
+# cqlsh --file ./files/cqlsh_setup &
 # Scala
 echo "Running Scala programs"
 $SPARK_SUBMIT_SCRIPT --class com.oreilly.learningsparkexamples.scala.LoadJsonWithSparkSQL $ASSEMBLY_JAR local ./files/pandainfo.json 
