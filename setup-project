@@ -5,8 +5,8 @@ set -o pipefail
 apt-get install -y axel time
 echo "Downloading misc tools"
 rm -f /etc/apt/sources.list.d/cassandra.sources.list
-echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+echo "deb http://debian.datastax.com/community stable main" | tee -a /etc/apt/sources.list.d/cassandra.sources.list
+curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
 apt-get update > aptlog &
 APT_GET_UPDATE_PID=$!
 axel http://d3kbcqa49mib13.cloudfront.net/spark-1.3.0-bin-hadoop1.tgz  > sparkdl &
