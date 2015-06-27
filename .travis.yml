@@ -1,6 +1,7 @@
 language: scala
 scala:
    - 2.10.4
+env: ISOLATED=true
 # Install R
 before_install:
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
