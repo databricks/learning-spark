@@ -44,7 +44,7 @@ object BasicParseJsonWithJackson {
         // list with one element if everything is ok (Some(_)).
         records.flatMap(record => {
           try {
-            Some(mapper.readValue(record, classOf[ioRecord]))
+            Some(mapper.readValue(record, classOf[record]))
           } catch {
             case e: Exception => None
           }
