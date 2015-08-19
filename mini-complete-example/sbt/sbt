@@ -30,9 +30,7 @@ if [ ! -f ${JAR} ]; then
   # Download
   printf "Attempting to fetch sbt\n"
   JAR_DL=${JAR}.part
-  if hash axel 2>/dev/null; then
-    (axel ${URL1} --output ${JAR_DL} || axel ${URL2} --output ${JAR_DL}) && mv ${JAR_DL} ${JAR}
-  elif hash wget 2>/dev/null; then
+  if hash wget 2>/dev/null; then
       (wget --progress=bar ${URL1} -O ${JAR_DL} || wget --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
   elif hash curl 2>/dev/null; then
     (curl -L --progress=bar ${URL1} -O ${JAR_DL} || curl -L --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
