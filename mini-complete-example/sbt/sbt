@@ -20,7 +20,7 @@
 # This script launches sbt for this project. If present it uses the system 
 # version of sbt. If there is no system version of sbt it attempts to download
 # sbt locally.
-SBT_VERSION=0.13.1
+SBT_VERSION=0.13.7
 URL1=http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/${SBT_VERSION}/sbt-launch.jar
 URL2=http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/${SBT_VERSION}/sbt-launch.jar
 JAR=sbt/sbt-launch-${SBT_VERSION}.jar
@@ -30,10 +30,12 @@ if [ ! -f ${JAR} ]; then
   # Download
   printf "Attempting to fetch sbt\n"
   JAR_DL=${JAR}.part
-  if hash curl 2>/dev/null; then
-    (curl --progress-bar ${URL1} > ${JAR_DL} || curl --progress-bar ${URL2} > ${JAR_DL}) && mv ${JAR_DL} ${JAR}
+  if hash axel 2>/dev/null; then
+    (axel ${URL1} --output ${JAR_DL} || axel ${URL2} --output ${JAR_DL}) && mv ${JAR_DL} ${JAR}
   elif hash wget 2>/dev/null; then
-    (wget --progress=bar ${URL1} -O ${JAR_DL} || wget --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
+      (wget --progress=bar ${URL1} -O ${JAR_DL} || wget --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
+  elif hash curl 2>/dev/null; then
+    (curl -L --progress=bar ${URL1} -O ${JAR_DL} || curl -L --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
   else
     printf "You do not have curl or wget installed, please install sbt manually from http://www.scala-sbt.org/\n"
     exit -1
@@ -46,6 +48,6 @@ if [ ! -f ${JAR} ]; then
 fi
 printf "Launching sbt from ${JAR}\n"
 java \
-  -Xmx1200m -XX:MaxPermSize=350m -XX:ReservedCodeCacheSize=256m \
+  -Xmx1400m -XX:MaxPermSize=450m -XX:ReservedCodeCacheSize=256m \
   -jar ${JAR} \
   "$@"
