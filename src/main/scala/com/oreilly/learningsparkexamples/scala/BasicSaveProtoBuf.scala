@@ -11,15 +11,14 @@ import org.apache.spark.SparkContext._
 import org.apache.hadoop.io.Text
 import com.twitter.elephantbird.mapreduce.io.ProtobufWritable
 import com.twitter.elephantbird.mapreduce.output.LzoProtobufBlockOutputFormat
-import org.apache.hadoop.mapreduce.Job
+import org.apache.hadoop.conf.Configuration
 
 object BasicSaveProtoBuf {
     def main(args: Array[String]) {
       val master = args(0)
       val outputFile = args(1)
       val sc = new SparkContext(master, "BasicSaveProtoBuf", System.getenv("SPARK_HOME"))
-      val job = new Job()
-      val conf = job.getConfiguration
+      val conf = new Configuration()
       LzoProtobufBlockOutputFormat.setClassConf(classOf[Places.Venue], conf);
       val dnaLounge = Places.Venue.newBuilder()
       dnaLounge.setId(1);
