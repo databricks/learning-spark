@@ -1,0 +1,88 @@
+/**
+ * Created by divesh.pathak on 11/3/2015.
+ * Just learning spark and feel there is issue in parsing json file for the begineers so written a simple program  
+ * Take the json input file in the format given here.
+ * {"age":100,"name":"Divesh","messages":["msg 1","msg 2","msg 3"]}
+ * The program will take one line of json as one record.
+ */
+
+
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+
+public  class Simple_Json_Parser implements Serializable {
+  static ArrayList<String> text1 = new ArrayList<String>();
+    public static void main(String[] argsc){
+     SparkConf sparkConf=new SparkConf().setAppName("MYApp_Json_Parser").setMaster("local[1]");
+     JavaSparkContext ctx=new JavaSparkContext(sparkConf);
+        JavaRDD<String> lines=ctx.textFile("C:\\Data\\Test.json", 1);
+
+        JavaRDD<String> words=lines.flatMap(new FlatMapFunction<String, String>(){
+                                                 public Iterable<String> call(String s){
+
+                                                     String Message = "";
+
+                                                     try {
+
+                                                         JSONParser parser = new JSONParser();
+
+                                                         Object obj = parser.parse(s);
+
+                                                         JSONObject jsonObject = (org.json.simple.JSONObject) obj;
+
+                                                         String name = (String) jsonObject.get("name");
+                                                     //System.out.print(name + ",");
+                                                         long age = (Long) jsonObject.get("age");
+                                                         //System.out.print(age + ",");
+                                                         JSONArray msg = (JSONArray) jsonObject.get("messages");
+                                                         Iterator<String> iterator = msg.iterator();
+
+                                                         while (iterator.hasNext()) {
+                                                             //System.out.print(iterator.next() + ",");
+                                                             Message =Message+iterator.next()+"," ;
+
+                                                         }
+                                                        // System.out.print(Message);
+                                                        // System.out.println();
+                                                         String a = name+","+ String.valueOf(age)+","+Message;
+                                                         Object obj1= a;
+                                                          text1.add(a);
+
+
+                                                        } catch (ParseException e1) {
+                                                         e1.printStackTrace();
+                                                        }
+
+
+                                                     return text1;                   
+                                                   }
+
+                                                 }
+        );
+
+
+       // Iterable<Object> iterable = text1;
+
+
+        System.out.println( words.count());
+        String outfile = "C:\\Data\\Test";
+        JavaRDD list = ctx.parallelize(text1);
+
+        list.saveAsTextFile(outfile);
+
+        ctx.stop();
+
+
+    }
+}
