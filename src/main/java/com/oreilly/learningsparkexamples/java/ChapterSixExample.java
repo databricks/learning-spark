@@ -53,8 +53,8 @@ public class ChapterSixExample {
       ArrayList<CallLog> res = new ArrayList<CallLog>();
       if (input != null) {
         for (CallLog call: input) {
-          if (call != null && call.mylat != null && call.mylong != null
-              && call.contactlat != null && call.contactlong != null) {
+          if (call != null && call.getMylat() != null && call.getMylong() != null
+              && call.getContactlat() != null && call.getContactlong() != null) {
             res.add(call);
           }
         }
@@ -174,8 +174,8 @@ public class ChapterSixExample {
       new FlatMapFunction<CallLog[], String>() { public Iterable<String> call(CallLog[] calls) {
           ArrayList<String> latLons = new ArrayList<String>();
           for (CallLog call: calls) {
-            latLons.add(call.mylat + "," + call.mylong +
-                        "," + call.contactlat + "," + call.contactlong);
+            latLons.add(call.getMylat() + "," + call.getMylong() +
+                        "," + call.getContactlat() + "," + call.getContactlong());
           }
           return latLons;
         }

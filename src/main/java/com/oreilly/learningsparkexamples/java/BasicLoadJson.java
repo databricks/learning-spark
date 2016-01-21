@@ -23,8 +23,24 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class BasicLoadJson {
 
   public static class Person implements java.io.Serializable {
-    public String name;
-    public Boolean lovesPandas;
+    private String name;
+    private Boolean lovesPandas;
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public Boolean getLovesPandas() {
+      return lovesPandas;
+    }
+
+    public void setLovesPandas(Boolean lovesPandas) {
+      this.lovesPandas = lovesPandas;
+    }
   }
 
   public static class ParseJson implements FlatMapFunction<Iterator<String>, Person> {
