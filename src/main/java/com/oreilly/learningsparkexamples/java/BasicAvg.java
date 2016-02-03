@@ -19,8 +19,8 @@ public final class BasicAvg {
 	    total_ = total;
 	    num_ = num;
     }
-    public int total_;
-    public int num_;
+    private int total_;
+    private int num_;
     public float avg() {
 	    return total_ / (float) num_;
     }

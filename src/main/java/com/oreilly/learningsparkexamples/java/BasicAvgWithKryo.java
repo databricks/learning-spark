@@ -31,8 +31,24 @@ public final class BasicAvgWithKryo {
     public float avg() {
       return total_ / (float) num_;
     }
-    public int total_;
-    public int num_;
+    private int total_;
+    private int num_;
+
+    public int getTotal_() {
+      return total_;
+    }
+
+    public void setTotal_(int total_) {
+      this.total_ = total_;
+    }
+
+    public int getNum_() {
+      return num_;
+    }
+
+    public void setNum_(int num_) {
+      this.num_ = num_;
+    }
   }
 
   public static class AvgRegistrator implements KryoRegistrator {

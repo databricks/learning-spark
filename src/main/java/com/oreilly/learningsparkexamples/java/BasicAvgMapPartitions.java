@@ -36,8 +36,25 @@ public final class BasicAvgMapPartitions {
       }
       return this;
     }
-    public Integer total_;
-    public Integer num_;
+    private Integer total_;
+    private Integer num_;
+
+    public Integer getTotal_() {
+      return total_;
+    }
+
+    public void setTotal_(Integer total_) {
+      this.total_ = total_;
+    }
+
+    public Integer getNum_() {
+      return num_;
+    }
+
+    public void setNum_(Integer num_) {
+      this.num_ = num_;
+    }
+
     public float avg() {
 	    return total_ / (float) num_;
     }
