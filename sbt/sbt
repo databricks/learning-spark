@@ -33,7 +33,7 @@ if [ ! -f ${JAR} ]; then
   if hash wget 2>/dev/null; then
       (wget --progress=bar ${URL1} -O ${JAR_DL} || wget --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
   elif hash curl 2>/dev/null; then
-    (curl -L --progress=bar ${URL1} -O ${JAR_DL} || curl -L --progress=bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
+    (curl -L --progress-bar ${URL1} -O ${JAR_DL} || curl -L --progress-bar ${URL2} -O ${JAR_DL}) && mv ${JAR_DL} ${JAR}
   else
     printf "You do not have curl or wget installed, please install sbt manually from http://www.scala-sbt.org/\n"
     exit -1
