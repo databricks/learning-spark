@@ -8,7 +8,7 @@
   <repositories>
     <repository>
       <id>Akka repository</id>
-      <url>http://repo.akka.io/releases</url>
+      <url>https://repo.akka.io/releases</url>
     </repository>
     <repository>
       <id>scala-tools</id>
@@ -20,11 +20,11 @@
     </repository>
     <repository>
       <id>twitter</id>
-      <url>http://maven.twttr.com/</url>
+      <url>https://maven.twttr.com/</url>
     </repository>
     <repository>
       <id>central2</id>
-      <url>http://central.maven.org/maven2/</url>
+      <url>https://central.maven.org/maven2/</url>
     </repository>
   </repositories>
   <dependencies>
