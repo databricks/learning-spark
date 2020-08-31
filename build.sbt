@@ -41,17 +41,17 @@ libraryDependencies ++= Seq(
 )
 
 resolvers ++= Seq(
-  "JBoss Repository" at "http://repository.jboss.org/nexus/content/repositories/releases/",
-  "Spray Repository" at "http://repo.spray.cc/",
+  "JBoss Repository" at "https://repository.jboss.org/nexus/content/repositories/releases/",
+  "Spray Repository" at "https://repo.spray.cc/",
   "Cloudera Repository" at "https://repository.cloudera.com/artifactory/cloudera-repos/",
-  "Akka Repository" at "http://repo.akka.io/releases/",
-  "Twitter4J Repository" at "http://twitter4j.org/maven2/",
+  "Akka Repository" at "https://repo.akka.io/releases/",
+  "Twitter4J Repository" at "https://twitter4j.org/maven2/",
   "Apache HBase" at "https://repository.apache.org/content/repositories/releases",
-  "Twitter Maven Repo" at "http://maven.twttr.com/",
+  "Twitter Maven Repo" at "https://maven.twttr.com/",
   "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools",
-  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
-  "Second Typesafe repo" at "http://repo.typesafe.com/typesafe/maven-releases/",
-  "Mesosphere Public Repository" at "http://downloads.mesosphere.io/maven",
+  "Typesafe repository" at "https://repo.typesafe.com/typesafe/releases/",
+  "Second Typesafe repo" at "https://repo.typesafe.com/typesafe/maven-releases/",
+  "Mesosphere Public Repository" at "https://downloads.mesosphere.io/maven",
   Resolver.sonatypeRepo("public")
 )
 
