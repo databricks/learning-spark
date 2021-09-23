@@ -28,7 +28,7 @@ public final class IntersectByKey {
     return grouped.flatMapValues(new Function<Tuple2<Iterable<V>, Iterable<V>>, Iterable<V>>() {
         @Override
         public Iterable<V> call(Tuple2<Iterable<V>, Iterable<V>> input) {
-          ArrayList<V> al = new ArrayList<V>();
+          ArrayList<V> al = new ArrayList<>();
           if (!Iterables.isEmpty(input._1()) && !Iterables.isEmpty(input._2())) {
             Iterables.addAll(al, input._1());
             Iterables.addAll(al, input._2());

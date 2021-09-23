@@ -92,7 +92,7 @@ public class LogAnalyzerWindowed implements Serializable {
       Comparator<Long> cmp = (Comparator<Long>)ordering;
       List<Tuple2<String, Long>> topEndpoints =
           Functions.endpointCount(accessLogs)
-        .top(10, new Functions.ValueComparator<String, Long>(cmp));
+        .top(10, new Functions.ValueComparator<>(cmp));
 
       logStatistics = new LogStatistics(contentSizeStats, responseCodeToCount,
           ip, topEndpoints);

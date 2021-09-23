@@ -42,7 +42,7 @@ public class SparkSQLTwitter {
         }});
     System.out.println(topTweetText.collect());
     // Create a person and turn it into a Schema RDD
-    ArrayList<HappyPerson> peopleList = new ArrayList<HappyPerson>();
+    ArrayList<HappyPerson> peopleList = new ArrayList<>();
     peopleList.add(new HappyPerson("holden", "coffee"));
     JavaRDD<HappyPerson> happyPeopleRDD = sc.parallelize(peopleList);
     DataFrame happyPeopleSchemaRDD = sqlCtx.applySchema(happyPeopleRDD, HappyPerson.class);

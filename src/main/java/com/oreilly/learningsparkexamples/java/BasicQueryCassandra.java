@@ -44,7 +44,7 @@ public class BasicQueryCassandra {
           return row.getInt("value");
         }}).stats());
     // write some basic data to Cassandra
-    ArrayList<KeyValue> input = new ArrayList<KeyValue>();
+    ArrayList<KeyValue> input = new ArrayList<>();
     input.add(KeyValue.newInstance("mostmagic", 3));
     JavaRDD<KeyValue> kvRDD = sc.parallelize(input);
     javaFunctions(kvRDD, KeyValue.class).saveToCassandra("test", "kv");

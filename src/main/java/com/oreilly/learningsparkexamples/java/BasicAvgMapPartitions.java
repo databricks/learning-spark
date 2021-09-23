@@ -67,7 +67,7 @@ public final class BasicAvgMapPartitions {
           a.total_ += input.next();
           a.num_ += 1;
         }
-        ArrayList<AvgCount> ret = new ArrayList<AvgCount>();
+        ArrayList<AvgCount> ret = new ArrayList<>();
         ret.add(a);
         return ret;
       }

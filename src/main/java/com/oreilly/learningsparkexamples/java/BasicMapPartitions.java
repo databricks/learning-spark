@@ -33,8 +33,8 @@ public class BasicMapPartitions {
     JavaRDD<String> result = rdd.mapPartitions(
       new FlatMapFunction<Iterator<String>, String>() {
         public Iterable<String> call(Iterator<String> input) {
-          ArrayList<String> content = new ArrayList<String>();
-          ArrayList<ContentExchange> cea = new ArrayList<ContentExchange>();
+          ArrayList<String> content = new ArrayList<>();
+          ArrayList<ContentExchange> cea = new ArrayList<>();
           HttpClient client = new HttpClient();
           try {
             client.start();

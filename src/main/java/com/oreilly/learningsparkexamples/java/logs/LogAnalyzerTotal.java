@@ -122,7 +122,7 @@ public class LogAnalyzerTotal implements Serializable {
         public Void call(JavaPairRDD<String, Long> rdd) {
       currentTopEndpoints = rdd.takeOrdered(
         10,
-        new Functions.ValueComparator<String, Long>(cmp));
+        new Functions.ValueComparator<>(cmp));
       return null;
         }});
   }

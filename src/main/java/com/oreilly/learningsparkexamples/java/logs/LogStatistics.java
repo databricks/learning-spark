@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class LogStatistics implements Serializable {
   public final static LogStatistics EMPTY_LOG_STATISTICS =
-    new LogStatistics(new Tuple4<>(0L, 0L, 0L, 0L), new ArrayList<Tuple2<Integer, Long>>(),
-                      new ArrayList<String>(), new ArrayList<Tuple2<String, Long>>());
+    new LogStatistics(new Tuple4<>(0L, 0L, 0L, 0L), new ArrayList<>(),
+                      new ArrayList<>(), new ArrayList<>());
 
   private Tuple4<Long, Long, Long, Long> contentSizeStats;
   private List<Tuple2<Integer, Long>> responseCodeToCount;

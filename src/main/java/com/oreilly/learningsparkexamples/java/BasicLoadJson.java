@@ -29,7 +29,7 @@ public class BasicLoadJson {
 
   public static class ParseJson implements FlatMapFunction<Iterator<String>, Person> {
     public Iterable<Person> call(Iterator<String> lines) throws Exception {
-      ArrayList<Person> people = new ArrayList<Person>();
+      ArrayList<Person> people = new ArrayList<>();
       ObjectMapper mapper = new ObjectMapper();
       while (lines.hasNext()) {
         String line = lines.next();
@@ -52,7 +52,7 @@ public class BasicLoadJson {
 
   public static class WriteJson implements FlatMapFunction<Iterator<Person>, String> {
     public Iterable<String> call(Iterator<Person> people) throws Exception {
-      ArrayList<String> text = new ArrayList<String>();
+      ArrayList<String> text = new ArrayList<>();
       ObjectMapper mapper = new ObjectMapper();
       while (people.hasNext()) {
         Person person = people.next();

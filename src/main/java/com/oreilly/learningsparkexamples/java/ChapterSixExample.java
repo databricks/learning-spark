@@ -50,7 +50,7 @@ public class ChapterSixExample {
 
   public static class VerifyCallLogs implements Function<CallLog[], CallLog[]> {
     public CallLog[] call(CallLog[] input) {
-      ArrayList<CallLog> res = new ArrayList<CallLog>();
+      ArrayList<CallLog> res = new ArrayList<>();
       if (input != null) {
         for (CallLog call: input) {
           if (call != null && call.mylat != null && call.mylong != null
@@ -147,9 +147,9 @@ public class ChapterSixExample {
         public Iterable<Tuple2<String, CallLog[]>> call(Iterator<String> input) {
           // List for our results.
           ArrayList<Tuple2<String, CallLog[]>> callsignQsos =
-            new ArrayList<Tuple2<String, CallLog[]>>();
+            new ArrayList<>();
           ArrayList<Tuple2<String, ContentExchange>> requests =
-            new ArrayList<Tuple2<String, ContentExchange>>();
+            new ArrayList<>();
           ObjectMapper mapper = createMapper();
           HttpClient client = new HttpClient();
           try {
@@ -172,7 +172,7 @@ public class ChapterSixExample {
     sc.addFile(distScript);
     JavaRDD<String> pipeInputs = contactsContactLists.values().map(new VerifyCallLogs()).flatMap(
       new FlatMapFunction<CallLog[], String>() { public Iterable<String> call(CallLog[] calls) {
-          ArrayList<String> latLons = new ArrayList<String>();
+          ArrayList<String> latLons = new ArrayList<>();
           for (CallLog call: calls) {
             latLons.add(call.mylat + "," + call.mylong +
                         "," + call.contactlat + "," + call.contactlong);
@@ -229,7 +229,7 @@ public class ChapterSixExample {
 
   static String[] loadCallSignTable() throws FileNotFoundException {
     Scanner callSignTbl = new Scanner(new File("./files/callsign_tbl_sorted"));
-    ArrayList<String> callSignList = new ArrayList<String>();
+    ArrayList<String> callSignList = new ArrayList<>();
     while (callSignTbl.hasNextLine()) {
       callSignList.add(callSignTbl.nextLine());
     }
